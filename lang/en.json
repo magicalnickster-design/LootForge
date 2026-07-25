@@ -1,0 +1,58 @@
+{
+  "LOOTFORGE": {
+    "Title": "LootForge",
+    "HUD": {
+      "LootBody": "Loot Body",
+      "ResetLoot": "Reset Loot Flag (GM)"
+    },
+    "Notify": {
+      "WrongSystem": "LootForge currently supports the D&D 5e system only.",
+      "NotDefeated": "{name} must be defeated before it can be looted.",
+      "AlreadyLooted": "{name} has already been looted.",
+      "NoLooter": "Assign a player character or select an owned character token to loot.",
+      "RollCancelled": "Loot roll cancelled.",
+      "NoTable": "No prototype loot table found for {name}.",
+      "LootGenerated": "Loot harvested from {name}.",
+      "Claimed": "Loot claimed by {name}.",
+      "PostedToChat": "No assigned character available. Loot was posted to chat.",
+      "FlagReset": "Loot flag reset for {name}.",
+      "PermissionDenied": "You do not have permission to loot {name}."
+    },
+    "Dialog": {
+      "Title": "Loot — {name}",
+      "Creature": "Creature",
+      "Skill": "Skill",
+      "RollTotal": "Roll Total",
+      "NaturalDie": "Natural Die",
+      "Tier": "Loot Tier",
+      "Items": "Items",
+      "Quantity": "Qty",
+      "BonusItem": "Natural 20 bonus applied",
+      "Claim": "Claim Loot",
+      "Close": "Close",
+      "Empty": "No usable materials were recovered."
+    },
+    "Chat": {
+      "LootHeader": "LootForge — {name}",
+      "ClaimHint": "Drag items to a character sheet, or ask the GM to distribute them.",
+      "Tier": "Tier: {tier}",
+      "Roll": "Roll: {total} ({skill})"
+    },
+    "Tier": {
+      "poor": "Poor",
+      "common": "Common",
+      "good": "Good",
+      "rare": "Rare",
+      "best": "Best",
+      "legendary": "Legendary"
+    },
+    "Interaction": {
+      "search": "Search",
+      "harvest": "Harvest"
+    },
+    "Skill": {
+      "inv": "Investigation",
+      "sur": "Survival"
+    }
+  }
+}

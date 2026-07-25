@@ -1,0 +1,95 @@
+/* LootForge — prototype styles (keep light; follow Foundry theme tokens where possible) */
+
+.control-icon.lootforge-loot-body {
+  color: var(--color-text-primary, #eee);
+}
+
+.control-icon.lootforge-loot-body.is-looted {
+  opacity: 0.45;
+}
+
+.control-icon.lootforge-loot-body:hover {
+  color: #c4a35a;
+}
+
+.lootforge-dialog .window-content {
+  padding: 0.75rem;
+}
+
+.lootforge-loot-dialog__header h3 {
+  margin: 0 0 0.15rem;
+  font-size: 1.15rem;
+}
+
+.lootforge-loot-dialog__meta {
+  margin: 0 0 0.75rem;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.lootforge-loot-dialog__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.lootforge-loot-dialog__stats div {
+  background: color-mix(in srgb, var(--color-cool-4, #222) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-cool-3, #444) 60%, transparent);
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+}
+
+.lootforge-loot-dialog__stats dt {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+.lootforge-loot-dialog__stats dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.lootforge-loot-dialog__bonus {
+  margin: 0 0 0.75rem;
+  color: #c4a35a;
+  font-weight: 600;
+}
+
+.lootforge-loot-dialog__items h4 {
+  margin: 0 0 0.4rem;
+}
+
+.lootforge-loot-dialog__items ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lootforge-loot-dialog__items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-cool-3, #444) 50%, transparent);
+}
+
+.lootforge-loot-dialog__items li.is-bonus .item-name::after {
+  content: " ★";
+  color: #c4a35a;
+}
+
+.lootforge-loot-dialog__empty {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.lootforge-chat ul {
+  margin: 0.25rem 0 0.5rem 1.1rem;
+}
