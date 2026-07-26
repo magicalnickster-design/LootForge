@@ -10,7 +10,8 @@ export const CONTAINER_KIND_CHEST = "chest";
 export const CONTAINER_KIND_BLANK = "blank";
 
 const CHEST_IMG = `modules/${MODULE_ID}/assets/tokens/chest.svg`;
-const BLANK_IMG = `modules/${MODULE_ID}/assets/tokens/blank.svg`;
+/** Real transparent PNG — Foundry rejects empty/none SVG textures for drag-drop. */
+const BLANK_IMG = `modules/${MODULE_ID}/assets/tokens/blank.png`;
 
 /**
  * @param {Actor|null|undefined} actor
