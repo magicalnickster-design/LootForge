@@ -83,8 +83,8 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
   const state = getCorpseState(tokenDoc);
   if (state.pendingReview && !state.dmApproved) return false;
 
-  // Shared leftovers: any player may take into their own character.
-  if (state.freeForAll) {
+  // Shared loot: any player may take into their own character.
+  if (state.freeForAll || state.dmApproved) {
     return userOwnsActor(actor, user) || user.character?.id === actor.id;
   }
 
@@ -180,12 +180,14 @@ export async function claimLootSession(tokenDoc, user, actor, { force = false } 
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
   }
 
-  // Shared leftover phase — no exclusive lock; multiple players may view/take.
-  if (state.freeForAll && !force) {
-    log.info("Joined free-for-all loot session", {
+  // Shared loot after DM review — no exclusive lock; multiple players may view/take.
+  if ((state.freeForAll || state.dmApproved) && !force) {
+    log.info("Joined shared loot session", {
       tokenUuid: tokenDoc.uuid,
       userId: user.id,
-      actorId: actor.id
+      actorId: actor.id,
+      freeForAll: Boolean(state.freeForAll),
+      dmApproved: Boolean(state.dmApproved)
     });
     return { ok: true, state, shared: true };
   }
