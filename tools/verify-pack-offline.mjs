@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.5") {
-  throw new Error(`Expected module version 0.5.5, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.6") {
+  throw new Error(`Expected module version 0.5.6, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -88,7 +88,18 @@ const expectedNames = new Set([
   "Orc War Orders",
   "Raid Map",
   "Clan Marking",
-  "Blood Oath Scrap"
+  "Blood Oath Scrap",
+  "Spider Chitin",
+  "Spinneret",
+  "Sticky Web Clump",
+  "Empty Cocoon",
+  "Brittle Leg Segment",
+  "Web-Wrapped Coin",
+  "Iridescent Chitin Shard",
+  "Fang Charm",
+  "Cocooned Journal",
+  "Prey Keepsake",
+  "Webbing Scrawl"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -197,6 +208,11 @@ const wolfSpider = resolveCreatureProfile({
   creatureType: "beast",
   creatureSubtype: ""
 });
+const spider = resolveCreatureProfile({
+  name: "Giant Spider",
+  creatureType: "beast",
+  creatureSubtype: ""
+});
 const armor = resolveCreatureProfile({
   name: "Animated Armor",
   creatureType: "construct",
@@ -235,6 +251,7 @@ const chest = resolveCreatureProfile({
 });
 if (wolf?.id !== "wolf") throw new Error(`Expected wolf profile, got ${wolf?.id}`);
 if (wolfSpider?.id !== "spider") throw new Error(`Expected spider profile for Wolf Spider, got ${wolfSpider?.id}`);
+if (spider?.id !== "spider") throw new Error(`Expected spider profile, got ${spider?.id}`);
 if (armor?.id !== "animated-armor") throw new Error(`Expected animated-armor profile, got ${armor?.id}`);
 if (goblin?.id !== "goblin") throw new Error(`Expected goblin profile, got ${goblin?.id}`);
 if (hobgoblin?.id === "goblin") throw new Error("Hobgoblin must not resolve to goblin profile");
@@ -267,7 +284,10 @@ if (!getLootDefinition("goblin-ear") || !getLootDefinition("bandit-orders")) {
 if (!getLootDefinition("orc-tusk") || !getLootDefinition("orc-war-orders") || !getLootDefinition("blood-oath-scrap")) {
   throw new Error("Missing orc loot definitions");
 }
-if (listLootDefinitions().length < 44) {
+if (!getLootDefinition("spider-chitin") || !getLootDefinition("spinneret") || !getLootDefinition("cocooned-journal")) {
+  throw new Error("Missing spider loot definitions");
+}
+if (listLootDefinitions().length < 55) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -522,12 +542,112 @@ for (const entry of orcLoot.items.filter((i) => i.kind === "equipment")) {
   if (!entry.baseItemData) throw new Error("Orc equipment entry missing baseItemData");
 }
 
+const phaseSpider = resolveCreatureProfile({
+  name: "Phase Spider",
+  creatureType: "monstrosity",
+  creatureSubtype: ""
+});
+if (phaseSpider?.id !== "spider") {
+  throw new Error(`Expected spider profile for Phase Spider, got ${phaseSpider?.id}`);
+}
+if (spider?.pools?.monsterParts?.type !== "definitions") {
+  throw new Error("Spider profile should be multi-pool with monsterParts");
+}
+
+const fakeSpider = {
+  id: "sp1",
+  name: "Giant Spider",
+  items: {
+    contents: [
+      {
+        id: "w1",
+        name: "Shortsword",
+        type: "weapon",
+        img: "icons/svg/sword.svg",
+        system: {
+          quantity: 1,
+          type: { value: "martialM" },
+          price: { value: 10, denomination: "gp" },
+          description: { value: "<p>A shortsword.</p>" },
+          rarity: "common"
+        },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      },
+      {
+        id: "p1",
+        name: "Potion of Healing",
+        type: "consumable",
+        img: "icons/svg/acid.svg",
+        system: {
+          quantity: 1,
+          type: { value: "potion" },
+          price: { value: 50, denomination: "gp" },
+          description: { value: "<p>A potion.</p>" },
+          rarity: "common"
+        },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      }
+    ]
+  }
+};
+
+const spiderLoot = await generateCreatureLoot({
+  context: {
+    name: "Giant Spider",
+    creatureType: "beast",
+    creatureSubtype: "",
+    size: "large",
+    challengeRating: 1,
+    isWolf: false,
+    isBoss: false,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: fakeSpider
+});
+if (spiderLoot.profileId !== "spider") throw new Error("Spider generation used wrong profile");
+if (!spiderLoot.items.length) throw new Error("Spider generation produced no items");
+const hasSpiderPart = spiderLoot.items.some((i) =>
+  ["spider-silk", "spider-fang", "spider-venom-gland", "spider-eye", "spider-chitin", "spinneret"].includes(
+    String(i.definitionId || "")
+  )
+);
+if (!hasSpiderPart) throw new Error("Spider loot missing monster parts");
+if (spiderLoot.items.some((i) => String(i.definitionId || "").includes("goblin") || String(i.definitionId || "").includes("orc-"))) {
+  throw new Error("Spider generation leaked humanoid definitions");
+}
+for (const entry of spiderLoot.items.filter((i) => i.kind === "equipment")) {
+  if (!entry.itemData) throw new Error("Spider equipment entry missing itemData snapshot");
+  if (!entry.equipmentQuality) throw new Error("Spider equipment entry missing quality");
+  if (!entry.baseItemData) throw new Error("Spider equipment entry missing baseItemData");
+}
+
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);
 console.log(`pack label: ${packDecl.label}`);
 console.log(`definitions: ${listLootDefinitions().length}`);
 console.log(
-  `wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}; orc items: ${orcLoot.items.length}`
+  `wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}; orc items: ${orcLoot.items.length}; spider items: ${spiderLoot.items.length}`
 );
 console.log("Exact shipped LevelDB files:");
 for (const name of shipped) {

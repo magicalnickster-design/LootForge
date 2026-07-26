@@ -1,0 +1,52 @@
+{
+  "_id": "LFBrittleLeg0000",
+  "name": "Brittle Leg Segment",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/brittle-leg-segment.svg",
+  "system": {
+    "description": {
+      "value": "<p>A snapped length of jointed spider leg. Hollow, light, and useless for anything but a morbid walking stick.</p>",
+      "chat": "A brittle spider leg segment."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "brittle-leg-segment",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "spider",
+        "chitin"
+      ],
+      "stackingKey": "brittle-leg-segment",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBrittleLeg0000"
+}

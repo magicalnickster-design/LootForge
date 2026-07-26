@@ -1,0 +1,54 @@
+{
+  "_id": "LFSpinneret00000",
+  "name": "Spinneret",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/spinneret.svg",
+  "system": {
+    "description": {
+      "value": "<p>An intact spinneret organ, still capable of producing a fine sticky thread. Rarely recovered whole after a hard fight.</p>",
+      "chat": "A spider spinneret."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "spinneret",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "beast",
+        "spider",
+        "rare",
+        "silk",
+        "alchemy"
+      ],
+      "stackingKey": "spinneret",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSpinneret00000"
+}

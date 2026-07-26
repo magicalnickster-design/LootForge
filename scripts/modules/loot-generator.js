@@ -2,8 +2,8 @@
  * Generate corpse loot from creature profiles.
  *
  * Supports:
- * - Legacy `drops[]` profiles (wolf, spider, animated armor) — unchanged behaviour
- * - Multi-pool `pools` profiles (goblin, …) — generic pool runners
+ * - Legacy `drops[]` profiles (wolf, animated armor) — unchanged behaviour
+ * - Multi-pool `pools` profiles (goblin, orc, spider, …) — generic pool runners
  */
 
 import {
@@ -203,7 +203,7 @@ export function aggregateCurrencyFromItems(items) {
 }
 
 /**
- * Legacy flat `drops[]` generation (wolf / spider / animated armor).
+ * Legacy flat `drops[]` generation (wolf / animated armor).
  */
 async function generateFromDrops(profile, {
   context,

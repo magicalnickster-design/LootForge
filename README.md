@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.5** |
+| Version | **0.5.6** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Orc**, **Chest / Container** |
@@ -30,7 +30,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 ## Creature loot notes
 
 - **Wolf** — wolf parts only (whole-word match; excludes “wolf spider”). Legacy `drops[]` profile.
-- **Spider / Wolf Spider** — spider silk, fangs, venom gland, eyes.
+- **Spider / Wolf Spider / Phase Spider** — multi-pool beast profile:
+  - Monster parts (silk, fang, venom gland, eye, chitin, rare spinneret)
+  - Occasional web-caught coins
+  - Equipment from the NPC’s **actual inventory** if present (victim gear), with quality
+  - Web junk, trinkets, and cocooned story scraps
 - **Animated Armor** — exactly **one** salvaged armor piece; Investigation quality sets the tier.
 - **Goblin** — multi-pool humanoid profile:
   - Monster parts (ear, tooth, finger bone, blood vial)
@@ -52,7 +56,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 Creature profiles live under `scripts/data/profiles/`. Register new creatures in `profiles/index.js`.
 
-- Legacy profiles use a flat `drops[]` table (wolf / spider / animated armor).
+- Legacy profiles use a flat `drops[]` table (wolf / animated armor).
 - Multi-pool profiles use `pools` (`monsterParts`, `currency`, `equipment`, `junk`, `trinkets`, `story`, …).
 - Generation code stays generic — do not hardcode creature names in the generator.
 

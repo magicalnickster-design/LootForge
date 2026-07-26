@@ -1,0 +1,52 @@
+{
+  "_id": "LFEmptyCocoon000",
+  "name": "Empty Cocoon",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/empty-cocoon.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn silk cocoon, hollow and brittle. Whatever was wrapped inside is long gone — or wriggled free.</p>",
+      "chat": "An empty silk cocoon."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "empty-cocoon",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "spider",
+        "silk"
+      ],
+      "stackingKey": "empty-cocoon",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFEmptyCocoon000"
+}

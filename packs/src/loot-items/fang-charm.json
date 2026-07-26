@@ -1,0 +1,52 @@
+{
+  "_id": "LFFangCharm00000",
+  "name": "Fang Charm",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fang-charm.svg",
+  "system": {
+    "description": {
+      "value": "<p>A small spider fang drilled and hung on a frayed cord. Hunters wear them for luck — or to warn rivals.</p>",
+      "chat": "A fang charm on a cord."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fang-charm",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "spider",
+        "fang"
+      ],
+      "stackingKey": "fang-charm",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFangCharm00000"
+}

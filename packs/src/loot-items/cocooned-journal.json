@@ -1,0 +1,52 @@
+{
+  "_id": "LFCocoonJournal0",
+  "name": "Cocooned Journal",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cocooned-journal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A leather journal half-sealed in silk. The last entry: \"The clicking is closer. If I don't return, burn the nest under the mill.\"</p>",
+      "chat": "A journal wrapped in silk."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cocooned-journal",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "spider",
+        "readable"
+      ],
+      "stackingKey": "cocooned-journal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCocoonJournal0"
+}

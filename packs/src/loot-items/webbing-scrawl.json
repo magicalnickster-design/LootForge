@@ -1,0 +1,52 @@
+{
+  "_id": "LFWebbingScrawl0",
+  "name": "Webbing Scrawl",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/webbing-scrawl.svg",
+  "system": {
+    "description": {
+      "value": "<p>Words pressed into a sheet of dried web in a shaky hand: \"Three tunnels. Eggs in the left. Don't light a torch.\"</p>",
+      "chat": "Writing pressed into webbing."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "webbing-scrawl",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "spider",
+        "readable"
+      ],
+      "stackingKey": "webbing-scrawl",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWebbingScrawl0"
+}

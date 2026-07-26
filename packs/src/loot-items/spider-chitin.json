@@ -1,0 +1,53 @@
+{
+  "_id": "LFSpiderChitin00",
+  "name": "Spider Chitin",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/spider-chitin.svg",
+  "system": {
+    "description": {
+      "value": "<p>A hard plate of spider carapace, still faintly iridescent. Armorers and shieldwrights can work it into light plating.</p>",
+      "chat": "A plate of spider chitin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "spider-chitin",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "spider",
+        "chitin",
+        "crafting"
+      ],
+      "stackingKey": "spider-chitin",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSpiderChitin00"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFIridChitin0000",
+  "name": "Iridescent Chitin Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/iridescent-chitin-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thumb-sized shard that shifts green to violet in the light. Jewelers sometimes set them as cheap cabochons.</p>",
+      "chat": "An iridescent chitin shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "iridescent-chitin-shard",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "spider",
+        "chitin"
+      ],
+      "stackingKey": "iridescent-chitin-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFIridChitin0000"
+}
