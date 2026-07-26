@@ -3,6 +3,7 @@
  */
 
 import { CORPSE_FLAG, LEGACY_LOOTED_FLAG, MODULE_ID } from "./constants.js";
+import { isCreatureDead } from "./creature-context.js";
 import { log } from "./logger.js";
 
 /**
@@ -139,7 +140,10 @@ export function corpseHasInventoryLoot(tokenDoc) {
  */
 export function isLootGenerated(tokenDoc) {
   const state = getCorpseState(tokenDoc);
-  return Boolean(state.generated) || corpseHasInventoryLoot(tokenDoc);
+  if (state.generated) return true;
+  // Inventory leftovers only count on dead creatures — never living PCs who took loot.
+  if (!isCreatureDead(tokenDoc, tokenDoc?.actor)) return false;
+  return corpseHasInventoryLoot(tokenDoc);
 }
 
 /**
@@ -157,12 +161,15 @@ export function isCorpseLooted(tokenDoc) {
 
 /**
  * Loot still available in the active window pool and/or corpse inventory.
+ * Living characters with LootForge items in their bags are NOT lootable corpses.
  * @param {TokenDocument} tokenDoc
  * @returns {boolean}
  */
 export function hasRemainingLoot(tokenDoc) {
   const state = getCorpseState(tokenDoc);
   if (state.items?.some((i) => Number(i.quantity) > 0)) return true;
+  // Only dead creature inventories can hold leftover corpse loot.
+  if (!isCreatureDead(tokenDoc, tokenDoc?.actor)) return false;
   return corpseHasInventoryLoot(tokenDoc);
 }
 

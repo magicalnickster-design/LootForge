@@ -485,6 +485,25 @@ export async function requestPlayerStartLoot(tokenDoc, actor, {
  * @param {TokenDocument} tokenDoc
  * @returns {Promise<object|null>}
  */
+/**
+ * Cancel all in-flight remote Investigation waits (e.g. player already submitted a roll).
+ * Resolves waiters with `{ superseded: true }` so GM generate does not silent-reroll.
+ */
+export function cancelAllPendingInvestigationRolls() {
+  for (const [id, pending] of pendingInvestigationRolls) {
+    clearTimeout(pending.timer);
+    pendingInvestigationRolls.delete(id);
+    if (pending.userId) {
+      emitLootForge({
+        op: OPS.CANCEL_INVESTIGATION_ROLL,
+        requestId: id,
+        targetUserId: pending.userId
+      });
+    }
+    pending.resolve({ superseded: true });
+  }
+}
+
 export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
   if (!user || !actor || !tokenDoc) return Promise.resolve(null);
   if (!isUserConnected(user)) return Promise.resolve(null);
@@ -504,7 +523,7 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
         requestId: id,
         targetUserId: user.id
       });
-      pending.resolve(null);
+      pending.resolve({ superseded: true });
     }
   }
 

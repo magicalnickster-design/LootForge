@@ -5,6 +5,7 @@
  */
 
 import { MODULE_ID } from "./constants.js";
+import { isCreatureDead } from "./creature-context.js";
 import { log } from "./logger.js";
 import { canUserAccessAssignedLoot, canUserLootCorpse } from "./ownership.js";
 import { getSetting } from "./settings.js";
@@ -64,10 +65,12 @@ function getStarTexture() {
 
 /**
  * Whether this client should render loot sparkles on the token.
+ * Only dead corpses with remaining loot — never living player characters.
  * @param {TokenDocument} tokenDoc
  */
 export function shouldShowLootIndicator(tokenDoc) {
   if (!tokenDoc || !getSetting("showLootIndicators")) return false;
+  if (!isCreatureDead(tokenDoc, tokenDoc.actor)) return false;
   if (!hasRemainingLoot(tokenDoc)) return false;
 
   const state = getCorpseState(tokenDoc);
@@ -102,7 +105,11 @@ export async function syncLootedCorpseVisibility(tokenDoc) {
   if (!game.user.isGM || !tokenDoc) return;
 
   const state = getCorpseState(tokenDoc);
-  const fullyLooted = Boolean(state.generated || state.looted) && !hasRemainingLoot(tokenDoc);
+  const wasCorpse = Boolean(state.generated || state.looted)
+    || isCreatureDead(tokenDoc, tokenDoc.actor);
+  const fullyLooted = wasCorpse
+    && Boolean(state.generated || state.looted)
+    && !hasRemainingLoot(tokenDoc);
   const flagged = Boolean(tokenDoc.getFlag(MODULE_ID, "hiddenByLootForge"));
 
   try {

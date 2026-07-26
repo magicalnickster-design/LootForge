@@ -17,7 +17,7 @@ import {
   userOwnsActor
 } from "./ownership.js";
 import { rollInvestigation, rollInvestigationSilent } from "./roll-helper.js";
-import { beginLootFlow, endLootFlow } from "./session-guard.js";
+import { beginLootFlow, endLootFlow, forceBeginLootFlow } from "./session-guard.js";
 import { getSetting } from "./settings.js";
 import {
   clearCorpseState,
@@ -34,6 +34,7 @@ import {
   materializeCorpseInventoryLoot
 } from "./loot-transfer.js";
 import {
+  cancelAllPendingInvestigationRolls,
   emitLootForge,
   requestDmLootPrompt,
   requestPlayerStartLoot,
@@ -49,6 +50,11 @@ export async function lootBody(token) {
   const tokenDoc = token?.document;
   const flowKey = tokenDoc?.uuid ?? null;
   if (flowKey && !beginLootFlow(flowKey)) return;
+
+  /** Release the short debounce lock before long Investigation / generate waits. */
+  const releaseFlowLock = () => {
+    if (flowKey) endLootFlow(flowKey);
+  };
 
   try {
     if (game.system.id !== "dnd5e") {
@@ -95,6 +101,8 @@ export async function lootBody(token) {
 
     // Nothing generated yet.
     if (!game.user.isGM) {
+      // Player Investigation can take a while — do not block the GM generate path.
+      releaseFlowLock();
       await handlePlayerLootBeforeReady(token, tokenDoc, creature);
       return;
     }
@@ -106,6 +114,8 @@ export async function lootBody(token) {
       return;
     }
 
+    // Remote Investigation wait must not hold the flow lock (blocks player → DM Review).
+    releaseFlowLock();
     await generateAndReview(token, tokenDoc, creature);
   } catch (err) {
     log.error("lootBody failed", err);
@@ -115,7 +125,7 @@ export async function lootBody(token) {
         : "LootForge encountered an error. See the console (F12) for details."
     );
   } finally {
-    if (flowKey) endLootFlow(flowKey);
+    releaseFlowLock();
   }
 }
 
@@ -289,7 +299,13 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
     const playerOwner = byPrimary ?? owners[0] ?? null;
     if (playerOwner) {
       const remote = await requestRemoteInvestigationRoll(playerOwner, roller, tokenDoc);
-      if (remote) return remote;
+      if (remote?.superseded) return null;
+      if (remote && Number.isFinite(Number(remote.total))) return remote;
+
+      // Player path may have already generated while we waited — do not silent-reroll.
+      const latest = getCorpseState(tokenDoc);
+      if (latest.generated || isAwaitingDmReview(latest)) return null;
+
       ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationFallback"));
     }
   }
@@ -398,7 +414,12 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
  * @param {Actor} creature
  */
 async function generateAndReview(token, tokenDoc, creature) {
-  await generateLootForCorpse(token, tokenDoc, creature, { openReview: true });
+  // Allow-all: players roll Investigation themselves — GM double-click uses a silent
+  // formula so we never block waiting on a remote roll that races the player path.
+  await generateLootForCorpse(token, tokenDoc, creature, {
+    openReview: true,
+    preferRemotePlayer: !getSetting("allowAllPlayersToLoot")
+  });
 }
 
 /**
@@ -509,9 +530,10 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     if (payload.investigationTotal == null) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.InvestigationRequired") };
     }
-    if (!beginLootFlow(tokenDoc.uuid)) {
-      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.LootInProgress") };
-    }
+
+    // Player already rolled — supersede any GM "waiting for Investigation" flow.
+    cancelAllPendingInvestigationRolls();
+    forceBeginLootFlow(tokenDoc.uuid);
     try {
       const investigationRoll = {
         total: Number(payload.investigationTotal),
@@ -521,7 +543,7 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
       const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
 
       // Generate + open DM Review only. Player window waits for Save & Close.
-      await generateLootForCorpse(
+      const generated = await generateLootForCorpse(
         token ?? { document: tokenDoc, actor: tokenDoc.actor },
         tokenDoc,
         tokenDoc.actor,
@@ -533,6 +555,10 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
           pendingLooterUserId: user.id
         }
       );
+
+      if (!generated) {
+        return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
+      }
 
       ui.notifications.info(
         game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
@@ -550,6 +576,12 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
         }),
         speaker: { alias: "LootForge" }
       }).catch(() => undefined);
+
+      log.info("Player Investigation generated loot — DM Review should be open", {
+        tokenUuid: tokenDoc.uuid,
+        total: investigationRoll.total,
+        itemCount: generated.items?.length ?? 0
+      });
 
       return { ok: true, awaitingDmReview: true };
     } finally {

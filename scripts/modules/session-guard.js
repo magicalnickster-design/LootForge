@@ -33,6 +33,21 @@ export function endLootFlow(tokenUuid) {
 }
 
 /**
+ * Clear any stuck lock and acquire a fresh one (player roll ready to generate).
+ * @param {string} tokenUuid
+ * @returns {boolean}
+ */
+export function forceBeginLootFlow(tokenUuid) {
+  if (!tokenUuid) return false;
+  if (lootInFlight.has(tokenUuid)) {
+    log.info("Forcing loot flow lock for completed Investigation", { tokenUuid });
+  }
+  lootInFlight.delete(tokenUuid);
+  lootInFlight.add(tokenUuid);
+  return true;
+}
+
+/**
  * @param {string} tokenUuid
  */
 export function isLootFlowInProgress(tokenUuid) {
