@@ -5,6 +5,9 @@
       "LootBody": "Loot Body",
       "ResetLoot": "Reset Loot Flag (GM)"
     },
+    "Keybinding": {
+      "LootTargetHint": "Loot the currently targeted or selected defeated creature."
+    },
     "Notify": {
       "WrongSystem": "LootForge currently supports the D&D 5e system only.",
       "NotDefeated": "{name} must be defeated before it can be looted.",
@@ -16,7 +19,9 @@
       "Claimed": "Loot claimed by {name}.",
       "PostedToChat": "No assigned character available. Loot was posted to chat.",
       "FlagReset": "Loot flag reset for {name}.",
-      "PermissionDenied": "You do not have permission to loot {name}."
+      "PermissionDenied": "You do not have permission to loot {name}.",
+      "NeedGM": "An active GM must be connected for LootForge to mark bodies as looted.",
+      "SelectOrTarget": "Target or select exactly one defeated creature, then use Loot Body (sack icon / Alt+L / right-click)."
     },
     "Dialog": {
       "Title": "Loot — {name}",

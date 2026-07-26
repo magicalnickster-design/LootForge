@@ -19,14 +19,20 @@ This repository currently ships a **D&D 5e wolf harvesting prototype**.
 
 1. Place a **Wolf** actor token on a scene.
 2. Mark the wolf defeated (Token HUD **dead** status, or reduce HP to 0).
-3. Select or target the wolf.
-4. Click **Loot Body** (Token HUD sack icon, or Token scene-control tool).
+3. As a **player**, target the wolf (hotkey **T**), or as GM open its Token HUD.
+4. Use one of these **Loot Body** actions (left-click alone does nothing):
+   - Token toolbar **sack** button (left scene controls)
+   - Right-click the corpse → **Loot Body**
+   - **Alt+L** (default keybind) while the corpse is targeted/selected
+   - Token HUD sack icon (usually GM / owned tokens only)
 5. LootForge classifies the wolf as **Harvest** and requests a **Survival** roll from your assigned character.
 6. Roll totals map to loot tiers (Poor → Best). Natural 20 adds a bonus item.
 7. A loot dialog shows creature, skill, roll, tier, items, and quantities.
 8. **Claim Loot** creates `loot` items on your assigned character (and posts chat links). Closing posts loot to chat instead.
 9. The token is flagged `flags.lootforge.looted = true` and cannot be looted again.
 10. GMs can click **Loot Body** again on a looted corpse to reset the flag.
+
+**Player tip:** Keep a GM client connected. Players cannot write flags on enemy tokens, so LootForge relays that write to the active GM.
 
 ## Install in a Foundry development world
 
