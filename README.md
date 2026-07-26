@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.3** |
+| Version | **0.5.4** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Chest / Container** |
@@ -41,7 +41,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - **Chest** — wooden chest token art
   - **Container** — blank/invisible token (place over map scenery)
   - 1 HP, sparkles always while lootable, hide when emptied
-  - Investigation → currency / junk / trinkets / story (+ any items you put in its inventory)
+  - Investigation → **official dnd5e/PHB equipment** from system packs (`equipment24`, `items`, `tradegoods`) by rarity, plus currency / LootForge junk & story (+ any items you put in its inventory)
 
 ## Profile architecture (v0.5+)
 

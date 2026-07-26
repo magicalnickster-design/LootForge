@@ -701,8 +701,8 @@ export async function resolveItemDataForTransfer(entry, {
 } = {}) {
   const qty = Math.max(1, Math.floor(Number(quantity ?? entry.quantity) || 1));
 
-  // Equipment / inventory clones always prefer their stored snapshot.
-  if (entry?.kind === "equipment" && entry.itemData) {
+  // Equipment / official system-item clones always prefer their stored snapshot.
+  if ((entry?.kind === "equipment" || entry?.kind === "system-item") && entry.itemData) {
     const duplicate = globalThis.foundry?.utils?.duplicate
       ?? ((obj) => JSON.parse(JSON.stringify(obj)));
     const data = duplicate(entry.itemData);

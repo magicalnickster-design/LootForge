@@ -21,6 +21,13 @@ import { scanActorEquipment } from "./equipment-scanner.js";
 import { getSetting } from "./settings.js";
 import { log } from "./logger.js";
 import { MODULE_ID } from "./constants.js";
+import {
+  CHEST_ITEM_TYPES,
+  DEFAULT_SYSTEM_ITEM_PACKS,
+  getSystemItemCatalog,
+  pickRandomEntry,
+  pickRarityBucket
+} from "./system-item-catalog.js";
 
 const QUALITY_ORDER = ["poor", "standard", "good", "excellent", "exceptional"];
 
@@ -433,6 +440,122 @@ async function runPoolPick(pool, { rollQuality, enableRare }) {
 }
 
 /**
+ * Build a corpse entry by cloning an official system Item document.
+ * @param {Item|object} doc
+ * @param {number} [quantity=1]
+ * @returns {Promise<import("./loot-storage.js").CorpseLootItem|null>}
+ */
+export async function buildSystemItemEntry(doc, quantity = 1) {
+  if (!doc) return null;
+  const qty = Math.max(1, Math.floor(Number(quantity) || 1));
+  const data = typeof doc.toObject === "function"
+    ? doc.toObject()
+    : foundry.utils.duplicate(doc);
+
+  delete data._id;
+  delete data.folder;
+  delete data.sort;
+  delete data._stats;
+  if (data.ownership) delete data.ownership;
+
+  data.system ??= {};
+  data.system.quantity = qty;
+
+  const rarity = String(data.system?.rarity || "common") || "common";
+  const uuid = doc.uuid || null;
+  const stackingKey = `sys-${doc.id || data.name}`;
+
+  data.flags ??= {};
+  data.flags.lootforge = {
+    ...(data.flags.lootforge ?? {}),
+    kind: "system-item",
+    itemUuid: uuid,
+    generatedByLootForge: true,
+    stackingKey,
+    rarity
+  };
+
+  const desc = data.system?.description?.chat
+    || String(data.system?.description?.value ?? "").replace(/<[^>]+>/g, "").slice(0, 180)
+    || "";
+
+  return {
+    entryId: foundry.utils.randomID(),
+    kind: "system-item",
+    definitionId: stackingKey,
+    itemUuid: uuid,
+    quantity: qty,
+    name: data.name,
+    img: data.img,
+    rarity,
+    valueText: formatItemValueText(data),
+    description: desc,
+    itemData: data
+  };
+}
+
+/**
+ * Pick official dnd5e/PHB-equipment items from system packs by rarity weights.
+ * @param {object} pool
+ * @param {object} options
+ */
+async function runSystemItemPool(pool, { rollQuality, enableRare }) {
+  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
+  const items = [];
+  if (pool.rare && !enableRare) return items;
+
+  const chance = pool.chanceByQuality?.[rollQuality] ?? 1;
+  if (!chanceSucceeds(chance)) return items;
+
+  const range = pool.countByQuality?.[rollQuality] ?? [0, 1];
+  let count = randomInt(range[0], range[1]);
+  if (count <= 0) return items;
+
+  const catalog = await getSystemItemCatalog({
+    packKeys: pool.packKeys ?? DEFAULT_SYSTEM_ITEM_PACKS,
+    itemTypes: pool.itemTypes ?? CHEST_ITEM_TYPES
+  });
+  if (!catalog.total) {
+    log.warn("System item pool empty — are dnd5e equipment packs available?");
+    return items;
+  }
+
+  const rarityWeights = pool.rarityWeightsByRollQuality?.[rollQuality]
+    ?? pool.rarityWeightsByRollQuality?.standard
+    ?? { common: 1 };
+
+  const pickedUuids = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 8) {
+    guard += 1;
+    const rarity = pickRarityBucket(rarityWeights, catalog.byRarity, randomUniform);
+    if (!rarity) break;
+    const available = (catalog.byRarity[rarity] ?? []).filter((e) => !pickedUuids.has(e.uuid));
+    const choice = pickRandomEntry(available.length ? available : catalog.byRarity[rarity], randomUniform);
+    if (!choice) break;
+    pickedUuids.add(choice.uuid);
+
+    try {
+      const doc = typeof fromUuid === "function" ? await fromUuid(choice.uuid) : null;
+      if (!doc) continue;
+      // Consumables / ammo often feel better as a small stack.
+      let qty = 1;
+      if (doc.type === "consumable") {
+        const subtype = String(doc.system?.type?.value ?? "").toLowerCase();
+        if (subtype === "ammo" || subtype === "ammunition") qty = randomInt(5, 20);
+        else if (subtype === "potion" || subtype === "food") qty = randomInt(1, 2);
+      }
+      const entry = await buildSystemItemEntry(doc, qty);
+      if (entry) items.push(entry);
+    } catch (err) {
+      log.warn("Failed to clone system item", choice.uuid, err);
+    }
+  }
+
+  return items;
+}
+
+/**
  * Multi-pool generation (goblin and future humanoids).
  */
 async function generateFromPools(profile, {
@@ -448,7 +571,16 @@ async function generateFromPools(profile, {
   const pools = profile.pools ?? {};
 
   // Stable pool order for handcrafted feel.
-  const order = ["monsterParts", "currency", "equipment", "junk", "trinkets", "story", "rare"];
+  const order = [
+    "monsterParts",
+    "currency",
+    "systemGear",
+    "equipment",
+    "junk",
+    "trinkets",
+    "story",
+    "rare"
+  ];
 
   for (const key of order) {
     const pool = pools[key];
@@ -472,6 +604,11 @@ async function generateFromPools(profile, {
       continue;
     }
 
+    if (pool.type === "systemItems") {
+      items.push(...await runSystemItemPool(pool, { rollQuality, enableRare }));
+      continue;
+    }
+
     if (pool.type === "equipment") {
       const eq = await runEquipmentPool(pool, { actor, context, rollQuality });
       items.push(...eq);
@@ -489,6 +626,8 @@ async function generateFromPools(profile, {
     if (order.includes(key)) continue;
     if (pool?.type === "poolPick") {
       items.push(...await runPoolPick(pool, { rollQuality, enableRare }));
+    } else if (pool?.type === "systemItems") {
+      items.push(...await runSystemItemPool(pool, { rollQuality, enableRare }));
     } else if (pool?.type === "definitions") {
       items.push(...await runDefinitionsPool(pool.drops ?? [], {
         context,

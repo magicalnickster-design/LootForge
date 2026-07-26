@@ -1,6 +1,9 @@
 /**
  * Chest / Container — multi-pool profile for placeable loot containers.
  * Matched via flags.lootforge.isContainer (not by creature name).
+ *
+ * Official PHB/SRD gear is pulled live from dnd5e system packs
+ * (`equipment24`, `items`, `tradegoods`) — not duplicated in LootForge.
  */
 
 /** @type {import("../creature-profiles.js").CreatureProfile} */
@@ -30,6 +33,67 @@ export const containerProfile = {
         good: 0.05,
         excellent: 0.1,
         exceptional: 0.15
+      }
+    },
+
+    /**
+     * Official dnd5e / PHB equipment from system compendiums.
+     * Rarity weights respect Investigation quality.
+     */
+    systemGear: {
+      type: "systemItems",
+      packKeys: ["dnd5e.equipment24", "dnd5e.items", "dnd5e.tradegoods"],
+      itemTypes: ["weapon", "equipment", "consumable", "tool", "loot", "container"],
+      countByQuality: {
+        poor: [1, 2],
+        standard: [1, 3],
+        good: [2, 4],
+        excellent: [2, 5],
+        exceptional: [3, 6]
+      },
+      chanceByQuality: {
+        poor: 0.9,
+        standard: 1,
+        good: 1,
+        excellent: 1,
+        exceptional: 1
+      },
+      rarityWeightsByRollQuality: {
+        poor: {
+          common: 0.97,
+          uncommon: 0.03,
+          rare: 0,
+          veryRare: 0,
+          legendary: 0
+        },
+        standard: {
+          common: 0.9,
+          uncommon: 0.09,
+          rare: 0.01,
+          veryRare: 0,
+          legendary: 0
+        },
+        good: {
+          common: 0.75,
+          uncommon: 0.2,
+          rare: 0.05,
+          veryRare: 0,
+          legendary: 0
+        },
+        excellent: {
+          common: 0.55,
+          uncommon: 0.3,
+          rare: 0.12,
+          veryRare: 0.03,
+          legendary: 0
+        },
+        exceptional: {
+          common: 0.35,
+          uncommon: 0.35,
+          rare: 0.22,
+          veryRare: 0.07,
+          legendary: 0.01
+        }
       }
     },
 
@@ -74,11 +138,11 @@ export const containerProfile = {
         exceptional: [2, 3]
       },
       chanceByQuality: {
-        poor: 0.7,
-        standard: 0.8,
-        good: 0.85,
-        excellent: 0.9,
-        exceptional: 0.95
+        poor: 0.55,
+        standard: 0.65,
+        good: 0.7,
+        excellent: 0.75,
+        exceptional: 0.8
       }
     },
 
@@ -99,11 +163,11 @@ export const containerProfile = {
         exceptional: [1, 2]
       },
       chanceByQuality: {
-        poor: 0.15,
-        standard: 0.28,
-        good: 0.4,
-        excellent: 0.55,
-        exceptional: 0.7
+        poor: 0.12,
+        standard: 0.22,
+        good: 0.35,
+        excellent: 0.5,
+        exceptional: 0.65
       }
     },
 

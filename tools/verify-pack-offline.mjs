@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.3") {
-  throw new Error(`Expected module version 0.5.3, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.4") {
+  throw new Error(`Expected module version 0.5.4, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -210,6 +210,25 @@ if (armor?.id !== "animated-armor") throw new Error(`Expected animated-armor pro
 if (goblin?.id !== "goblin") throw new Error(`Expected goblin profile, got ${goblin?.id}`);
 if (hobgoblin?.id === "goblin") throw new Error("Hobgoblin must not resolve to goblin profile");
 if (chest?.id !== "container") throw new Error(`Expected container profile for Chest, got ${chest?.id}`);
+if (chest?.pools?.systemGear?.type !== "systemItems") {
+  throw new Error("Container profile missing systemGear pool for official dnd5e items");
+}
+
+const {
+  normalizeItemRarity,
+  pickRarityBucket
+} = await import("../scripts/modules/system-item-catalog.js");
+if (normalizeItemRarity("very rare") !== "veryRare") {
+  throw new Error("normalizeItemRarity failed for very rare");
+}
+if (normalizeItemRarity("") !== "common") {
+  throw new Error("normalizeItemRarity should default blank to common");
+}
+const bucket = pickRarityBucket(
+  { common: 1, rare: 0 },
+  { common: [{ uuid: "a" }], uncommon: [], rare: [], veryRare: [], legendary: [], artifact: [] }
+);
+if (bucket !== "common") throw new Error(`Expected common rarity bucket, got ${bucket}`);
 if (!getLootDefinition("goblin-ear") || !getLootDefinition("bandit-orders")) {
   throw new Error("Missing goblin loot definitions");
 }
