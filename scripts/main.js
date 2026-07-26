@@ -36,15 +36,11 @@ Hooks.once("ready", () => {
   }
 
   registerSocketManager();
+  registerInvestigationReadyHook();
   registerLootIndicatorHooks();
   registerTokenHud();
   registerTokenContext();
   registerTokenDoubleClickLoot();
-
-  // Chat-message backup so GM always receives Investigation → DM Review.
-  import("./modules/loot-workflow.js").then(({ registerInvestigationReadyHook }) => {
-    registerInvestigationReadyHook();
-  });
 
   // Public API for macros / other modules.
   game.modules.get(MODULE_ID).api = {
@@ -62,5 +58,5 @@ Hooks.once("ready", () => {
     }
   };
 
-  log.info(`Ready v0.4.5 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.4.6 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

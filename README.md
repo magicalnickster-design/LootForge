@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.4.5** |
+| Version | **0.4.6** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |
@@ -16,8 +16,8 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 1. Creature is marked **dead** → white sparkles appear.
 2. A **player** **double-left-clicks** the corpse → Investigation auto-rolls once (shown in chat).
 3. **DM Review** opens automatically for the GM — edit quantities, reroll, add/remove items.
-4. GM **Save & Close** or **Close** → loot is released free-for-all (no assignee).
-5. Any player double-clicks again → shared Items window; takes live-sync across clients.
+4. GM **Save & Close** or **Close** → loot is released free-for-all and the **player Items window opens automatically**.
+5. Players can double-left-click again anytime to reopen the shared Items window; takes live-sync across clients.
 6. Fully looted → sparkles off; corpse is hidden (`hiddenByLootForge`).
 7. GM **Reset Loot** restores the corpse for another pass.
 

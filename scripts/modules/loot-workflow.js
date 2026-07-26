@@ -123,8 +123,12 @@ export async function lootBody(token) {
       return;
     }
 
-    // Loot released — open the shared WoW window (any player / GM).
-    if (hasRemainingLoot(tokenDoc) && (state.dmApproved || state.freeForAll || game.user.isGM)) {
+    // Loot released (or review closed) — open / reopen the shared Items window.
+    if (
+      state.generated
+      && hasRemainingLoot(tokenDoc)
+      && (state.dmApproved || state.freeForAll || !state.pendingReview || game.user.isGM)
+    ) {
       await openExistingLoot(tokenDoc, state);
       return;
     }
@@ -137,6 +141,7 @@ export async function lootBody(token) {
     }
 
     // One Investigation per corpse — block spam before any roll work.
+    // Do not block reopen of already-released loot (handled above).
     if (
       hasInvestigationClaim(tokenDoc.uuid)
       || isInvestigationPending(state)
@@ -460,6 +465,22 @@ async function openExistingLoot(tokenDoc, state) {
     return;
   }
 
+  // After DM release, open locally — do not depend on GM sockets for the window UI.
+  if (state.dmApproved || state.freeForAll || (!state.pendingReview && state.generated)) {
+    const looter = game.actors.get(state.activeLooterActorId)
+      ?? game.user.character
+      ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
+    if (!looter) {
+      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoLooter"));
+      return;
+    }
+
+    await openPlayerLootWindow(tokenDoc);
+    // Background session claim so takes stay GM-authoritative.
+    void requestPlayerStartLoot(tokenDoc, looter, { claimOnly: true });
+    return;
+  }
+
   if (!canUserLootCorpse(tokenDoc, game.user)) {
     const busyKey = getLootBusyReasonKey(state, game.user);
     if (busyKey) {
@@ -478,6 +499,7 @@ async function openExistingLoot(tokenDoc, state) {
     ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
   if (!looter) return;
 
+  await openPlayerLootWindow(tokenDoc);
   const result = await requestPlayerStartLoot(tokenDoc, looter, { claimOnly: true });
   if (!result.ok && result.error) ui.notifications.warn(result.error);
 }

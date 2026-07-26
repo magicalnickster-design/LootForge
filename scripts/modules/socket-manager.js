@@ -26,6 +26,9 @@ import { refreshLootWindows } from "../applications/window-registry.js";
 
 let registered = false;
 
+/** @type {Map<string, number>} tokenUuid → last auto-open ms */
+const recentAutoOpens = new Map();
+
 /**
  * Primary connected GM who should handle authoritative socket ops.
  * Falls back when Foundry's activeGM getter is null (common on some hosts).
@@ -66,10 +69,11 @@ export function registerSocketManager() {
 
     // Keep local one-roll guards in sync with authoritative corpse flags.
     const state = getCorpseState(tokenDoc);
-    if (isInvestigationPending(state) || state.generated || state.pendingReview) {
-      markInvestigationClaimed(tokenDoc.uuid);
-    } else if (!state.generated && !state.pendingInvestigation) {
+    if (!state.generated && !state.pendingInvestigation) {
       releaseInvestigationClaim(tokenDoc.uuid);
+    } else if (isInvestigationPending(state) || (state.generated && state.pendingReview)) {
+      // Only lock Investigation while waiting on the DM — not after release.
+      markInvestigationClaimed(tokenDoc.uuid);
     }
 
     refreshLootWindows(tokenDoc.uuid);
@@ -148,6 +152,10 @@ async function handleSocketPayload(payload) {
   switch (op) {
     case OPS.STATE_UPDATED:
       await onStateUpdated(payload);
+      return;
+
+    case OPS.LOOT_RELEASED:
+      await onLootReleased(payload);
       return;
 
     case OPS.OPEN_PLAYER_WINDOW:
@@ -338,6 +346,17 @@ async function openPlayerWindowFromPayload(payload) {
     return;
   }
 
+  // Trusted opens (post-release) may arrive before flags replicate.
+  if (trustedTarget) {
+    for (let i = 0; i < 12; i++) {
+      const state = getCorpseState(tokenDoc);
+      if ((state.dmApproved || state.freeForAll || state.activeLooterUserId) && hasRemainingLoot(tokenDoc)) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 75));
+    }
+  }
+
   const state = getCorpseState(tokenDoc);
   const allowed = trustedTarget
     || game.user.isGM
@@ -354,6 +373,12 @@ async function openPlayerWindowFromPayload(payload) {
       localUserId: game.user.id,
       trustedTarget
     });
+    return;
+  }
+
+  if (!beginAutoOpen(tokenDoc.uuid)) {
+    const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
+    await openPlayerLootWindow(tokenDoc);
     return;
   }
 
@@ -424,8 +449,57 @@ export async function requestPlayerStartLoot(tokenDoc, actor, {
 }
 
 /**
+ * @param {string} tokenUuid
+ * @returns {boolean} true if this client should auto-open now
+ */
+function beginAutoOpen(tokenUuid) {
+  if (!tokenUuid) return false;
+  const now = Date.now();
+  const last = recentAutoOpens.get(tokenUuid) ?? 0;
+  if (now - last < 1500) return false;
+  recentAutoOpens.set(tokenUuid, now);
+  return true;
+}
+
+/**
+ * Players: DM released loot — open the Items window (with a short flag-sync wait).
+ * @param {object} payload
+ */
+async function onLootReleased(payload) {
+  if (game.user.isGM) return;
+  const tokenUuid = payload.tokenUuid;
+  if (!tokenUuid || !beginAutoOpen(tokenUuid)) return;
+
+  log.info("Loot released — opening player window", {
+    tokenUuid,
+    localUserId: game.user.id
+  });
+
+  const tokenDoc = await resolveTokenDocSoon(tokenUuid);
+  if (!tokenDoc) {
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
+    return;
+  }
+
+  // Wait briefly for dmApproved / items to replicate to this client.
+  for (let i = 0; i < 12; i++) {
+    const state = getCorpseState(tokenDoc);
+    if ((state.dmApproved || state.freeForAll) && hasRemainingLoot(tokenDoc)) break;
+    await new Promise((resolve) => setTimeout(resolve, 75));
+  }
+
+  const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
+  await openPlayerLootWindow(tokenDoc);
+  ui.notifications.info(
+    game.i18n.format("LOOTFORGE.Notify.LootAvailable", {
+      name: getCorpseState(tokenDoc).creatureContext?.name ?? tokenDoc.name
+    })
+  );
+}
+
+/**
  * GM finished reviewing — release corpse loot for every player (shared free-for-all).
- * Does not auto-open player windows; players double-click to loot.
+ * Auto-opens the player Items window on connected player clients.
  * @param {TokenDocument} tokenDoc
  */
 export async function releaseLootForEveryone(tokenDoc) {
@@ -458,8 +532,28 @@ export async function releaseLootForEveryone(tokenDoc) {
   });
 
   broadcastStateUpdated(tokenDoc.uuid);
+
+  // Reliable handoff: every active player should see the loot window now.
+  emitLootForge({
+    op: OPS.LOOT_RELEASED,
+    tokenUuid: tokenDoc.uuid
+  });
+
+  const players = game.users.filter((u) => !u.isGM && u.active);
+  for (const user of players) {
+    emitLootForge({
+      op: OPS.OPEN_PLAYER_WINDOW,
+      tokenUuid: tokenDoc.uuid,
+      targetUserId: user.id,
+      trusted: true
+    });
+  }
+
   ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootOpenForAll"));
-  log.info("Released loot for everyone (free-for-all)", { tokenUuid: tokenDoc.uuid });
+  log.info("Released loot for everyone (free-for-all)", {
+    tokenUuid: tokenDoc.uuid,
+    playerIds: players.map((u) => u.id)
+  });
   return { ok: true, freeForAll: true };
 }
 

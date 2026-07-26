@@ -248,11 +248,13 @@ export async function openPlayerLootWindow(tokenDoc) {
 
   for (const app of foundry.applications.instances.values()) {
     if (app instanceof PlayerLootWindow && app.tokenDoc?.uuid === tokenDoc.uuid) {
-      app.render({ force: true });
+      await app.render({ force: true });
+      app.bringToFront?.();
       return app;
     }
   }
   const app = new PlayerLootWindow(tokenDoc);
   await app.render({ force: true });
+  app.bringToFront?.();
   return app;
 }

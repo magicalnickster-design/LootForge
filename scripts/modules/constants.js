@@ -38,6 +38,7 @@ export const OPS = Object.freeze({
   PLAYER_START_LOOT: "playerStartLoot",
   CLAIM_LOOT_SESSION: "claimLootSession",
   INVESTIGATION_READY: "investigationReady",
+  LOOT_RELEASED: "lootReleased",
   STATE_UPDATED: "stateUpdated"
 });
 
