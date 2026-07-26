@@ -26,6 +26,12 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @type {boolean} */
   #busy = false;
 
+  /** @type {boolean} */
+  #pendingRefresh = false;
+
+  /** Monotonic token so a slow busy=true render cannot overwrite a later idle UI. */
+  #renderGeneration = 0;
+
   constructor(tokenDoc, options = {}) {
     super(options);
     this.#tokenDoc = tokenDoc;
@@ -79,6 +85,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
 
     return {
       busy: this.#busy,
+      renderGeneration: this.#renderGeneration,
       creature: {
         name: ctx.name ?? this.#tokenDoc.name,
         image: ctx.image ?? this.#tokenDoc.actor?.img,
@@ -103,13 +110,18 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   async _onRender(context, options) {
     await super._onRender(context, options);
     registerLootWindow(this.#tokenDoc.uuid, this);
+
+    // If a newer render was requested while this frame was painting, correct it.
+    if (context?.renderGeneration != null && context.renderGeneration < this.#renderGeneration) {
+      void this.render({ force: true });
+    }
   }
 
   async _onClose(options) {
     unregisterLootWindow(this.#tokenDoc.uuid, this);
 
-    // Closing the review releases loot for every player (free-for-all).
-    if (game.user.isGM) {
+    // Close / Save & Close release loot. Do not release if we were mid-edit.
+    if (game.user.isGM && !this.#busy) {
       const state = getCorpseState(this.#tokenDoc);
       if (state.generated && !state.dmApproved && (state.items?.length || state.pendingReview)) {
         try {
@@ -124,18 +136,51 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   onCorpseStateChanged() {
-    if (this.rendered) this.render({ force: true });
+    // Flag updates from our own edits already re-render via #withBusy.
+    // A second render mid-edit races and can leave every button disabled.
+    if (this.#busy) {
+      this.#pendingRefresh = true;
+      return;
+    }
+    if (this.rendered) void this.#safeRender();
+  }
+
+  /**
+   * Disable/enable action controls without a full re-render (avoids busy-frame races).
+   * @param {boolean} disabled
+   */
+  #setActionsDisabled(disabled) {
+    const root = this.element;
+    if (!root) return;
+    for (const el of root.querySelectorAll("[data-action]")) {
+      if (el.dataset.action === "cancel") continue;
+      el.disabled = disabled;
+    }
+  }
+
+  async #safeRender() {
+    this.#renderGeneration += 1;
+    try {
+      await this.render({ force: true });
+    } catch (err) {
+      log.warn("DM Review render failed", err);
+    }
   }
 
   async #withBusy(fn) {
     if (this.#busy) return;
     this.#busy = true;
-    this.render({ force: true });
+    this.#pendingRefresh = false;
+    // Do NOT full-re-render with busy=true — that paint can finish after unlock
+    // and permanently disable every control except Close.
+    this.#setActionsDisabled(true);
     try {
       await fn();
     } finally {
       this.#busy = false;
-      if (this.rendered) this.render({ force: true });
+      this.#pendingRefresh = false;
+      if (this.rendered) await this.#safeRender();
+      else this.#setActionsDisabled(false);
     }
   }
 

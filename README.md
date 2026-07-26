@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.0** |
+| Version | **0.5.1** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin** (first humanoid multi-pool profile) |
