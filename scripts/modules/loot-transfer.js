@@ -6,12 +6,20 @@
  * Never mutates the compendium source Item.
  */
 
-import { getLootDefinition, resolveItemDataForTransfer } from "../data/loot-definitions.js";
-import { log } from "./logger.js";
-import { canUserAccessAssignedLoot, userOwnsActor } from "./ownership.js";
 import {
+  formatDefinitionValue,
+  getLootDefinition,
+  resolveItemDataForTransfer
+} from "../data/loot-definitions.js";
+import { log } from "./logger.js";
+import { canUserLootCorpse, userOwnsActor } from "./ownership.js";
+import { getSetting } from "./settings.js";
+import {
+  corpseHasInventoryLoot,
+  getCorpseInventoryLootItems,
   getCorpseState,
   hasRemainingLoot,
+  isLootSessionLocked,
   updateCorpseState
 } from "./loot-storage.js";
 
@@ -29,7 +37,6 @@ function releaseLock(lockKey) {
 }
 
 /**
- * Stack using flags.lootforge.stackingKey (preferred), then definitionId.
  * @param {Actor} actor
  * @param {string} definitionId
  * @returns {Item|null}
@@ -46,7 +53,6 @@ function findStackableItem(actor, definitionId) {
 }
 
 /**
- * Enrich legacy corpse entries (pre-compendium) with UUID / snapshot when possible.
  * @param {import("./loot-storage.js").CorpseLootItem} entry
  * @returns {import("./loot-storage.js").CorpseLootItem}
  */
@@ -75,9 +81,132 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
   if (user.isGM) return true;
 
   const state = getCorpseState(tokenDoc);
-  if (state.assignedActorId && state.assignedActorId !== actor.id) return false;
-  if (!canUserAccessAssignedLoot(state, user)) return false;
-  return userOwnsActor(actor, user) || state.assignedUserId === user.id;
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
+    return false;
+  }
+  if (state.activeLooterActorId && state.activeLooterActorId !== actor.id) {
+    return false;
+  }
+  if (state.assignedActorId && state.assignedActorId !== actor.id) {
+    // During an open session the claim sets assignment to the looter.
+    if (!(getSetting("allowAllPlayersToLoot") && state.activeLooterUserId === user.id)) {
+      return false;
+    }
+  }
+  if (!canUserLootCorpse(tokenDoc, user)) return false;
+  return userOwnsActor(actor, user) || state.assignedUserId === user.id || state.activeLooterUserId === user.id;
+}
+
+/**
+ * Pull LootForge items from the corpse actor inventory into the loot window pool.
+ * @param {TokenDocument} tokenDoc
+ * @returns {Promise<object>}
+ */
+export async function materializeCorpseInventoryLoot(tokenDoc) {
+  const state = getCorpseState(tokenDoc);
+  if (state.items?.some((i) => Number(i.quantity) > 0)) return state;
+  if (!corpseHasInventoryLoot(tokenDoc)) return state;
+
+  const actorItems = getCorpseInventoryLootItems(tokenDoc);
+  const entries = [];
+  const deleteIds = [];
+
+  for (const item of actorItems) {
+    const flags = item.flags?.lootforge ?? {};
+    const definitionId = flags.definitionId || flags.stackingKey || null;
+    const def = definitionId ? getLootDefinition(definitionId) : null;
+    const qty = Math.max(1, Number(item.system?.quantity ?? 1));
+    const data = typeof item.toObject === "function" ? item.toObject() : foundry.utils.duplicate(item);
+    delete data._id;
+
+    entries.push({
+      entryId: foundry.utils.randomID(),
+      definitionId: definitionId || `inv-${item.id}`,
+      itemUuid: flags.itemUuid || def?.itemUuid || null,
+      itemData: data,
+      name: item.name,
+      quantity: qty,
+      img: item.img || def?.img,
+      rarity: flags.rarity || def?.rarity || item.system?.rarity || "common",
+      valueText: def ? formatDefinitionValue(def) : "—",
+      description: def?.description
+        || item.system?.description?.chat
+        || ""
+    });
+    deleteIds.push(item.id);
+  }
+
+  if (deleteIds.length) {
+    await tokenDoc.actor.deleteEmbeddedDocuments("Item", deleteIds);
+  }
+
+  const next = await updateCorpseState(tokenDoc, {
+    generated: true,
+    items: entries,
+    looted: false,
+    lootedAt: null
+  });
+  log.info(`Materialized ${entries.length} corpse inventory item(s) into loot window`, tokenDoc.uuid);
+  return next;
+}
+
+/**
+ * Claim exclusive loot session (one player at a time).
+ * @param {TokenDocument} tokenDoc
+ * @param {User} user
+ * @param {Actor} actor
+ */
+export async function claimLootSession(tokenDoc, user, actor) {
+  if (!tokenDoc || !user || !actor) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoLooter") };
+  }
+
+  await materializeCorpseInventoryLoot(tokenDoc);
+  let state = getCorpseState(tokenDoc);
+
+  if (!hasRemainingLoot(tokenDoc)) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
+  }
+
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
+    const name = state.activeLooterName
+      || game.users.get(state.activeLooterUserId)?.name
+      || "Another player";
+    return {
+      ok: false,
+      error: game.i18n.format("LOOTFORGE.Notify.LootBusy", { name })
+    };
+  }
+
+  state = await updateCorpseState(tokenDoc, {
+    activeLooterUserId: user.id,
+    activeLooterActorId: actor.id,
+    activeLooterName: actor.name,
+    assignedActorId: actor.id,
+    assignedUserId: user.id,
+    looted: false
+  });
+
+  log.info("Loot session claimed", {
+    tokenUuid: tokenDoc.uuid,
+    userId: user.id,
+    actorId: actor.id
+  });
+  return { ok: true, state };
+}
+
+/**
+ * Clear exclusive looter lock without depositing.
+ * @param {TokenDocument} tokenDoc
+ */
+export async function clearLootSession(tokenDoc) {
+  return updateCorpseState(tokenDoc, {
+    activeLooterUserId: null,
+    activeLooterActorId: null,
+    activeLooterName: null,
+    assignedActorId: null,
+    assignedUserId: null
+  });
 }
 
 /**
@@ -101,8 +230,6 @@ async function grantEntryToActor(actor, entry, sourceCreature) {
     quantity: normalized.quantity,
     sourceCreature
   });
-
-  // Safety: never carry a document id into create.
   delete data._id;
 
   const created = await actor.createEmbeddedDocuments("Item", [data]);
@@ -114,8 +241,6 @@ async function grantEntryToActor(actor, entry, sourceCreature) {
  * @param {Actor} actor
  * @param {string} entryId
  * @param {object} [options]
- * @param {number} [options.quantity]
- * @param {User} [options.user]
  */
 export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user = game.user } = {}) {
   const lockKey = `${tokenDoc.uuid}:${entryId}`;
@@ -129,10 +254,6 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
     }
 
     const state = getCorpseState(tokenDoc);
-    if (state.looted) {
-      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
-    }
-
     const entry = state.items.find((i) => i.entryId === entryId);
     if (!entry || entry.quantity <= 0) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.ItemGone") };
@@ -153,7 +274,16 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
     const nextState = await updateCorpseState(tokenDoc, {
       items: nextItems,
       looted: empty,
-      lootedAt: empty ? Date.now() : state.lootedAt
+      lootedAt: empty ? Date.now() : state.lootedAt,
+      ...(empty
+        ? {
+          activeLooterUserId: null,
+          activeLooterActorId: null,
+          activeLooterName: null,
+          assignedActorId: null,
+          assignedUserId: null
+        }
+        : {})
     });
 
     log.info(`Transferred ${takeQty}× ${entry.name} → ${actor.name}`);
@@ -188,6 +318,7 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
     }
 
+    await materializeCorpseInventoryLoot(tokenDoc);
     let state = getCorpseState(tokenDoc);
     const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
 
@@ -199,7 +330,12 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
     state = await updateCorpseState(tokenDoc, {
       items: [],
       looted: true,
-      lootedAt: Date.now()
+      lootedAt: Date.now(),
+      activeLooterUserId: null,
+      activeLooterActorId: null,
+      activeLooterName: null,
+      assignedActorId: null,
+      assignedUserId: null
     });
 
     log.info(`Take All → ${actor.name} from ${tokenDoc.name}`);
@@ -216,8 +352,8 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
 }
 
 /**
- * Move any remaining corpse-flag loot onto the dead creature's actor inventory,
- * then mark the corpse empty/looted. Used by the player Done button.
+ * Leave loot window: deposit leftovers onto the corpse actor and free the session
+ * so another player can loot (WoW-style).
  *
  * @param {TokenDocument} tokenDoc
  * @param {User} [user]
@@ -230,8 +366,16 @@ export async function depositRemainingToCorpse(tokenDoc, user = game.user) {
 
   try {
     const state = getCorpseState(tokenDoc);
-    if (!user.isGM && !canUserAccessAssignedLoot(state, user)) {
-      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
+    if (!user.isGM) {
+      if (state.activeLooterUserId && state.activeLooterUserId !== user.id) {
+        return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
+      }
+      if (!canUserLootCorpse(tokenDoc, user) && state.activeLooterUserId !== user.id) {
+        // Still allow release if they held the session.
+        if (state.activeLooterUserId !== user.id) {
+          return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
+        }
+      }
     }
 
     const corpseActor = tokenDoc.actor;
@@ -239,30 +383,28 @@ export async function depositRemainingToCorpse(tokenDoc, user = game.user) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
     }
 
-    if (!hasRemainingLoot(tokenDoc)) {
-      const nextState = await updateCorpseState(tokenDoc, {
-        items: [],
-        looted: true,
-        lootedAt: state.lootedAt ?? Date.now()
-      });
-      return { ok: true, state: nextState, deposited: 0 };
-    }
-
-    const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
     let deposited = 0;
-    for (const entry of [...state.items]) {
+    const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
+    for (const entry of [...(state.items ?? [])]) {
       if (entry.quantity <= 0) continue;
       await grantEntryToActor(corpseActor, entry, sourceCreature);
       deposited += 1;
     }
 
+    const stillHasInventory = deposited > 0 || corpseHasInventoryLoot(tokenDoc);
     const nextState = await updateCorpseState(tokenDoc, {
       items: [],
-      looted: true,
-      lootedAt: Date.now()
+      looted: !stillHasInventory,
+      lootedAt: stillHasInventory ? null : Date.now(),
+      activeLooterUserId: null,
+      activeLooterActorId: null,
+      activeLooterName: null,
+      // Free the corpse for the next player (WoW free-for-all leftovers).
+      assignedActorId: null,
+      assignedUserId: null
     });
 
-    log.info(`Done: deposited ${deposited} remaining entries → ${corpseActor.name}`);
+    log.info(`Loot session closed: deposited ${deposited} → ${corpseActor.name}`, tokenDoc.uuid);
     return { ok: true, state: nextState, deposited };
   } catch (err) {
     log.error("depositRemainingToCorpse failed", err);

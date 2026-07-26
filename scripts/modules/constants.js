@@ -36,6 +36,9 @@ export const OPS = Object.freeze({
   TAKE_ITEM: "takeItem",
   TAKE_ALL: "takeAll",
   DONE_LOOT: "doneLoot",
+  REQUEST_DM_LOOT: "requestDmLoot",
+  PLAYER_START_LOOT: "playerStartLoot",
+  CLAIM_LOOT_SESSION: "claimLootSession",
   STATE_UPDATED: "stateUpdated",
   RESET_LOOT: "resetLoot",
   SET_FLAG: "setLootedFlag"

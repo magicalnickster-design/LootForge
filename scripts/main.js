@@ -10,6 +10,7 @@ import { registerLootIndicatorHooks } from "./modules/loot-indicator.js";
 import { registerSettings } from "./modules/settings.js";
 import { registerSocketManager } from "./modules/socket-manager.js";
 import { registerSceneControls } from "./ui/scene-controls.js";
+import { registerTokenDoubleClickLoot } from "./ui/token-dblclick.js";
 import { registerLootKeybinding, registerTokenContext } from "./ui/token-context.js";
 import { registerTokenHud } from "./ui/token-hud.js";
 
@@ -37,6 +38,7 @@ Hooks.once("ready", () => {
   registerLootIndicatorHooks();
   registerTokenHud();
   registerTokenContext();
+  registerTokenDoubleClickLoot();
 
   // Public API for macros / other modules.
   game.modules.get(MODULE_ID).api = {
@@ -54,5 +56,5 @@ Hooks.once("ready", () => {
     }
   };
 
-  log.info(`Ready v0.2.2 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.2.3 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

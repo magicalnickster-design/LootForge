@@ -9,8 +9,8 @@ import { log } from "./logger.js";
  * @typedef {object} CorpseLootItem
  * @property {string} entryId
  * @property {string} definitionId
- * @property {string} [itemUuid]     Canonical Compendium.lootforge.loot-items UUID
- * @property {object} [itemData]     Fallback Item create-data snapshot
+ * @property {string} [itemUuid]
+ * @property {object} [itemData]
  * @property {string} name
  * @property {number} quantity
  * @property {string} img
@@ -30,6 +30,9 @@ import { log } from "./logger.js";
  * @property {string|null} rollQuality
  * @property {string|null} assignedActorId
  * @property {string|null} assignedUserId
+ * @property {string|null} activeLooterUserId
+ * @property {string|null} activeLooterActorId
+ * @property {string|null} activeLooterName
  * @property {CorpseLootItem[]} items
  * @property {object} currency
  * @property {boolean} looted
@@ -49,6 +52,9 @@ export function emptyCorpseState() {
     rollQuality: null,
     assignedActorId: null,
     assignedUserId: null,
+    activeLooterUserId: null,
+    activeLooterActorId: null,
+    activeLooterName: null,
     items: [],
     currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     looted: false,
@@ -69,7 +75,6 @@ export function getCorpseState(tokenDoc) {
     return foundry.utils.mergeObject(emptyCorpseState(), stored, { inplace: false });
   }
 
-  // Legacy v0.1.x: only a boolean looted flag.
   if (tokenDoc.getFlag(MODULE_ID, LEGACY_LOOTED_FLAG)) {
     const legacy = emptyCorpseState();
     legacy.generated = true;
@@ -82,18 +87,58 @@ export function getCorpseState(tokenDoc) {
 }
 
 /**
- * @param {TokenDocument} tokenDoc
+ * @param {Item} item
  * @returns {boolean}
  */
-export function isLootGenerated(tokenDoc) {
-  return Boolean(getCorpseState(tokenDoc).generated);
+export function isLootForgeItem(item) {
+  if (!item) return false;
+  const flags = item.flags?.lootforge ?? {};
+  if (flags.generatedByLootForge) return true;
+  if (flags.definitionId || flags.stackingKey) return true;
+  try {
+    if (item.getFlag?.(MODULE_ID, "generatedByLootForge")) return true;
+    if (item.getFlag?.(MODULE_ID, "definitionId")) return true;
+  } catch {
+    // ignore
+  }
+  return false;
+}
+
+/**
+ * Leftover loot sitting on the dead creature's actor inventory (WoW-style).
+ * @param {TokenDocument} tokenDoc
+ * @returns {Item[]}
+ */
+export function getCorpseInventoryLootItems(tokenDoc) {
+  const actor = tokenDoc?.actor;
+  if (!actor?.items) return [];
+  return actor.items.filter((item) => isLootForgeItem(item));
 }
 
 /**
  * @param {TokenDocument} tokenDoc
  * @returns {boolean}
  */
+export function corpseHasInventoryLoot(tokenDoc) {
+  return getCorpseInventoryLootItems(tokenDoc).length > 0;
+}
+
+/**
+ * @param {TokenDocument} tokenDoc
+ * @returns {boolean}
+ */
+export function isLootGenerated(tokenDoc) {
+  const state = getCorpseState(tokenDoc);
+  return Boolean(state.generated) || corpseHasInventoryLoot(tokenDoc);
+}
+
+/**
+ * True when there is nothing left in the loot window pool or corpse inventory.
+ * @param {TokenDocument} tokenDoc
+ * @returns {boolean}
+ */
 export function isCorpseLooted(tokenDoc) {
+  if (hasRemainingLoot(tokenDoc)) return false;
   const state = getCorpseState(tokenDoc);
   if (state.looted) return true;
   if (tokenDoc.getFlag(MODULE_ID, LEGACY_LOOTED_FLAG)) return true;
@@ -101,18 +146,45 @@ export function isCorpseLooted(tokenDoc) {
 }
 
 /**
+ * Loot still available in the active window pool and/or corpse inventory.
  * @param {TokenDocument} tokenDoc
  * @returns {boolean}
  */
 export function hasRemainingLoot(tokenDoc) {
   const state = getCorpseState(tokenDoc);
-  return state.generated && !state.looted && (state.items?.some((i) => i.quantity > 0) ?? false);
+  if (state.items?.some((i) => Number(i.quantity) > 0)) return true;
+  return corpseHasInventoryLoot(tokenDoc);
 }
 
 /**
- * Persist corpse state. Prefer direct update when permitted; callers that need
- * GM relay should go through socket-manager.
- *
+ * @param {TokenDocument} tokenDoc
+ * @returns {boolean}
+ */
+export function hasActiveLootWindowItems(tokenDoc) {
+  const state = getCorpseState(tokenDoc);
+  return state.items?.some((i) => Number(i.quantity) > 0) ?? false;
+}
+
+/**
+ * @param {CorpseLootState} state
+ * @returns {User|null}
+ */
+export function getActiveLooterUser(state) {
+  if (!state?.activeLooterUserId) return null;
+  return game.users.get(state.activeLooterUserId) ?? null;
+}
+
+/**
+ * Active looter lock is held by a still-connected user.
+ * @param {CorpseLootState} state
+ * @returns {boolean}
+ */
+export function isLootSessionLocked(state) {
+  const user = getActiveLooterUser(state);
+  return Boolean(user?.active);
+}
+
+/**
  * @param {TokenDocument} tokenDoc
  * @param {Partial<CorpseLootState>} patch
  * @returns {Promise<CorpseLootState>}
@@ -122,13 +194,11 @@ export async function updateCorpseState(tokenDoc, patch) {
 
   const current = getCorpseState(tokenDoc);
   const next = foundry.utils.mergeObject(current, patch, { inplace: false });
-
-  // Normalize items array when provided.
   if (Array.isArray(patch.items)) next.items = patch.items;
 
   await tokenDoc.update({
     [`flags.${MODULE_ID}.${CORPSE_FLAG}`]: next,
-    [`flags.${MODULE_ID}.${LEGACY_LOOTED_FLAG}`]: Boolean(next.looted)
+    [`flags.${MODULE_ID}.${LEGACY_LOOTED_FLAG}`]: Boolean(next.looted && !hasRemainingLootItems(next, tokenDoc))
   });
 
   log.debug("Corpse state updated", tokenDoc.uuid, next);
@@ -136,7 +206,16 @@ export async function updateCorpseState(tokenDoc, patch) {
 }
 
 /**
- * Replace the entire corpse state (used by reset / fresh generation).
+ * @param {CorpseLootState} state
+ * @param {TokenDocument} tokenDoc
+ */
+function hasRemainingLootItems(state, tokenDoc) {
+  if (state.items?.some((i) => Number(i.quantity) > 0)) return true;
+  // Inventory loot checked after update may still be mid-flight; ignore here.
+  return false;
+}
+
+/**
  * @param {TokenDocument} tokenDoc
  * @param {CorpseLootState} state
  */
@@ -145,7 +224,6 @@ export async function setCorpseState(tokenDoc, state) {
 }
 
 /**
- * Clear generated loot (GM reset).
  * @param {TokenDocument} tokenDoc
  */
 export async function clearCorpseState(tokenDoc) {

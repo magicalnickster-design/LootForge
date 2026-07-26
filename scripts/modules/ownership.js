@@ -1,10 +1,16 @@
 /**
- * Resolve which users own an assigned loot character.
- * Players often have OWNER, but also may only be linked via user.character.
+ * Resolve which users own an assigned loot character / may loot a corpse.
  */
 
+import { getSetting } from "./settings.js";
+import {
+  corpseHasInventoryLoot,
+  getCorpseState,
+  hasRemainingLoot,
+  isLootSessionLocked
+} from "./loot-storage.js";
+
 /**
- * Ownership level helper that works across Foundry 13/14.
  * @returns {number}
  */
 function ownerLevel() {
@@ -32,8 +38,6 @@ export function userOwnsActor(actor, user) {
   const level = ownership[user.id];
   if (typeof level === "number" && level >= ownerLevel()) return true;
   if ((ownership.default ?? 0) >= ownerLevel()) return true;
-
-  // Primary character assignment (common player setup).
   if (user.character?.id === actor.id) return true;
 
   return false;
@@ -55,21 +59,58 @@ export function resolveAssignedOwnerUsers(actor, { activeOnly = false } = {}) {
 }
 
 /**
- * Can this user open the player loot window / loot bag for an assigned corpse?
- * Does not require ownership of the enemy token.
- *
+ * Can this user open loot for an assigned corpse (classic assign mode)?
  * @param {import("./loot-storage.js").CorpseLootState} state
  * @param {User} [user]
- * @returns {boolean}
  */
 export function canUserAccessAssignedLoot(state, user = game.user) {
   if (!state || !user) return false;
   if (user.isGM) return true;
   if (!state.assignedActorId) return false;
-
   if (state.assignedUserId && state.assignedUserId === user.id) return true;
-
   const actor = game.actors.get(state.assignedActorId);
   if (!actor) return false;
   return userOwnsActor(actor, user);
+}
+
+/**
+ * WoW-style access: one active looter at a time; free-for-all leftovers when unlocked.
+ * @param {TokenDocument} tokenDoc
+ * @param {User} [user]
+ */
+export function canUserLootCorpse(tokenDoc, user = game.user) {
+  if (!tokenDoc || !user) return false;
+  if (user.isGM) return true;
+  if (!hasRemainingLoot(tokenDoc)) return false;
+
+  const state = getCorpseState(tokenDoc);
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
+    return false;
+  }
+
+  // Free-for-all mode: any player may claim when unlocked.
+  if (getSetting("allowAllPlayersToLoot")) return true;
+
+  // Currently assigned / claimed session.
+  if (state.activeLooterUserId === user.id) return true;
+  if (canUserAccessAssignedLoot(state, user)) return true;
+
+  // WoW leftovers: after a looter leaves, remaining items sit on the corpse
+  // inventory with no assignee — any player may claim the next session.
+  if (!state.assignedActorId && !state.activeLooterUserId && corpseHasInventoryLoot(tokenDoc)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * @param {import("./loot-storage.js").CorpseLootState} state
+ * @param {User} [user]
+ * @returns {string|null} localization key or null if free
+ */
+export function getLootBusyReasonKey(state, user = game.user) {
+  if (!isLootSessionLocked(state)) return null;
+  if (state.activeLooterUserId === user?.id) return null;
+  return "LOOTFORGE.Notify.LootBusy";
 }

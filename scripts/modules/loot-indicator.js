@@ -5,13 +5,12 @@
 
 import { LOOT_BAG_ICON, MODULE_ID } from "./constants.js";
 import { log } from "./logger.js";
-import { canUserAccessAssignedLoot } from "./ownership.js";
+import { canUserAccessAssignedLoot, canUserLootCorpse } from "./ownership.js";
 import { getSetting } from "./settings.js";
 import {
   getCorpseState,
   hasRemainingLoot,
-  isCorpseLooted,
-  isLootGenerated
+  isLootSessionLocked
 } from "./loot-storage.js";
 
 /** @type {Map<string, PIXI.Container>} token id → overlay container */
@@ -49,14 +48,16 @@ async function loadBagTexture() {
  */
 export function shouldShowLootIndicator(tokenDoc) {
   if (!tokenDoc || !getSetting("showLootIndicators")) return false;
-  if (!isLootGenerated(tokenDoc) || isCorpseLooted(tokenDoc) || !hasRemainingLoot(tokenDoc)) {
-    return false;
-  }
+  if (!hasRemainingLoot(tokenDoc)) return false;
 
   const state = getCorpseState(tokenDoc);
   if (game.user.isGM) return true;
-  // Unassigned: players never see the bag.
-  if (!state.assignedActorId) return false;
+
+  // Free-for-all mode, or free leftovers after a looter leaves.
+  if (getSetting("allowAllPlayersToLoot")) return true;
+  if (!state.assignedActorId && !isLootSessionLocked(state)) return true;
+
+  if (state.activeLooterUserId === game.user.id) return true;
   return canUserAccessAssignedLoot(state, game.user);
 }
 
@@ -67,7 +68,11 @@ export function shouldShowLootIndicator(tokenDoc) {
 export function canInteractWithLootIndicator(tokenDoc) {
   if (!shouldShowLootIndicator(tokenDoc)) return false;
   if (game.user.isGM) return true;
-  return canUserAccessAssignedLoot(getCorpseState(tokenDoc), game.user);
+  const state = getCorpseState(tokenDoc);
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
+    return false;
+  }
+  return canUserLootCorpse(tokenDoc, game.user);
 }
 
 /**
@@ -191,31 +196,25 @@ async function upsertOverlay(token) {
 async function onBagClicked(token) {
   const tokenDoc = token.document;
   if (!canInteractWithLootIndicator(tokenDoc)) {
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
-    log.info("Loot bag click rejected", {
-      reason: "not-assigned-owner",
-      tokenUuid: tokenDoc.uuid,
-      userId: game.user.id
-    });
+    const state = getCorpseState(tokenDoc);
+    if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
+      const name = state.activeLooterName
+        || game.users.get(state.activeLooterUserId)?.name
+        || "Another player";
+      ui.notifications.warn(game.i18n.format("LOOTFORGE.Notify.LootBusy", { name }));
+    } else {
+      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
+    }
     return;
   }
 
-  log.info("Loot bag clicked — opening player window", {
+  log.info("Loot bag clicked", {
     tokenUuid: tokenDoc.uuid,
     userId: game.user.id
   });
 
-  if (game.user.isGM) {
-    const { openDmLootReview } = await import("../applications/dm-loot-review.js");
-    const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
-    const state = getCorpseState(tokenDoc);
-    if (state.assignedActorId) await openPlayerLootWindow(tokenDoc);
-    else await openDmLootReview(tokenDoc);
-    return;
-  }
-
-  const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
-  await openPlayerLootWindow(tokenDoc);
+  const { lootBody } = await import("./loot-workflow.js");
+  await lootBody(token);
 }
 
 /**

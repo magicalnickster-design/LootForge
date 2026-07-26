@@ -6,14 +6,28 @@ import { MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
 import { log } from "./logger.js";
 import {
   canUserAccessAssignedLoot,
+  canUserLootCorpse,
   resolveAssignedOwnerUsers,
   userOwnsActor
 } from "./ownership.js";
-import { canUserModifyToken, getCorpseState, updateCorpseState } from "./loot-storage.js";
-import { canTakeLoot, depositRemainingToCorpse, takeAllCorpseItems, takeCorpseItem } from "./loot-transfer.js";
+import {
+  canUserModifyToken,
+  getCorpseState,
+  updateCorpseState
+} from "./loot-storage.js";
+import {
+  canTakeLoot,
+  claimLootSession,
+  depositRemainingToCorpse,
+  takeAllCorpseItems,
+  takeCorpseItem
+} from "./loot-transfer.js";
 import { refreshLootWindows } from "../applications/window-registry.js";
 
 let registered = false;
+
+/** @type {Set<string>} */
+const dmPromptTokens = new Set();
 
 /**
  * Register socket listeners (ready).
@@ -34,7 +48,6 @@ export function registerSocketManager() {
 }
 
 /**
- * Emit to other clients.
  * @param {object} payload
  */
 export function emitLootForge(payload) {
@@ -48,7 +61,6 @@ export function emitLootForge(payload) {
 }
 
 /**
- * Broadcast state update so open windows + indicators refresh.
  * @param {string} tokenUuid
  */
 export function broadcastStateUpdated(tokenUuid) {
@@ -92,10 +104,22 @@ async function handleSocketPayload(payload) {
         targetUserId: payload.targetUserId,
         actorId: payload.actorId,
         tokenUuid: payload.tokenUuid,
-        localUserId: game.user.id,
-        isGM: game.user.isGM
+        localUserId: game.user.id
       });
       await openPlayerWindowFromPayload(payload);
+      return;
+
+    case OPS.REQUEST_DM_LOOT:
+      if (!game.user.isGM) return;
+      if (game.users.activeGM?.id !== game.user.id) return;
+      await onDmLootRequest(payload);
+      return;
+
+    case OPS.PLAYER_START_LOOT:
+    case OPS.CLAIM_LOOT_SESSION:
+      if (!game.user.isGM) return;
+      if (game.users.activeGM?.id !== game.user.id) return;
+      await onPlayerStartLoot(payload);
       return;
 
     case OPS.TAKE_ITEM:
@@ -106,16 +130,45 @@ async function handleSocketPayload(payload) {
       await handleTakeRequest(payload);
       return;
 
-    case OPS.ASSIGN_LOOT:
-      return;
-
     default:
       log.debug("Unhandled socket op", op);
   }
 }
 
 /**
- * Player requests a take / done; GM executes authoritatively.
+ * @param {object} payload
+ */
+async function onDmLootRequest(payload) {
+  const key = `${payload.tokenUuid}:${payload.fromUserId}`;
+  if (dmPromptTokens.has(key)) return;
+  dmPromptTokens.add(key);
+  try {
+    const { handleDmLootRequest } = await import("./loot-workflow.js");
+    await handleDmLootRequest(payload);
+  } finally {
+    dmPromptTokens.delete(key);
+  }
+}
+
+/**
+ * @param {object} payload
+ */
+async function onPlayerStartLoot(payload) {
+  const { handlePlayerStartLoot } = await import("./loot-workflow.js");
+  const result = await handlePlayerStartLoot(payload, {
+    claimOnly: Boolean(payload.claimOnly) || payload.op === OPS.CLAIM_LOOT_SESSION
+  });
+  if (!result?.ok && result?.error) {
+    emitLootForge({
+      op: OPS.STATE_UPDATED,
+      tokenUuid: payload.tokenUuid,
+      error: result.error,
+      targetUserId: payload.fromUserId
+    });
+  }
+}
+
+/**
  * @param {object} payload
  */
 async function handleTakeRequest(payload) {
@@ -136,6 +189,13 @@ async function handleTakeRequest(payload) {
 
   const state = getCorpseState(tokenDoc);
   if (payload.op !== OPS.DONE_LOOT) {
+    if (state.activeLooterUserId && state.activeLooterUserId !== requestingUser.id) {
+      log.warn("Take request rejected: another looter", {
+        tokenUuid: payload.tokenUuid,
+        fromUserId: payload.fromUserId
+      });
+      return;
+    }
     if (state.assignedActorId && state.assignedActorId !== actor.id) {
       log.warn("Take request rejected: actor not assigned", {
         tokenUuid: payload.tokenUuid,
@@ -151,8 +211,12 @@ async function handleTakeRequest(payload) {
       });
       return;
     }
-  } else if (!canUserAccessAssignedLoot(state, requestingUser) && !requestingUser.isGM) {
-    log.warn("Done request rejected: permission", {
+  } else if (
+    state.activeLooterUserId
+    && state.activeLooterUserId !== requestingUser.id
+    && !requestingUser.isGM
+  ) {
+    log.warn("Done request rejected: not active looter", {
       tokenUuid: payload.tokenUuid,
       fromUserId: payload.fromUserId
     });
@@ -192,7 +256,6 @@ async function handleTakeRequest(payload) {
  * @param {object} payload
  */
 async function openPlayerWindowFromPayload(payload) {
-  // Targeted open: only the intended user opens (GMs ignore remote opens unless solo-testing).
   if (payload.targetUserId && payload.targetUserId !== game.user.id) {
     log.info("Socket open ignored: not target user", {
       targetUserId: payload.targetUserId,
@@ -208,18 +271,16 @@ async function openPlayerWindowFromPayload(payload) {
   }
 
   const state = getCorpseState(tokenDoc);
-  const actor = state.assignedActorId ? game.actors.get(state.assignedActorId) : null;
-  const allowed = canUserAccessAssignedLoot(state, game.user);
+  const allowed = game.user.isGM
+    || state.activeLooterUserId === game.user.id
+    || canUserAccessAssignedLoot(state, game.user)
+    || canUserLootCorpse(tokenDoc, game.user);
 
   if (!allowed) {
     log.info("Player window open blocked", {
-      reason: !state.assignedActorId
-        ? "not-assigned"
-        : !actor
-          ? "assigned-actor-missing"
-          : "not-owner",
+      reason: "not-allowed",
       assignedActorId: state.assignedActorId,
-      assignedUserId: state.assignedUserId,
+      activeLooterUserId: state.activeLooterUserId,
       localUserId: game.user.id
     });
     return;
@@ -227,8 +288,8 @@ async function openPlayerWindowFromPayload(payload) {
 
   log.info("Player window opening", {
     tokenUuid: tokenDoc.uuid,
-    sceneId: tokenDoc.parent?.id ?? tokenDoc.parent?.id,
-    assignedActorId: state.assignedActorId
+    assignedActorId: state.assignedActorId,
+    activeLooterUserId: state.activeLooterUserId
   });
 
   const creatureName = state.creatureContext?.name ?? tokenDoc.name;
@@ -239,6 +300,77 @@ async function openPlayerWindowFromPayload(payload) {
   const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
   await openPlayerLootWindow(tokenDoc);
   await refreshIndicatorsSafe(tokenDoc.uuid);
+}
+
+/**
+ * Player → GM: show "start the roll" dialog.
+ * @param {TokenDocument} tokenDoc
+ * @param {Actor} actor
+ */
+export async function requestDmLootPrompt(tokenDoc, actor) {
+  if (game.user.isGM) {
+    const { handleDmLootRequest } = await import("./loot-workflow.js");
+    await handleDmLootRequest({
+      tokenUuid: tokenDoc.uuid,
+      actorId: actor.id,
+      fromUserId: game.user.id
+    });
+    return { ok: true };
+  }
+
+  if (!game.users.activeGM) {
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NeedGM"));
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NeedGM") };
+  }
+
+  emitLootForge({
+    op: OPS.REQUEST_DM_LOOT,
+    tokenUuid: tokenDoc.uuid,
+    actorId: actor.id
+  });
+  log.info("Socket event emitted", {
+    op: OPS.REQUEST_DM_LOOT,
+    tokenUuid: tokenDoc.uuid,
+    actorId: actor.id
+  });
+  return { ok: true, pending: true };
+}
+
+/**
+ * Player → GM: auto-start or claim loot session.
+ * @param {TokenDocument} tokenDoc
+ * @param {Actor} actor
+ * @param {{ claimOnly?: boolean }} [options]
+ */
+export async function requestPlayerStartLoot(tokenDoc, actor, { claimOnly = false } = {}) {
+  if (game.user.isGM) {
+    const { handlePlayerStartLoot } = await import("./loot-workflow.js");
+    return handlePlayerStartLoot({
+      tokenUuid: tokenDoc.uuid,
+      actorId: actor.id,
+      fromUserId: game.user.id,
+      claimOnly
+    }, { claimOnly });
+  }
+
+  if (!game.users.activeGM) {
+    const err = game.i18n.localize("LOOTFORGE.Notify.NeedGM");
+    ui.notifications.warn(err);
+    return { ok: false, error: err };
+  }
+
+  emitLootForge({
+    op: claimOnly ? OPS.CLAIM_LOOT_SESSION : OPS.PLAYER_START_LOOT,
+    tokenUuid: tokenDoc.uuid,
+    actorId: actor.id,
+    claimOnly
+  });
+  log.info("Socket event emitted", {
+    op: claimOnly ? OPS.CLAIM_LOOT_SESSION : OPS.PLAYER_START_LOOT,
+    tokenUuid: tokenDoc.uuid,
+    actorId: actor.id
+  });
+  return { ok: true, pending: true };
 }
 
 /**
@@ -259,9 +391,10 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
   const connectedOwners = resolveAssignedOwnerUsers(actor, { activeOnly: true });
   const preferred = user && !user.isGM && userOwnsActor(actor, user) ? user : null;
   const targets = preferred
-    ? connectedOwners.filter((u) => u.id === preferred.id).concat(
-      connectedOwners.filter((u) => u.id !== preferred.id)
-    )
+    ? [
+      ...connectedOwners.filter((u) => u.id === preferred.id),
+      ...connectedOwners.filter((u) => u.id !== preferred.id)
+    ]
     : connectedOwners;
 
   const uniqueTargets = [...new Map(targets.map((u) => [u.id, u])).values()];
@@ -269,18 +402,27 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
 
   log.info("Assignment owner resolution", {
     assignedActorId: actor.id,
-    assignedActorName: actor.name,
     ownerUserIds: allOwners.map((u) => u.id),
     connectedOwnerUserIds: connectedOwners.map((u) => u.id),
-    preferredUserId: preferred?.id ?? null,
     assignedUserId: assignedUser?.id ?? null,
     tokenUuid: tokenDoc.uuid
   });
 
-  await updateCorpseState(tokenDoc, {
-    assignedActorId: actor.id,
-    assignedUserId: assignedUser?.id ?? null
-  });
+  if (assignedUser) {
+    const claim = await claimLootSession(tokenDoc, assignedUser, actor);
+    if (!claim.ok) {
+      // Still assign ownership flags if claim failed due to empty — update manually.
+      await updateCorpseState(tokenDoc, {
+        assignedActorId: actor.id,
+        assignedUserId: assignedUser.id
+      });
+    }
+  } else {
+    await updateCorpseState(tokenDoc, {
+      assignedActorId: actor.id,
+      assignedUserId: null
+    });
+  }
 
   broadcastStateUpdated(tokenDoc.uuid);
 
@@ -302,8 +444,7 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
     }
   } else {
     log.warn("No connected player owners — opening locally for GM", {
-      assignedActorId: actor.id,
-      ownerUserIds: allOwners.map((u) => u.id)
+      assignedActorId: actor.id
     });
     const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
     await openPlayerLootWindow(tokenDoc);
@@ -314,7 +455,6 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
 }
 
 /**
- * Player-side request to take an item (relayed to active GM when needed).
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
  * @param {string} entryId
@@ -369,7 +509,7 @@ export async function requestDoneLoot(tokenDoc) {
   emitLootForge({
     op: OPS.DONE_LOOT,
     tokenUuid: tokenDoc.uuid,
-    actorId: state.assignedActorId
+    actorId: state.assignedActorId ?? state.activeLooterActorId
   });
   return { ok: true, pending: true };
 }

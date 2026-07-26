@@ -36,8 +36,11 @@
       "NeedGM": "An active GM must be connected for LootForge to update corpse loot.",
       "SelectOrTarget": "Target a defeated creature with T, then use Loot Targeted Body (or Alt+L).",
       "NoAssignedCorpse": "No lootable corpse found. Target a dead body assigned to your character, or stand near one.",
-      "PlayersCannotGenerate": "Only the GM can generate loot (unless player requests are enabled in settings).",
+      "PlayersCannotGenerate": "Only the GM can generate loot (enable Allow all players to loot to let players auto-loot).",
       "WaitingForGM": "Loot generated. Waiting for the GM to review and assign it.",
+      "WaitingForDM": "Waiting for the DM to start looting {name}.",
+      "GeneratingLoot": "Generating loot…",
+      "LootBusy": "{name} is already looting this corpse.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
       "NoTakePermission": "You do not have permission to take this loot.",
       "ItemGone": "That item is no longer available on the corpse.",
@@ -55,7 +58,12 @@
       "ChooseLooter": "Character",
       "ChooseLooterHint": "Choose which character makes the skill roll and/or receives the loot.",
       "Close": "Close",
-      "Empty": "No usable materials were recovered."
+      "Empty": "No usable materials were recovered.",
+      "LootRequestTitle": "LootForge — Loot Request",
+      "PlayerLootRequest": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Start the loot roll?",
+      "PlayerLootReady": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Open the loot window for them?",
+      "StartRoll": "Start Roll",
+      "OpenForPlayer": "Open for Player"
     },
     "DM": {
       "Title": "LootForge — DM Review",
@@ -82,7 +90,7 @@
       "TakeAll": "Take All",
       "LootAll": "Loot All",
       "Done": "Done",
-      "DoubleClickHint": "Double-click an item to take it."
+      "DoubleClickHint": "Double-click an item to take it. Closing leaves the rest on the corpse."
     },
     "Settings": {
       "ManualGenerationOnly": {
@@ -97,9 +105,13 @@
         "Name": "Default Survival total (no roll)",
         "Hint": "Used when Survival rolls are disabled."
       },
+      "AllowAllPlayersToLoot": {
+        "Name": "Allow all players to loot",
+        "Hint": "When enabled, any player can start looting a corpse and loot auto-generates. Only one player may loot at a time; leftovers go to the corpse inventory for the next player (WoW-style). When disabled, players who loot early are told to wait and the DM gets a Start Roll prompt."
+      },
       "AllowPlayerRequestLoot": {
-        "Name": "Allow players to request loot",
-        "Hint": "If enabled, players may trigger generation (GM still assigns)."
+        "Name": "Allow players to request loot from DM",
+        "Hint": "When Allow all players to loot is off, double-clicking a corpse notifies the DM to start the roll (recommended)."
       },
       "PreventDuplicateGeneration": {
         "Name": "Prevent duplicate generation",

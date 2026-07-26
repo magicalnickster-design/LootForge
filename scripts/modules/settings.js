@@ -1,7 +1,7 @@
 import { MODULE_ID } from "./constants.js";
 
 /**
- * Register world settings for the Wolf MVP.
+ * Register world settings for LootForge.
  */
 export function registerSettings() {
   const settings = [
@@ -26,10 +26,16 @@ export function registerSettings() {
       range: { min: 5, max: 30, step: 1 }
     },
     {
+      key: "allowAllPlayersToLoot",
+      name: "LOOTFORGE.Settings.AllowAllPlayersToLoot.Name",
+      hint: "LOOTFORGE.Settings.AllowAllPlayersToLoot.Hint",
+      default: false
+    },
+    {
       key: "allowPlayerRequestLoot",
       name: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Name",
       hint: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Hint",
-      default: false
+      default: true
     },
     {
       key: "preventDuplicateGeneration",

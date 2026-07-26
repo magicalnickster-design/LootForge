@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.2.2** (Player loot UX + bag overlay) |
+| Version | **0.2.3** (WoW-style player loot sessions) |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |
@@ -27,11 +27,19 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 Players generally cannot open the Token HUD of an unowned enemy corpse. LootForge provides:
 
+- **Double-click** a dead creature to loot
 - **Auto-open** player loot window on assignment (socket)
 - **Loot-bag PIXI overlay** above the corpse (click to reopen)
 - Scene control **Loot Targeted Body** (target with `T`, then click)
 - Context menu **Loot Body** where Foundry exposes it
 - Hotkey **Alt+L** (targeted corpse, else nearest assigned corpse)
+
+### WoW-style looting
+
+- Only **one player** can loot a corpse at a time
+- Closing the loot window (or **Done**) leaves untaken items on the **corpse actor inventory** for the next player
+- Setting **Allow all players to loot**: any player may start looting; loot auto-generates
+- When that setting is off: early player loot attempts show **Waiting for the DM**, and the DM gets a **Start Roll** popup
 
 ## Install
 
