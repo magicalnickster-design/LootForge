@@ -15,6 +15,10 @@ let boundElement = null;
 let boundHandler = null;
 let patched = false;
 
+/** @type {Map<string, number>} tokenUuid → last loot attempt ms */
+const recentLootClicks = new Map();
+const LOOT_CLICK_DEBOUNCE_MS = 900;
+
 /**
  * @returns {typeof Token|null}
  */
@@ -105,8 +109,18 @@ async function tryLootDeadToken(token, event = null) {
   event?.stopPropagation?.();
   event?.stopImmediatePropagation?.();
 
+  // Board dblclick + Token#_onClickLeft2 both fire — debounce to one loot attempt.
+  const uuid = token.document.uuid;
+  const now = Date.now();
+  const last = recentLootClicks.get(uuid) ?? 0;
+  if (now - last < LOOT_CLICK_DEBOUNCE_MS) {
+    log.debug("Double-click loot debounced", { tokenUuid: uuid });
+    return true;
+  }
+  recentLootClicks.set(uuid, now);
+
   log.info("Double-click loot", {
-    tokenUuid: token.document.uuid,
+    tokenUuid: uuid,
     userId: game.user.id,
     isGM: game.user.isGM
   });

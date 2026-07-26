@@ -130,6 +130,14 @@ async function handleSocketPayload(payload) {
       await onRequestInvestigationRoll(payload);
       return;
 
+    case OPS.INVESTIGATION_ROLL_ACK:
+      if (!game.user.isGM) return;
+      log.info("Investigation roll ACK from player", {
+        requestId: payload.requestId,
+        fromUserId: payload.fromUserId
+      });
+      return;
+
     case OPS.INVESTIGATION_ROLL_RESULT:
       if (!game.user.isGM) return;
       onInvestigationRollResult(payload);
@@ -433,11 +441,21 @@ export async function requestPlayerStartLoot(tokenDoc, actor, {
  * @returns {Promise<object|null>}
  */
 export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
-  if (!user?.active || !actor || !tokenDoc) return Promise.resolve(null);
+  if (!user || !actor || !tokenDoc) return Promise.resolve(null);
+  if (!isUserConnected(user)) return Promise.resolve(null);
 
   // Local user (or GM rolling for themselves): roll immediately.
   if (user.id === game.user.id) {
     return import("./roll-helper.js").then(({ rollInvestigation }) => rollInvestigation(actor));
+  }
+
+  // Cancel any prior pending request for this user (prevents stacked 120s waits).
+  for (const [id, pending] of pendingInvestigationRolls) {
+    if (pending.userId === user.id) {
+      clearTimeout(pending.timer);
+      pending.resolve(null);
+      pendingInvestigationRolls.delete(id);
+    }
   }
 
   const requestId = foundry.utils.randomID();
@@ -447,9 +465,10 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
       log.warn("Investigation roll request timed out", { requestId, userId: user.id });
       ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationTimeout"));
       resolve(null);
-    }, 120000);
+    }, 20000);
 
     pendingInvestigationRolls.set(requestId, {
+      userId: user.id,
       resolve: (value) => {
         clearTimeout(timer);
         pendingInvestigationRolls.delete(requestId);
@@ -477,7 +496,6 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
         creature: tokenDoc.name
       })
     );
-    // Whisper so the player sees a chat ping even if the toast is missed.
     ChatMessage.create({
       content: game.i18n.format("LOOTFORGE.Notify.InvestigationWhisper", {
         name: tokenDoc.name
@@ -489,6 +507,18 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
 }
 
 /**
+ * @param {User} user
+ * @returns {boolean}
+ */
+function isUserConnected(user) {
+  if (!user || user.isGM) return false;
+  if (user.active) return true;
+  // Some Foundry builds expose connection via the users collection only.
+  const live = game.users.get(user.id);
+  return Boolean(live?.active);
+}
+
+/**
  * @param {object} payload
  */
 async function onRequestInvestigationRoll(payload) {
@@ -497,6 +527,13 @@ async function onRequestInvestigationRoll(payload) {
     requestId: payload.requestId,
     actorId: payload.actorId,
     localUserId: game.user.id
+  });
+
+  // Immediate ACK so the GM knows this client got the request.
+  emitLootForge({
+    op: OPS.INVESTIGATION_ROLL_ACK,
+    requestId: payload.requestId,
+    targetUserId: payload.fromUserId
   });
 
   const actor = game.actors.get(payload.actorId) ?? game.user.character;
@@ -587,20 +624,30 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
   const allOwners = resolveAssignedOwnerUsers(actor, { activeOnly: false });
   const connectedOwners = resolveAssignedOwnerUsers(actor, { activeOnly: true });
   const preferred = user && !user.isGM && userOwnsActor(actor, user) ? user : null;
-  const targets = preferred
-    ? [
-      ...connectedOwners.filter((u) => u.id === preferred.id),
-      ...connectedOwners.filter((u) => u.id !== preferred.id)
-    ]
-    : connectedOwners;
 
-  const uniqueTargets = [...new Map(targets.map((u) => [u.id, u])).values()];
-  const assignedUser = preferred ?? uniqueTargets[0] ?? allOwners[0] ?? null;
+  // Also catch players whose primary character is this actor (even if ownership map is odd).
+  const byPrimaryCharacter = game.users.filter(
+    (u) => !u.isGM && isUserConnected(u) && u.character?.id === actor.id
+  );
+
+  const targetMap = new Map();
+  for (const u of connectedOwners) targetMap.set(u.id, u);
+  for (const u of byPrimaryCharacter) targetMap.set(u.id, u);
+  if (preferred && isUserConnected(preferred)) targetMap.set(preferred.id, preferred);
+
+  const uniqueTargets = [...targetMap.values()];
+  const assignedUser = preferred
+    ?? uniqueTargets[0]
+    ?? allOwners[0]
+    ?? byPrimaryCharacter[0]
+    ?? null;
 
   log.info("Assignment owner resolution", {
     assignedActorId: actor.id,
     ownerUserIds: allOwners.map((u) => u.id),
     connectedOwnerUserIds: connectedOwners.map((u) => u.id),
+    primaryCharacterUserIds: byPrimaryCharacter.map((u) => u.id),
+    emitTargetUserIds: uniqueTargets.map((u) => u.id),
     assignedUserId: assignedUser?.id ?? null,
     tokenUuid: tokenDoc.uuid
   });
@@ -627,6 +674,7 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
   broadcastStateUpdated(tokenDoc.uuid);
 
   const emitOpen = (target) => {
+    if (!target?.id) return;
     const emitted = emitLootForge({
       op: OPS.OPEN_PLAYER_WINDOW,
       tokenUuid: tokenDoc.uuid,
@@ -643,16 +691,25 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
     });
   };
 
+  // Always emit to every plausible connected player owner.
   if (uniqueTargets.length) {
     for (const target of uniqueTargets) emitOpen(target);
-    // Re-emit after flag sync so a lost race cannot leave the player window closed.
     setTimeout(() => {
       for (const target of uniqueTargets) emitOpen(target);
     }, 300);
+  } else if (assignedUser) {
+    // Owner listed but not marked active — still try the socket once.
+    emitOpen(assignedUser);
+    ui.notifications.warn(
+      game.i18n.format("LOOTFORGE.Notify.PlayerMaybeOffline", { name: assignedUser.name })
+    );
+    const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
+    await openPlayerLootWindow(tokenDoc);
   } else {
-    log.warn("No connected player owners — opening locally for GM", {
+    log.warn("No player owners found — opening locally for GM", {
       assignedActorId: actor.id
     });
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoConnectedOwners"));
     const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
     await openPlayerLootWindow(tokenDoc);
   }

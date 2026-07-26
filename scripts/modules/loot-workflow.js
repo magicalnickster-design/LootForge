@@ -229,14 +229,20 @@ async function openExistingLoot(tokenDoc, state) {
 }
 
 /**
- * Resolve an Investigation roll for the looter — always Investigation, from the player when possible.
+ * Resolve an Investigation roll for the looter — always Investigation.
+ *
+ * Remote player prompts are ONLY used when preferRemotePlayer is true (DM Start Roll).
+ * GM-initiated generate/double-click rolls locally so we never sit on 120s timeouts.
  *
  * @param {Actor} roller
  * @param {TokenDocument} tokenDoc
  * @param {object|null} [providedRoll]
+ * @param {{ preferRemotePlayer?: boolean }} [options]
  * @returns {Promise<object|null>}
  */
-async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null) {
+async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
+  preferRemotePlayer = false
+} = {}) {
   if (providedRoll && Number.isFinite(Number(providedRoll.total))) {
     return {
       total: Number(providedRoll.total),
@@ -245,17 +251,17 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null) {
     };
   }
 
-  // Prefer a connected owning player so they make the Investigation check.
-  const owners = resolveAssignedOwnerUsers(roller, { activeOnly: true });
-  const playerOwner = owners[0] ?? null;
-
-  if (playerOwner && playerOwner.id !== game.user.id) {
-    const remote = await requestRemoteInvestigationRoll(playerOwner, roller, tokenDoc);
-    if (remote) return remote;
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationFallback"));
+  if (preferRemotePlayer && game.user.isGM) {
+    const owners = resolveAssignedOwnerUsers(roller, { activeOnly: true });
+    const playerOwner = owners[0] ?? null;
+    if (playerOwner && playerOwner.id !== game.user.id) {
+      const remote = await requestRemoteInvestigationRoll(playerOwner, roller, tokenDoc);
+      if (remote) return remote;
+      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationFallback"));
+    }
   }
 
-  // Local roll (player looting themselves, or solo GM testing).
+  // Local roll (player looting themselves, or GM generating).
   return rollInvestigation(roller);
 }
 
@@ -273,7 +279,8 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null) {
 export async function generateLootForCorpse(token, tokenDoc, creature, {
   roller = null,
   openReview = true,
-  investigationRoll = null
+  investigationRoll = null,
+  preferRemotePlayer = false
 } = {}) {
   const context = buildCreatureContext(creature, tokenDoc);
   const profile = resolveCreatureProfile(context);
@@ -287,7 +294,12 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   const resolvedRoller = roller ?? await resolveLooterActor({ excludeActor: creature });
   if (!resolvedRoller) return null;
 
-  const rollResult = await resolveInvestigationRoll(resolvedRoller, tokenDoc, investigationRoll);
+  const rollResult = await resolveInvestigationRoll(
+    resolvedRoller,
+    tokenDoc,
+    investigationRoll,
+    { preferRemotePlayer }
+  );
   if (!rollResult) {
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
     return null;

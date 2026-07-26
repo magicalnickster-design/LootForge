@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.2.7** (DM Review opens after player Investigation) |
+| Version | **0.2.8** (Fix GM loot window + investigation timeouts) |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |

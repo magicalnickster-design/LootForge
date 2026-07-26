@@ -40,6 +40,7 @@ export const OPS = Object.freeze({
   PLAYER_START_LOOT: "playerStartLoot",
   CLAIM_LOOT_SESSION: "claimLootSession",
   REQUEST_INVESTIGATION_ROLL: "requestInvestigationRoll",
+  INVESTIGATION_ROLL_ACK: "investigationRollAck",
   INVESTIGATION_ROLL_RESULT: "investigationRollResult",
   STATE_UPDATED: "stateUpdated",
   RESET_LOOT: "resetLoot",

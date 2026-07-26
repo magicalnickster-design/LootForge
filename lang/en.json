@@ -60,7 +60,9 @@
       "CharacterMissing": "The selected character no longer exists.",
       "NoItemsToAssign": "There is no loot to assign.",
       "CorpseEmpty": "The corpse has been fully looted.",
-      "LootDeposited": "Remaining loot was left on the corpse."
+      "LootDeposited": "Remaining loot was left on the corpse.",
+      "PlayerMaybeOffline": "{name} may be offline — opened loot locally for the GM as well.",
+      "NoConnectedOwners": "No connected player owns that character — opened loot for the GM."
     },
     "Dialog": {
       "Title": "Loot — {name}",
