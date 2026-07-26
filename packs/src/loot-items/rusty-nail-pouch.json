@@ -1,0 +1,51 @@
+{
+  "_id": "LFRustyNail00000",
+  "name": "Rusty Nail Pouch",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/rusty-nail-pouch.svg",
+  "system": {
+    "description": {
+      "value": "<p>A greasy pouch of bent, rusty nails — scrap for traps, or just pocket clutter.</p>",
+      "chat": "A pouch of rusty nails."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "rusty-nail-pouch",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "orc"
+      ],
+      "stackingKey": "rusty-nail-pouch",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRustyNail00000"
+}

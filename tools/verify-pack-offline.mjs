@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.4") {
-  throw new Error(`Expected module version 0.5.4, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.5") {
+  throw new Error(`Expected module version 0.5.5, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -74,7 +74,21 @@ const expectedNames = new Set([
   "Wanted Poster",
   "Caravan Schedule",
   "Bandit Orders",
-  "Scribbled Note"
+  "Scribbled Note",
+  "Orc Tusk",
+  "Orc Ear",
+  "Orc Blood Vial",
+  "Orc Heart",
+  "War Paint Pot",
+  "Gnawed Bone",
+  "Rusty Nail Pouch",
+  "Iron Nose Ring",
+  "Crude Totem",
+  "Tusk Pendant",
+  "Orc War Orders",
+  "Raid Map",
+  "Clan Marking",
+  "Blood Oath Scrap"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -198,6 +212,21 @@ const hobgoblin = resolveCreatureProfile({
   creatureType: "humanoid",
   creatureSubtype: "goblinoid"
 });
+const orc = resolveCreatureProfile({
+  name: "Orc",
+  creatureType: "humanoid",
+  creatureSubtype: "orc"
+});
+const orog = resolveCreatureProfile({
+  name: "Orog",
+  creatureType: "humanoid",
+  creatureSubtype: "orc"
+});
+const halfOrc = resolveCreatureProfile({
+  name: "Half-Orc Raider",
+  creatureType: "humanoid",
+  creatureSubtype: "human"
+});
 const chest = resolveCreatureProfile({
   name: "Chest",
   creatureType: "construct",
@@ -209,6 +238,9 @@ if (wolfSpider?.id !== "spider") throw new Error(`Expected spider profile for Wo
 if (armor?.id !== "animated-armor") throw new Error(`Expected animated-armor profile, got ${armor?.id}`);
 if (goblin?.id !== "goblin") throw new Error(`Expected goblin profile, got ${goblin?.id}`);
 if (hobgoblin?.id === "goblin") throw new Error("Hobgoblin must not resolve to goblin profile");
+if (orc?.id !== "orc") throw new Error(`Expected orc profile, got ${orc?.id}`);
+if (orog?.id !== "orc") throw new Error(`Expected orc profile for Orog, got ${orog?.id}`);
+if (halfOrc?.id === "orc") throw new Error("Half-orc must not resolve to orc profile");
 if (chest?.id !== "container") throw new Error(`Expected container profile for Chest, got ${chest?.id}`);
 if (chest?.pools?.systemGear?.type !== "systemItems") {
   throw new Error("Container profile missing systemGear pool for official dnd5e items");
@@ -232,7 +264,10 @@ if (bucket !== "common") throw new Error(`Expected common rarity bucket, got ${b
 if (!getLootDefinition("goblin-ear") || !getLootDefinition("bandit-orders")) {
   throw new Error("Missing goblin loot definitions");
 }
-if (listLootDefinitions().length < 30) {
+if (!getLootDefinition("orc-tusk") || !getLootDefinition("orc-war-orders") || !getLootDefinition("blood-oath-scrap")) {
+  throw new Error("Missing orc loot definitions");
+}
+if (listLootDefinitions().length < 44) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -377,11 +412,123 @@ for (const entry of goblinLoot.items.filter((i) => i.kind === "equipment")) {
 }
 void hasEquip;
 
+const fakeOrc = {
+  id: "orc1",
+  name: "Orc",
+  items: {
+    contents: [
+      {
+        id: "w1",
+        name: "Greataxe",
+        type: "weapon",
+        img: "icons/svg/sword.svg",
+        system: {
+          quantity: 1,
+          type: { value: "martialM" },
+          price: { value: 30, denomination: "gp" },
+          description: { value: "<p>A greataxe.</p>" },
+          rarity: "common"
+        },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      },
+      {
+        id: "w2",
+        name: "Javelin",
+        type: "weapon",
+        img: "icons/svg/sword.svg",
+        system: {
+          quantity: 3,
+          type: { value: "simpleR" },
+          price: { value: 5, denomination: "sp" },
+          description: { value: "<p>A javelin.</p>" },
+          rarity: "common"
+        },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      },
+      {
+        id: "a1",
+        name: "Hide Armor",
+        type: "equipment",
+        img: "icons/svg/armor.svg",
+        system: {
+          quantity: 1,
+          type: { value: "medium" },
+          price: { value: 10, denomination: "gp" },
+          description: { value: "<p>Hide armor.</p>" },
+          rarity: "common"
+        },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      }
+    ]
+  }
+};
+
+const orcLoot = await generateCreatureLoot({
+  context: {
+    name: "Orc",
+    creatureType: "humanoid",
+    creatureSubtype: "orc",
+    size: "med",
+    challengeRating: 0.5,
+    isWolf: false,
+    isBoss: false,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: fakeOrc
+});
+if (orcLoot.profileId !== "orc") throw new Error("Orc generation used wrong profile");
+if (!orcLoot.items.length) throw new Error("Orc generation produced no items");
+const hasOrcPart = orcLoot.items.some((i) => String(i.definitionId || "").startsWith("orc-"));
+if (!hasOrcPart) throw new Error("Orc loot missing monster parts");
+if (orcLoot.items.some((i) => String(i.definitionId || "").includes("goblin"))) {
+  throw new Error("Orc generation leaked goblin definitions");
+}
+const orcCurrency = aggregateCurrencyFromItems(orcLoot.items);
+const orcCurrencySum = Object.values(orcCurrency).reduce((a, b) => a + b, 0);
+if (orcCurrencySum <= 0) throw new Error("Orc loot should usually include some currency at total 18");
+for (const entry of orcLoot.items.filter((i) => i.kind === "equipment")) {
+  if (!entry.itemData) throw new Error("Orc equipment entry missing itemData snapshot");
+  if (!entry.equipmentQuality) throw new Error("Orc equipment entry missing quality");
+  if (!entry.baseItemData) throw new Error("Orc equipment entry missing baseItemData");
+}
+
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);
 console.log(`pack label: ${packDecl.label}`);
 console.log(`definitions: ${listLootDefinitions().length}`);
-console.log(`wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}`);
+console.log(
+  `wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}; orc items: ${orcLoot.items.length}`
+);
 console.log("Exact shipped LevelDB files:");
 for (const name of shipped) {
   const size = statSync(path.join(packDir, name)).size;

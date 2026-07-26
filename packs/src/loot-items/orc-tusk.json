@@ -1,0 +1,53 @@
+{
+  "_id": "LFOrcTusk0000000",
+  "name": "Orc Tusk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/orc-tusk.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thick yellowed tusk hacked from an orc. Hunters and trophy-takers value an unbroken pair.</p>",
+      "chat": "An orc tusk."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "orc-tusk",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "orc",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "orc-tusk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFOrcTusk0000000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFClanMarking000",
+  "name": "Clan Marking",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/clan-marking.svg",
+  "system": {
+    "description": {
+      "value": "<p>A strip of painted hide bearing a clan sigil — a broken axe over a crescent. Useful to those who track orc tribes.</p>",
+      "chat": "A clan marking."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "clan-marking",
+      "category": "story",
+      "rarity": "common",
+      "tags": [
+        "story",
+        "orc",
+        "readable"
+      ],
+      "stackingKey": "clan-marking",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFClanMarking000"
+}

@@ -172,6 +172,10 @@ function looksNamed(name, creatureType) {
     "wolf spider",
     "animated armor",
     "animated armour",
+    "goblin",
+    "orc",
+    "orc war chief",
+    "orog",
     "chest",
     "container"
   ]);

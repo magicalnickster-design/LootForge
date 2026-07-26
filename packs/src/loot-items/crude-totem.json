@@ -1,0 +1,52 @@
+{
+  "_id": "LFCrudeTotem0000",
+  "name": "Crude Totem",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crude-totem.svg",
+  "system": {
+    "description": {
+      "value": "<p>A carved wooden idol bristling with teeth and feathers. Someone muttered to it before the fight.</p>",
+      "chat": "A crude totem."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crude-totem",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "orc",
+        "religion"
+      ],
+      "stackingKey": "crude-totem",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrudeTotem0000"
+}

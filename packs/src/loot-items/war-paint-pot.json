@@ -1,0 +1,51 @@
+{
+  "_id": "LFWarPaint000000",
+  "name": "War Paint Pot",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/war-paint-pot.svg",
+  "system": {
+    "description": {
+      "value": "<p>A clay pot of greasy red-and-black war paint. Most of it has dried to a crust.</p>",
+      "chat": "A pot of war paint."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "war-paint-pot",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "orc"
+      ],
+      "stackingKey": "war-paint-pot",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWarPaint000000"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFOrcHeart000000",
+  "name": "Orc Heart",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/orc-heart.svg",
+  "system": {
+    "description": {
+      "value": "<p>A heavy, scarred heart cut carefully from a powerful orc. Rarely intact after a hard fight.</p>",
+      "chat": "An orc heart."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "orc-heart",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "humanoid",
+        "orc",
+        "rare",
+        "alchemy"
+      ],
+      "stackingKey": "orc-heart",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFOrcHeart000000"
+}

@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.4** |
+| Version | **0.5.5** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Orc**, **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -37,6 +37,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Pocket currency (cp / sp / rare gp; CR-scaled)
   - Equipment cloned from the NPC’s **actual inventory**, with dynamic quality (Broken → Masterwork)
   - Junk, trinkets, and readable story scraps
+- **Orc** — multi-pool humanoid profile (excludes half-orc):
+  - Monster parts (tusk, ear, blood vial, rare heart)
+  - Pocket currency (a bit richer than goblins; CR-scaled)
+  - Equipment from the NPC’s **actual inventory** (greataxe, javelins, hide armor, etc.) with quality
+  - Orc-themed junk / trinkets / war-order story scraps
 - **Chest / Container** — seeded into the Actors tab on load:
   - **Chest** — wooden chest token art
   - **Container** — blank/invisible token (place over map scenery)

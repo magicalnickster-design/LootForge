@@ -1,0 +1,52 @@
+{
+  "_id": "LFGnawedBone0000",
+  "name": "Gnawed Bone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/gnawed-bone.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thick bone chewed clean. Tooth marks suggest an orc snack more than a dog's toy.</p>",
+      "chat": "A gnawed bone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "gnawed-bone",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "orc",
+        "bone"
+      ],
+      "stackingKey": "gnawed-bone",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGnawedBone0000"
+}

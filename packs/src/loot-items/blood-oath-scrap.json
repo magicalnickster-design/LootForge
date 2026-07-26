@@ -1,0 +1,52 @@
+{
+  "_id": "LFBloodOath00000",
+  "name": "Blood Oath Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/blood-oath-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn scrap smeared with dried blood: \"Until the last tusk breaks.\" Names of two warbands are scratched beneath.</p>",
+      "chat": "A blood oath scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "blood-oath-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "orc",
+        "readable"
+      ],
+      "stackingKey": "blood-oath-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBloodOath00000"
+}
