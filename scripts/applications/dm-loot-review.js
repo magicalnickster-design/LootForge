@@ -1,12 +1,11 @@
 /**
- * DM Loot Review — ApplicationV2 window for editing and assigning corpse loot.
+ * DM Loot Review — ApplicationV2 window for editing corpse loot before release.
  */
 
 import { listLootDefinitions } from "../data/loot-definitions.js";
 import { MODULE_ID } from "../modules/constants.js";
 import { generateCreatureLoot, rerollSingleEntry } from "../modules/loot-generator.js";
 import { log } from "../modules/logger.js";
-import { getLooterCandidates } from "../modules/looter-selection.js";
 import { broadcastStateUpdated, releaseLootForEveryone } from "../modules/socket-manager.js";
 import {
   getCorpseState,
@@ -23,20 +22,12 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @type {TokenDocument} */
   #tokenDoc;
 
-  /** @type {string|null} */
-  #selectedActorId;
-
   /** @type {boolean} */
   #busy = false;
 
   constructor(tokenDoc, options = {}) {
     super(options);
     this.#tokenDoc = tokenDoc;
-    const state = getCorpseState(tokenDoc);
-    this.#selectedActorId = options.initialRollerId
-      ?? state.pendingLooterActorId
-      ?? state.assignedActorId
-      ?? null;
   }
 
   static DEFAULT_OPTIONS = {
@@ -57,7 +48,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
       decQty: DmLootReview.#onDecQty,
       removeItem: DmLootReview.#onRemoveItem,
       addItem: DmLootReview.#onAddItem,
-      assign: DmLootReview.#onAssign,
+      assign: DmLootReview.#onSaveAndClose,
       resetLoot: DmLootReview.#onReset,
       cancel: DmLootReview.#onCancel
     }
@@ -82,8 +73,8 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(_options) {
     const state = getCorpseState(this.#tokenDoc);
     const ctx = state.creatureContext ?? {};
-    const candidates = getLooterCandidates();
-    if (!this.#selectedActorId && candidates[0]) this.#selectedActorId = candidates[0].id;
+    const rollerId = state.pendingLooterActorId ?? null;
+    const rollerName = rollerId ? game.actors.get(rollerId)?.name : null;
 
     return {
       busy: this.#busy,
@@ -102,15 +93,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
       rollQualityKey: state.rollQuality ?? "poor",
       items: state.items ?? [],
       definitions: listLootDefinitions(),
-      candidates: candidates.map((a) => ({
-        id: a.id,
-        name: a.name,
-        selected: a.id === this.#selectedActorId
-      })),
-      assignedActorId: state.assignedActorId,
-      assignedName: state.assignedActorId
-        ? game.actors.get(state.assignedActorId)?.name
-        : null,
+      rollerName,
       hasItems: (state.items?.length ?? 0) > 0
     };
   }
@@ -118,11 +101,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   async _onRender(context, options) {
     await super._onRender(context, options);
     registerLootWindow(this.#tokenDoc.uuid, this);
-
-    const select = this.element?.querySelector?.('[name="looterId"]');
-    select?.addEventListener("change", (event) => {
-      this.#selectedActorId = event.currentTarget.value;
-    });
   }
 
   async _onClose(options) {
@@ -178,10 +156,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
         ...state,
         rollQuality: generated.rollQuality,
         profileId: generated.profileId,
-        items: generated.items,
-        // Preserve assignment / selected looter.
-        assignedActorId: state.assignedActorId,
-        assignedUserId: state.assignedUserId
+        items: generated.items
       });
       await syncLootIndicator(app.#tokenDoc);
       broadcastStateUpdated(app.#tokenDoc.uuid);
@@ -280,7 +255,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
     });
   }
 
-  static async #onAssign(event, _target) {
+  static async #onSaveAndClose(event, _target) {
     event.preventDefault();
     const app = this;
     await app.#withBusy(async () => {
@@ -290,9 +265,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
         return;
       }
 
-      // Save & Close: release shared loot — players double-click to open the WoW window.
       await releaseLootForEveryone(app.#tokenDoc);
-      // Mark approved before close so _onClose does not double-release.
       await app.close();
     });
   }

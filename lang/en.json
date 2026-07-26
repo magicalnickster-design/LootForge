@@ -4,13 +4,12 @@
     "HUD": {
       "LootBody": "Loot Body",
       "LootTargetedBody": "Loot Targeted Body",
-      "GenerateLoot": "Generate Loot",
       "ViewLoot": "View Loot",
       "Looted": "Looted",
       "ResetLoot": "Reset Loot"
     },
     "Keybinding": {
-      "LootTargetHint": "Open loot for the targeted corpse, or the nearest assigned corpse on this scene (Alt+L)."
+      "LootTargetHint": "Open loot for the targeted corpse, or the nearest lootable corpse on this scene (Alt+L)."
     },
     "Quality": {
       "poor": "Poor",
@@ -26,40 +25,19 @@
       "AlreadyLootedEmpty": "This corpse has already been looted.",
       "NoLooter": "No eligible player characters found. Create a character or place one on the scene.",
       "RollCancelled": "Investigation roll cancelled.",
-      "RollInvestigation": "Roll Investigation to loot the corpse.",
-      "RollInvestigationNamed": "LootForge needs you to roll Investigation for {name}.",
-      "InvestigationRequired": "An Investigation roll is required before loot can be generated.",
-      "WaitingForInvestigation": "Waiting for {name} to roll Investigation for {creature}…",
-      "InvestigationTimeout": "Investigation roll timed out.",
-      "InvestigationFallback": "Player Investigation roll unavailable — rolling silently for the DM (no dialog).",
-      "InvestigationSuperseded": "Previous Investigation prompt was cancelled — a newer loot request replaced it.",
-      "InvestigationWhisper": "<p><strong>LootForge:</strong> Please roll <em>Investigation</em> to loot <strong>{name}</strong>. A prompt should appear — if not, use <strong>Loot Targeted Body</strong> or Alt+L.</p>",
+      "RollInvestigation": "Rolling Investigation to loot the corpse…",
       "LootInProgress": "LootForge is already handling this corpse — wait for the current roll/session to finish.",
       "NoTable": "No LootForge profile found for {name}.",
-      "Claimed": "Loot claimed by {name}.",
-      "Assigned": "Loot assigned to {name}.",
       "LootAvailable": "Loot available: {name}",
-      "PostedToChat": "Loot was posted to chat.",
       "FlagReset": "Loot reset for {name}.",
       "PermissionDenied": "You do not have permission to modify loot on {name}.",
       "NeedGM": "An active GM must be connected for LootForge to update corpse loot.",
       "SelectOrTarget": "Target a defeated creature with T, then use Loot Targeted Body (or Alt+L).",
-      "NoAssignedCorpse": "No lootable corpse found. Target a dead body assigned to your character, or stand near one.",
-      "PlayersCannotGenerate": "Only the GM can generate loot (enable Allow all players to loot to let players auto-loot).",
+      "NoAssignedCorpse": "No lootable corpse found. Target a dead body, or stand near one.",
       "WaitingForGM": "Waiting for the DM to finish reviewing the loot.",
       "PlayersMustInitiate": "Only players can start looting a corpse — ask a player to double-click it.",
-      "WaitingForGMGenerate": "Investigation submitted — waiting for the DM.",
-      "CheckChatInvestigation": "Check chat — use the Roll Investigation button for {name}.",
-      "CheckChatGenerate": "Check chat — use the Generate Loot button.",
-      "PlayerMustRoll": "The player must press Roll Investigation in their chat.",
-      "InvestigationReadyForGM": "{player} rolled Investigation {total} on {name}.",
-      "LootReleasedToPlayer": "Loot released to {name}.",
       "LootOpenForAll": "Loot is ready — any player can double-click the corpse to loot.",
-      "WaitingForDM": "Waiting for the DM to start looting {name}.",
-      "GeneratingLoot": "Generating loot…",
-      "SendingToDM": "Investigation submitted — the DM can Generate Loot from chat.",
       "PlayerGeneratedLoot": "{player} rolled Investigation {total} on {name}. Review the loot, then Save & Close.",
-      "PlayerGeneratedLootChat": "<p><strong>LootForge:</strong> <em>{player}</em> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>.</p>",
       "LootBusy": "{name} is already looting this corpse.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
       "NoTakePermission": "You do not have permission to take this loot.",
@@ -68,21 +46,9 @@
       "TransferBusy": "A loot transfer is already in progress.",
       "TransferPending": "Loot request sent to the GM…",
       "CharacterMissing": "The selected character no longer exists.",
-      "NoItemsToAssign": "There is no loot to assign.",
+      "NoItemsToAssign": "There is no loot to release.",
       "CorpseEmpty": "The corpse has been fully looted.",
-      "LootDeposited": "Remaining loot was left for other players.",
-      "PlayerMaybeOffline": "{name} may be offline — opened loot locally for the GM as well.",
-      "NoConnectedOwners": "No connected player owns that character — opened loot for the GM."
-    },
-    "Chat": {
-      "InvestigationTitle": "LootForge — Investigation",
-      "InvestigationBody": "<strong>{character}</strong> wants to loot <strong>{name}</strong>. Press the button to roll Investigation.",
-      "RollInvestigation": "Roll Investigation",
-      "Rolled": "Rolled",
-      "GenerateTitle": "LootForge — Generate Loot",
-      "GenerateBody": "<strong>{player}</strong> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>.",
-      "GenerateLoot": "Generate Loot",
-      "Generated": "Generated"
+      "LootDeposited": "Remaining loot was left for other players."
     },
     "Dialog": {
       "Title": "Loot — {name}",
@@ -90,15 +56,7 @@
       "ChooseLooter": "Character",
       "ChooseLooterHint": "Choose which character makes the skill roll and/or receives the loot.",
       "Close": "Close",
-      "Empty": "No usable materials were recovered.",
-      "LootRequestTitle": "LootForge — Loot Request",
-      "PlayerLootRequest": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Ask them to roll Investigation and generate loot?",
-      "PlayerLootReady": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Open the loot window for them?",
-      "StartRoll": "Roll Investigation",
-      "OpenForPlayer": "Open for Player",
-      "InvestigationTitle": "LootForge — Investigation",
-      "InvestigationPrompt": "Roll <strong>Investigation</strong> to loot <strong>{name}</strong>?",
-      "RollInvestigation": "Roll Investigation"
+      "Empty": "No usable materials were recovered."
     },
     "DM": {
       "Title": "LootForge — DM Review",
@@ -106,16 +64,14 @@
       "Type": "Type",
       "CR": "CR",
       "Size": "Size",
-      "Survival": "Investigation",
       "Investigation": "Investigation",
       "Natural": "Natural",
-      "AssignedTo": "Assigned to",
+      "RolledBy": "Rolled by",
       "RerollAll": "Reroll All",
       "RerollItem": "Reroll item",
       "RemoveItem": "Remove item",
       "AddItem": "Add LootForge item",
       "Add": "Add",
-      "ConfirmAssign": "Save & Close",
       "SaveAndClose": "Save & Close",
       "SaveAndCloseHint": "Save & Close (or Close) releases this loot so any player can double-click the corpse to open the loot window."
     },
@@ -133,23 +89,23 @@
     "Settings": {
       "ManualGenerationOnly": {
         "Name": "Manual generation only",
-        "Hint": "Loot is only created when Generate Loot is used (recommended)."
+        "Hint": "Legacy setting (unused)."
       },
       "RequireInvestigationRoll": {
         "Name": "Require Investigation roll",
-        "Hint": "Looting always forces an Investigation check from the player. This setting is kept for compatibility and cannot disable the roll."
+        "Hint": "Legacy setting — Investigation is always rolled by the player."
       },
       "DefaultInvestigationTotal": {
         "Name": "Default Investigation total",
-        "Hint": "Unused — Investigation is always rolled by the player."
+        "Hint": "Legacy setting — unused."
       },
       "AllowAllPlayersToLoot": {
         "Name": "Allow all players to loot",
-        "Hint": "Recommended. A player double-clicks a dead creature → Investigation auto-rolls → DM Review opens for the GM. After the GM closes review, any player can double-click to loot together (live-synced)."
+        "Hint": "After the GM closes DM Review, any player can double-click the corpse to loot together (live-synced). Recommended on."
       },
       "AllowPlayerRequestLoot": {
         "Name": "Allow players to request loot from DM",
-        "Hint": "When Allow all players to loot is off, double-clicking a corpse notifies the DM to start the roll (recommended)."
+        "Hint": "Legacy setting — players start Investigation by double-clicking."
       },
       "PreventDuplicateGeneration": {
         "Name": "Prevent duplicate generation",

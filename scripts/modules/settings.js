@@ -6,37 +6,43 @@ import { MODULE_ID } from "./constants.js";
 export function registerSettings() {
   const settings = [
     {
-      key: "manualGenerationOnly",
-      name: "LOOTFORGE.Settings.ManualGenerationOnly.Name",
-      hint: "LOOTFORGE.Settings.ManualGenerationOnly.Hint",
-      default: true
-    },
-    {
-      // Legacy key kept so existing worlds do not error; always ignored — Investigation is mandatory.
+      // Legacy key — Investigation is always required; hidden from config.
       key: "requireSurvivalRoll",
       name: "LOOTFORGE.Settings.RequireInvestigationRoll.Name",
       hint: "LOOTFORGE.Settings.RequireInvestigationRoll.Hint",
-      default: true
+      default: true,
+      config: false
     },
     {
-      // Legacy key: unused fallback (Investigation is always rolled).
+      // Legacy key — unused; hidden from config.
       key: "defaultSurvivalDC",
       name: "LOOTFORGE.Settings.DefaultInvestigationTotal.Name",
       hint: "LOOTFORGE.Settings.DefaultInvestigationTotal.Hint",
       type: Number,
       default: 10,
-      range: { min: 5, max: 30, step: 1 }
+      range: { min: 5, max: 30, step: 1 },
+      config: false
+    },
+    {
+      // Legacy key — players always initiate; hidden from config.
+      key: "manualGenerationOnly",
+      name: "LOOTFORGE.Settings.ManualGenerationOnly.Name",
+      hint: "LOOTFORGE.Settings.ManualGenerationOnly.Hint",
+      default: true,
+      config: false
+    },
+    {
+      // Legacy key — request-DM prompt removed; hidden from config.
+      key: "allowPlayerRequestLoot",
+      name: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Name",
+      hint: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Hint",
+      default: true,
+      config: false
     },
     {
       key: "allowAllPlayersToLoot",
       name: "LOOTFORGE.Settings.AllowAllPlayersToLoot.Name",
       hint: "LOOTFORGE.Settings.AllowAllPlayersToLoot.Hint",
-      default: true
-    },
-    {
-      key: "allowPlayerRequestLoot",
-      name: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Name",
-      hint: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Hint",
       default: true
     },
     {
@@ -70,7 +76,7 @@ export function registerSettings() {
       name: s.name,
       hint: s.hint,
       scope: "world",
-      config: s.key !== "requireSurvivalRoll" && s.key !== "defaultSurvivalDC",
+      config: s.config !== false,
       type: s.type ?? Boolean,
       default: s.default,
       range: s.range,

@@ -1,5 +1,6 @@
 /**
- * End-to-end LootForge workflow for Generate / View / Reset / player requests.
+ * End-to-end LootForge workflow (v0.4+):
+ * Player Investigation → GM DM Review → free-for-all shared loot.
  */
 
 import { resolveCreatureProfile } from "../data/creature-profiles.js";
@@ -13,11 +14,9 @@ import { resolveLooterActor } from "./looter-selection.js";
 import {
   canUserLootCorpse,
   getLootBusyReasonKey,
-  resolveAssignedOwnerUsers,
-  userOwnsActor
+  resolveAssignedOwnerUsers
 } from "./ownership.js";
 import { rollInvestigation, rollInvestigationSilent } from "./roll-helper.js";
-// rollInvestigation used by resolveInvestigationRoll for non-GM edge paths
 import { beginLootFlow, endLootFlow } from "./session-guard.js";
 import { getSetting } from "./settings.js";
 import {
@@ -28,7 +27,8 @@ import {
   isCorpseLooted,
   isLootGenerated,
   isLootSessionLocked,
-  setCorpseState
+  setCorpseState,
+  updateCorpseState
 } from "./loot-storage.js";
 import {
   claimLootSession,
@@ -36,10 +36,12 @@ import {
 } from "./loot-transfer.js";
 import {
   emitLootForge,
-  requestPlayerStartLoot,
-  requestRemoteInvestigationRoll
+  requestPlayerStartLoot
 } from "./socket-manager.js";
 import { MODULE_ID, OPS } from "./constants.js";
+
+/** Token UUIDs currently generating loot on the GM (race guard). */
+const generatingTokens = new Set();
 
 /**
  * Primary entry from HUD / context / scene controls / keybind / double-click.
@@ -50,10 +52,6 @@ export async function lootBody(token) {
   const tokenDoc = token?.document;
   const flowKey = tokenDoc?.uuid ?? null;
   if (flowKey && !beginLootFlow(flowKey)) return;
-
-  const releaseFlowLock = () => {
-    if (flowKey) endLootFlow(flowKey);
-  };
 
   try {
     if (game.system.id !== "dnd5e") {
@@ -95,9 +93,7 @@ export async function lootBody(token) {
     // Waiting for DM to finish reviewing generated loot.
     if (isAwaitingDmReview(state)) {
       if (game.user.isGM) {
-        await openDmLootReview(tokenDoc, {
-          initialRollerId: state.pendingLooterActorId ?? state.assignedActorId
-        });
+        await openDmLootReview(tokenDoc);
       } else {
         ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
       }
@@ -116,8 +112,8 @@ export async function lootBody(token) {
       return;
     }
 
-    releaseFlowLock();
-    await handlePlayerLootBeforeReady(token, tokenDoc, creature);
+    // Keep the flow lock until Investigation + emit finish (finally releases).
+    await handlePlayerLootBeforeReady(tokenDoc, creature);
   } catch (err) {
     log.error("lootBody failed", err);
     ui.notifications.error(
@@ -126,17 +122,16 @@ export async function lootBody(token) {
         : "LootForge encountered an error. See the console (F12) for details."
     );
   } finally {
-    releaseFlowLock();
+    if (flowKey) endLootFlow(flowKey);
   }
 }
 
 /**
  * Player double-clicks a dead creature with no loot yet → auto Investigation.
- * @param {Token} token
  * @param {TokenDocument} tokenDoc
  * @param {Actor} creature
  */
-async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
+async function handlePlayerLootBeforeReady(tokenDoc, creature) {
   const looter = game.user.character
     ?? (await resolveLooterActor({ excludeActor: creature }));
   if (!looter) return;
@@ -161,7 +156,6 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
     return;
   }
 
-  // Tell the active GM to generate loot and open DM Review.
   emitLootForge({
     op: OPS.INVESTIGATION_READY,
     tokenUuid: tokenDoc.uuid,
@@ -182,20 +176,124 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
 }
 
 /**
+ * GM: player finished Investigation — generate loot and open DM Review.
+ * @param {object} payload
+ */
+export async function handleInvestigationReady(payload) {
+  if (!game.user.isGM) return;
+
+  const activeGms = game.users.filter((u) => u.isGM && u.active);
+  const elected = game.users.activeGM ?? activeGms[0] ?? null;
+  if (elected && elected.id !== game.user.id) {
+    log.info("Non-elected GM ignoring Investigation ready", {
+      electedId: elected.id,
+      localUserId: game.user.id
+    });
+    return;
+  }
+
+  const tokenDoc = await fromUuid(payload.tokenUuid);
+  const actor = game.actors.get(payload.actorId);
+  const user = game.users.get(payload.fromUserId);
+  if (!tokenDoc || !actor) {
+    log.warn("Investigation ready missing token/actor", payload);
+    return;
+  }
+
+  const roll = {
+    total: Number(payload.investigationTotal),
+    natural: Number(payload.naturalDie ?? 0),
+    isNatural20: Boolean(payload.isNatural20)
+  };
+  if (!Number.isFinite(roll.total)) {
+    log.warn("Investigation ready missing total", payload);
+    return;
+  }
+
+  const state = getCorpseState(tokenDoc);
+  if (
+    generatingTokens.has(tokenDoc.uuid)
+    || isLootGenerated(tokenDoc)
+    || isAwaitingDmReview(state)
+  ) {
+    log.info("Ignoring duplicate Investigation ready", {
+      tokenUuid: tokenDoc.uuid,
+      generated: state.generated,
+      awaiting: isAwaitingDmReview(state)
+    });
+    if (payload.fromUserId) {
+      emitLootForge({
+        op: OPS.STATE_UPDATED,
+        tokenUuid: tokenDoc.uuid,
+        error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"),
+        targetUserId: payload.fromUserId
+      });
+    }
+    return;
+  }
+
+  generatingTokens.add(tokenDoc.uuid);
+
+  log.info("Player Investigation ready — generating loot + opening DM Review", {
+    tokenUuid: tokenDoc.uuid,
+    actorId: actor.id,
+    total: roll.total,
+    player: user?.name
+  });
+
+  try {
+    await updateCorpseState(tokenDoc, {
+      pendingInvestigation: {
+        ...roll,
+        actorId: actor.id,
+        userId: user?.id ?? payload.fromUserId,
+        at: Date.now()
+      },
+      pendingLooterActorId: actor.id,
+      pendingLooterUserId: user?.id ?? payload.fromUserId ?? null
+    });
+
+    const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
+    const generated = await generateLootForCorpse(
+      token ?? { document: tokenDoc, actor: tokenDoc.actor },
+      tokenDoc,
+      tokenDoc.actor,
+      {
+        roller: actor,
+        openReview: true,
+        investigationRoll: roll,
+        pendingLooterUserId: user?.id ?? null
+      }
+    );
+
+    if (!generated) {
+      ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
+      return;
+    }
+
+    ui.notifications.info(
+      game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
+        player: user?.name ?? actor.name,
+        name: tokenDoc.name,
+        total: roll.total
+      })
+    );
+  } finally {
+    generatingTokens.delete(tokenDoc.uuid);
+  }
+}
+
+/**
  * @param {TokenDocument} tokenDoc
  * @param {object} state
  */
 async function openExistingLoot(tokenDoc, state) {
   if (game.user.isGM) {
-    // Still in DM Review phase — always open the review window.
     if (isAwaitingDmReview(state)) {
-      await openDmLootReview(tokenDoc, {
-        initialRollerId: state.pendingLooterActorId ?? state.assignedActorId
-      });
+      await openDmLootReview(tokenDoc);
       return;
     }
 
-    // If a player already holds the exclusive session, open DM review instead of fighting the lock.
     if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id && !state.freeForAll) {
       ui.notifications.info(
         game.i18n.format("LOOTFORGE.Notify.LootBusy", {
@@ -208,9 +306,8 @@ async function openExistingLoot(tokenDoc, state) {
       return;
     }
 
-    if (state.freeForAll || state.activeLooterUserId || state.assignedActorId || getSetting("allowAllPlayersToLoot")) {
+    if (state.freeForAll || state.dmApproved || state.activeLooterUserId || getSetting("allowAllPlayersToLoot")) {
       const looter = game.actors.get(state.activeLooterActorId)
-        ?? game.actors.get(state.assignedActorId)
         ?? game.user.character
         ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
       if (looter) {
@@ -229,71 +326,41 @@ async function openExistingLoot(tokenDoc, state) {
     return;
   }
 
-  // Players must wait while the DM finishes generating / editing loot.
   if (isAwaitingDmReview(state)) {
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
     return;
   }
 
-  // Shared loot after DM review, or reopen for the active looter.
-  if (
-    state.freeForAll
-    || state.dmApproved
-    || state.activeLooterUserId === game.user.id
-    || canUserAccessAssignedLoot(state, game.user)
-  ) {
-    const looter = game.actors.get(state.activeLooterActorId)
-      ?? game.actors.get(state.assignedActorId)
-      ?? game.user.character
-      ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
-    if (!looter) return;
-    const result = await requestPlayerStartLoot(tokenDoc, looter, { claimOnly: true });
-    if (!result.ok && result.error) ui.notifications.warn(result.error);
-    return;
-  }
-
-  const busyKey = getLootBusyReasonKey(state, game.user);
-  if (busyKey) {
-    const name = state.activeLooterName
-      || game.users.get(state.activeLooterUserId)?.name
-      || "Another player";
-    ui.notifications.warn(game.i18n.format(busyKey, { name }));
-    return;
-  }
-
-  if (!canUserLootCorpse(tokenDoc, game.user) && !getSetting("allowAllPlayersToLoot")) {
-    if (state.assignedActorId && !userOwnsActor(game.actors.get(state.assignedActorId), game.user)) {
-      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
+  if (!canUserLootCorpse(tokenDoc, game.user)) {
+    const busyKey = getLootBusyReasonKey(state, game.user);
+    if (busyKey) {
+      const name = state.activeLooterName
+        || game.users.get(state.activeLooterUserId)?.name
+        || "Another player";
+      ui.notifications.warn(game.i18n.format(busyKey, { name }));
       return;
     }
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
+    return;
   }
 
-  const looter = game.user.character
+  const looter = game.actors.get(state.activeLooterActorId)
+    ?? game.user.character
     ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
   if (!looter) return;
 
   const result = await requestPlayerStartLoot(tokenDoc, looter, { claimOnly: true });
-  if (!result.ok && result.error) {
-    ui.notifications.warn(result.error);
-  }
+  if (!result.ok && result.error) ui.notifications.warn(result.error);
 }
 
 /**
- * Resolve an Investigation roll for the looter — always Investigation.
- *
- * On the GM client:
- * - Prefer a remote roll on a connected player-owner of the looter character.
- * - Fallback is a silent formula roll (never Foundry's interactive roll UI).
+ * Resolve Investigation for generate — prefer a provided player roll; never open remote prompts.
  *
  * @param {Actor} roller
- * @param {TokenDocument} tokenDoc
  * @param {object|null} [providedRoll]
- * @param {{ preferRemotePlayer?: boolean }} [options]
  * @returns {Promise<object|null>}
  */
-async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
-  preferRemotePlayer = true
-} = {}) {
+async function resolveInvestigationRoll(roller, providedRoll = null) {
   if (providedRoll && Number.isFinite(Number(providedRoll.total))) {
     return {
       total: Number(providedRoll.total),
@@ -306,27 +373,7 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
     return rollInvestigation(roller);
   }
 
-  if (preferRemotePlayer && roller && tokenDoc) {
-    const owners = resolveAssignedOwnerUsers(roller, { activeOnly: true });
-    // Prefer the player's primary-character user when present.
-    const byPrimary = game.users.find(
-      (u) => !u.isGM && u.active && u.character?.id === roller.id
-    );
-    const playerOwner = byPrimary ?? owners[0] ?? null;
-    if (playerOwner) {
-      const remote = await requestRemoteInvestigationRoll(playerOwner, roller, tokenDoc);
-      if (remote?.superseded) return null;
-      if (remote && Number.isFinite(Number(remote.total))) return remote;
-
-      // Player path may have already generated while we waited — do not silent-reroll.
-      const latest = getCorpseState(tokenDoc);
-      if (latest.generated || isAwaitingDmReview(latest)) return null;
-
-      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationFallback"));
-    }
-  }
-
-  // GM fallback: silent only — never pop the roll UI on the DM.
+  // Macro / edge fallback: silent only — never pop the roll UI on the DM.
   return rollInvestigationSilent(roller);
 }
 
@@ -340,15 +387,21 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
  * @param {Actor} [options.roller]
  * @param {boolean} [options.openReview=true]
  * @param {{ total: number, natural?: number, isNatural20?: boolean }|null} [options.investigationRoll]
- * @param {boolean} [options.preferRemotePlayer=true]
  */
 export async function generateLootForCorpse(token, tokenDoc, creature, {
   roller = null,
   openReview = true,
   investigationRoll = null,
-  preferRemotePlayer = true,
   pendingLooterUserId = null
 } = {}) {
+  if (getSetting("preventDuplicateGeneration") && isLootGenerated(tokenDoc)) {
+    log.info("Prevent duplicate generation — opening existing review", tokenDoc.uuid);
+    if (openReview && game.user.isGM) {
+      await openDmLootReview(tokenDoc);
+    }
+    return getCorpseState(tokenDoc);
+  }
+
   const context = buildCreatureContext(creature, tokenDoc);
   const profile = resolveCreatureProfile(context);
   if (!profile) {
@@ -361,12 +414,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   const resolvedRoller = roller ?? await resolveLooterActor({ excludeActor: creature });
   if (!resolvedRoller) return null;
 
-  const rollResult = await resolveInvestigationRoll(
-    resolvedRoller,
-    tokenDoc,
-    investigationRoll,
-    { preferRemotePlayer }
-  );
+  const rollResult = await resolveInvestigationRoll(resolvedRoller, investigationRoll);
   if (!rollResult) {
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
     return null;
@@ -388,7 +436,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     ?? rollerOwners[0]?.id
     ?? null;
 
-  // Generated loot stays locked until the DM hits Save & Close.
+  // Generated loot stays locked until the DM hits Save & Close / Close.
   const state = await setCorpseState(tokenDoc, {
     generated: true,
     generatedAt: Date.now(),
@@ -419,31 +467,14 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   log.info(`Generated ${state.items.length} loot entries for ${creature.name} (Investigation ${survivalTotal})`);
 
   if (openReview && game.user.isGM) {
-    await openDmLootReview(tokenDoc, { initialRollerId: resolvedRoller.id });
+    await openDmLootReview(tokenDoc);
   }
 
   return state;
 }
 
 /**
- * GM: legacy DM loot request socket — open review if waiting, else ignore.
- * Players initiate Investigation themselves; DMs do not start that step.
- * @param {object} payload
- */
-export async function handleDmLootRequest(payload) {
-  const tokenDoc = await fromUuid(payload.tokenUuid);
-  if (!tokenDoc) return;
-
-  const state = getCorpseState(tokenDoc);
-  if (isAwaitingDmReview(state) || (state.generated && hasRemainingLoot(tokenDoc))) {
-    await openDmLootReview(tokenDoc, {
-      initialRollerId: state.pendingLooterActorId ?? payload.actorId
-    });
-  }
-}
-
-/**
- * GM: auto-generate (if needed), claim session, open player window.
+ * GM: claim shared loot session and open the player window for the requester.
  * @param {object} payload
  * @param {object} [options]
  */
@@ -459,36 +490,27 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoLooter") };
   }
 
-  const allowAll = getSetting("allowAllPlayersToLoot");
-  const claimOnlyMode = claimOnly || payload.claimOnly;
   let state = getCorpseState(tokenDoc);
 
-  if (!hasRemainingLoot(tokenDoc) && !state.generated) {
-    if (payload.investigationTotal != null) {
-      const { handleInvestigationReady } = await import("./loot-chat.js");
-      await handleInvestigationReady({
-        ...payload,
-        fromUserId: user.id
-      });
-      return { ok: true, awaitingDmReview: true };
+  // Investigation starts via INVESTIGATION_READY only — do not generate here.
+  if (!state.generated || !hasRemainingLoot(tokenDoc)) {
+    if (!state.generated) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
     }
-    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
   }
 
   await materializeCorpseInventoryLoot(tokenDoc);
-
   state = getCorpseState(tokenDoc);
 
   if (isAwaitingDmReview(state)) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
   }
 
-  // After DM closes review, loot is free-for-all for every player.
-  if (!state.dmApproved && !state.freeForAll && !claimOnlyMode) {
+  if (!state.dmApproved && !state.freeForAll) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
   }
 
-  // Already the active looter — just reopen the window (no busy error).
   if (state.activeLooterUserId === user.id && hasRemainingLoot(tokenDoc)) {
     emitLootForge({
       op: OPS.OPEN_PLAYER_WINDOW,
@@ -497,14 +519,10 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
       actorId: actor.id,
       trusted: true
     });
-    log.info("Re-opened loot window for active looter", {
-      tokenUuid: tokenDoc.uuid,
-      userId: user.id
-    });
     return { ok: true, reopened: true };
   }
 
-  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id && !state.freeForAll) {
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id && !state.freeForAll && !state.dmApproved) {
     const name = state.activeLooterName
       || game.users.get(state.activeLooterUserId)?.name
       || "Another player";
@@ -516,16 +534,6 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
 
   if (!hasRemainingLoot(tokenDoc)) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
-  }
-
-  // Classic assign mode: only the assignee may open until leftovers are freed.
-  if (!allowAll && !state.freeForAll && state.assignedActorId && state.assignedActorId !== actor.id) {
-    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
-  }
-
-  // Free-for-all leftovers: anyone may open after DM approval / first looter leaves.
-  if (!state.dmApproved && !state.freeForAll && !state.assignedActorId && !state.activeLooterUserId) {
-    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
   }
 
   const claim = await claimLootSession(tokenDoc, user, actor);
@@ -541,21 +549,13 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     actorId: actor.id,
     trusted: true
   });
-  setTimeout(() => {
-    emitLootForge({
-      op: OPS.OPEN_PLAYER_WINDOW,
-      tokenUuid: tokenDoc.uuid,
-      targetUserId: user.id,
-      actorId: actor.id,
-      trusted: true
-    });
-  }, 300);
 
   log.info("Player loot session started", {
     tokenUuid: tokenDoc.uuid,
     userId: user.id,
     actorId: actor.id,
-    autoGenerated: allowAll && !claimOnlyMode
+    claimOnly: claimOnly || payload.claimOnly,
+    shared: Boolean(claim.shared)
   });
 
   return { ok: true };
@@ -586,8 +586,8 @@ export function getLootActionLabelKey(tokenDoc) {
   if (isCorpseLooted(tokenDoc) && !hasRemainingLoot(tokenDoc)) {
     return "LOOTFORGE.HUD.Looted";
   }
-  if (isLootGenerated(tokenDoc) && hasRemainingLoot(tokenDoc)) {
-    return game.user.isGM ? "LOOTFORGE.HUD.ViewLoot" : "LOOTFORGE.HUD.LootBody";
+  if (game.user.isGM && isLootGenerated(tokenDoc) && hasRemainingLoot(tokenDoc)) {
+    return "LOOTFORGE.HUD.ViewLoot";
   }
-  return "LOOTFORGE.HUD.GenerateLoot";
+  return "LOOTFORGE.HUD.LootBody";
 }

@@ -31,22 +31,14 @@ export const RARITIES = Object.freeze([
 
 /** Socket / query operation names. */
 export const OPS = Object.freeze({
-  ASSIGN_LOOT: "assignLoot",
   OPEN_PLAYER_WINDOW: "openPlayerWindow",
   TAKE_ITEM: "takeItem",
   TAKE_ALL: "takeAll",
   DONE_LOOT: "doneLoot",
-  REQUEST_DM_LOOT: "requestDmLoot",
   PLAYER_START_LOOT: "playerStartLoot",
   CLAIM_LOOT_SESSION: "claimLootSession",
-  REQUEST_INVESTIGATION_ROLL: "requestInvestigationRoll",
-  CANCEL_INVESTIGATION_ROLL: "cancelInvestigationRoll",
-  INVESTIGATION_ROLL_ACK: "investigationRollAck",
-  INVESTIGATION_ROLL_RESULT: "investigationRollResult",
   INVESTIGATION_READY: "investigationReady",
-  STATE_UPDATED: "stateUpdated",
-  RESET_LOOT: "resetLoot",
-  SET_FLAG: "setLootedFlag"
+  STATE_UPDATED: "stateUpdated"
 });
 
 /** Looting always uses Investigation — never Survival or another skill. */

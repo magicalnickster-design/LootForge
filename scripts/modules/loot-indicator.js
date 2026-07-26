@@ -93,9 +93,9 @@ export function canInteractWithLootIndicator(tokenDoc) {
     return false;
   }
 
-  // Dead but no loot generated yet — player may start Investigation via chat.
+  // Dead but no loot generated yet — player may start Investigation.
   if (!isLootGenerated(tokenDoc) && !hasRemainingLoot(tokenDoc)) {
-    return getSetting("allowAllPlayersToLoot") || getSetting("allowPlayerRequestLoot");
+    return true;
   }
 
   return canUserLootCorpse(tokenDoc, game.user);

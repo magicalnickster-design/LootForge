@@ -7,10 +7,11 @@ import { MODULE_ID } from "../modules/constants.js";
 import {
   getCorpseState,
   hasRemainingLoot,
+  isAwaitingDmReview,
   isLootGenerated
 } from "../modules/loot-storage.js";
-import { canUserAccessAssignedLoot } from "../modules/ownership.js";
-import { getLootActionLabelKey, lootBody } from "../modules/loot-workflow.js";
+import { canUserLootCorpse } from "../modules/ownership.js";
+import { lootBody } from "../modules/loot-workflow.js";
 
 /**
  * Prefer targeted, then hovered, then single controlled token.
@@ -29,15 +30,18 @@ export function resolveLootTargetToken() {
  * Nearest corpse on the current scene that this user may loot.
  * @returns {Token|null}
  */
-export function resolveNearestAssignedCorpse() {
+export function resolveNearestLootableCorpse() {
   const placeables = canvas.tokens?.placeables ?? [];
   const candidates = placeables.filter((token) => {
     const doc = token.document;
     if (!doc || !isCreatureDead(doc, token.actor)) return false;
-    if (!isLootGenerated(doc) || !hasRemainingLoot(doc)) return false;
-    const state = getCorpseState(doc);
-    if (game.user.isGM) return true;
-    return canUserAccessAssignedLoot(state, game.user);
+    if (game.user.isGM) {
+      return !isLootGenerated(doc) || hasRemainingLoot(doc) || isAwaitingDmReview(getCorpseState(doc));
+    }
+    // Players: start Investigation on ungenerated corpses, or open released loot.
+    if (!isLootGenerated(doc)) return true;
+    if (!hasRemainingLoot(doc)) return false;
+    return canUserLootCorpse(doc, game.user);
   });
   if (!candidates.length) return null;
 
@@ -61,8 +65,11 @@ export function resolveNearestAssignedCorpse() {
   return best;
 }
 
+/** @deprecated Use resolveNearestLootableCorpse */
+export const resolveNearestAssignedCorpse = resolveNearestLootableCorpse;
+
 /**
- * Targeted corpse, else nearest assigned corpse.
+ * Targeted corpse, else nearest lootable corpse.
  * @returns {Token|null}
  */
 export function resolveLootHotkeyToken() {
@@ -71,7 +78,7 @@ export function resolveLootHotkeyToken() {
     const doc = targeted.document;
     if (doc && isCreatureDead(doc, targeted.actor)) return targeted;
   }
-  return resolveNearestAssignedCorpse();
+  return resolveNearestLootableCorpse();
 }
 
 export function registerLootKeybinding() {
@@ -105,10 +112,10 @@ export function registerTokenContext() {
         const t = resolveLootTargetToken();
         if (!t?.document || !isCreatureDead(t.document, t.actor)) return false;
         if (game.user.isGM) return true;
-        const state = getCorpseState(t.document);
-        // Players: only when loot exists and is assigned to them (or unassigned hide).
-        if (!isLootGenerated(t.document) || !hasRemainingLoot(t.document)) return false;
-        return canUserAccessAssignedLoot(state, game.user);
+        const doc = t.document;
+        if (!isLootGenerated(doc)) return true;
+        if (!hasRemainingLoot(doc)) return false;
+        return canUserLootCorpse(doc, game.user);
       },
       callback: async () => {
         const t = resolveLootTargetToken();

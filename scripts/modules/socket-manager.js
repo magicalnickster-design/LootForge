@@ -1,15 +1,10 @@
 /**
- * GM-authoritative socket layer for corpse loot assignment and takes.
+ * GM-authoritative socket layer for shared corpse loot takes.
  */
 
 import { CORPSE_FLAG, MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
 import { log } from "./logger.js";
-import {
-  canUserAccessAssignedLoot,
-  canUserLootCorpse,
-  resolveAssignedOwnerUsers,
-  userOwnsActor
-} from "./ownership.js";
+import { canUserLootCorpse } from "./ownership.js";
 import {
   canUserModifyToken,
   getCorpseState,
@@ -18,24 +13,13 @@ import {
 } from "./loot-storage.js";
 import {
   canTakeLoot,
-  claimLootSession,
   depositRemainingToCorpse,
   takeAllCorpseItems,
   takeCorpseItem
 } from "./loot-transfer.js";
 import { refreshLootWindows } from "../applications/window-registry.js";
-import {
-  cancelInvestigationDialog,
-  endInvestigationDialog
-} from "./session-guard.js";
 
 let registered = false;
-
-/** @type {Set<string>} */
-const dmPromptTokens = new Set();
-
-/** @type {Map<string, { resolve: Function, reject: Function, timer: any }>} */
-const pendingInvestigationRolls = new Map();
 
 /**
  * Register socket listeners (ready).
@@ -99,10 +83,8 @@ async function onStateUpdated(payload) {
   const tokenUuid = payload.tokenUuid;
   if (!tokenUuid) return;
 
-  // Immediate pass (local GM often already has the update).
   refreshLootWindows(tokenUuid);
 
-  // Second pass after document sync so other players see takes live.
   await new Promise((resolve) => setTimeout(resolve, 100));
   try {
     await fromUuid(tokenUuid);
@@ -151,22 +133,11 @@ async function handleSocketPayload(payload) {
       await openPlayerWindowFromPayload(payload);
       return;
 
-    case OPS.REQUEST_DM_LOOT:
-      if (!game.user.isGM) return;
-      if (game.users.activeGM?.id !== game.user.id) return;
-      await onDmLootRequest(payload);
-      return;
-
     case OPS.PLAYER_START_LOOT:
     case OPS.CLAIM_LOOT_SESSION:
       if (!game.user.isGM) return;
       if (game.users.activeGM?.id !== game.user.id) return;
       await onPlayerStartLoot(payload);
-      return;
-
-    case OPS.REQUEST_INVESTIGATION_ROLL:
-      if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
-      await onRequestInvestigationRoll(payload);
       return;
 
     case OPS.INVESTIGATION_READY:
@@ -180,27 +151,9 @@ async function handleSocketPayload(payload) {
           localUserId: game.user.id,
           activeGM: game.users.activeGM?.id ?? null
         });
-        const { handleInvestigationReady } = await import("./loot-chat.js");
+        const { handleInvestigationReady } = await import("./loot-workflow.js");
         await handleInvestigationReady(payload);
       }
-      return;
-
-    case OPS.CANCEL_INVESTIGATION_ROLL:
-      if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
-      onCancelInvestigationRoll(payload);
-      return;
-
-    case OPS.INVESTIGATION_ROLL_ACK:
-      if (!game.user.isGM) return;
-      log.info("Investigation roll ACK from player", {
-        requestId: payload.requestId,
-        fromUserId: payload.fromUserId
-      });
-      return;
-
-    case OPS.INVESTIGATION_ROLL_RESULT:
-      if (!game.user.isGM) return;
-      onInvestigationRollResult(payload);
       return;
 
     case OPS.TAKE_ITEM:
@@ -213,21 +166,6 @@ async function handleSocketPayload(payload) {
 
     default:
       log.debug("Unhandled socket op", op);
-  }
-}
-
-/**
- * @param {object} payload
- */
-async function onDmLootRequest(payload) {
-  const key = `${payload.tokenUuid}:${payload.fromUserId}`;
-  if (dmPromptTokens.has(key)) return;
-  dmPromptTokens.add(key);
-  try {
-    const { handleDmLootRequest } = await import("./loot-workflow.js");
-    await handleDmLootRequest(payload);
-  } finally {
-    dmPromptTokens.delete(key);
   }
 }
 
@@ -269,15 +207,17 @@ async function handleTakeRequest(payload) {
   if (!requestingUser) return;
 
   const state = getCorpseState(tokenDoc);
+  const shared = Boolean(state.freeForAll || state.dmApproved);
+
   if (payload.op !== OPS.DONE_LOOT) {
-    if (state.activeLooterUserId && state.activeLooterUserId !== requestingUser.id) {
+    if (!shared && state.activeLooterUserId && state.activeLooterUserId !== requestingUser.id) {
       log.warn("Take request rejected: another looter", {
         tokenUuid: payload.tokenUuid,
         fromUserId: payload.fromUserId
       });
       return;
     }
-    if (state.assignedActorId && state.assignedActorId !== actor.id) {
+    if (!shared && state.assignedActorId && state.assignedActorId !== actor.id) {
       log.warn("Take request rejected: actor not assigned", {
         tokenUuid: payload.tokenUuid,
         actorId: payload.actorId
@@ -293,7 +233,8 @@ async function handleTakeRequest(payload) {
       return;
     }
   } else if (
-    state.activeLooterUserId
+    !shared
+    && state.activeLooterUserId
     && state.activeLooterUserId !== requestingUser.id
     && !requestingUser.isGM
   ) {
@@ -360,8 +301,6 @@ async function openPlayerWindowFromPayload(payload) {
     return;
   }
 
-  // A targeted open socket is authoritative. Do not require local corpse flags to
-  // have synced yet — that race was blocking the player window after assign.
   const trustedTarget = payload.targetUserId === game.user.id;
 
   const tokenDoc = await resolveTokenDocSoon(payload.tokenUuid);
@@ -375,7 +314,8 @@ async function openPlayerWindowFromPayload(payload) {
   const allowed = trustedTarget
     || game.user.isGM
     || state.activeLooterUserId === game.user.id
-    || canUserAccessAssignedLoot(state, game.user)
+    || state.freeForAll
+    || state.dmApproved
     || canUserLootCorpse(tokenDoc, game.user);
 
   if (!allowed) {
@@ -391,7 +331,6 @@ async function openPlayerWindowFromPayload(payload) {
 
   log.info("Player window opening", {
     tokenUuid: tokenDoc.uuid,
-    assignedActorId: state.assignedActorId ?? payload.actorId ?? null,
     activeLooterUserId: state.activeLooterUserId,
     trustedTarget
   });
@@ -407,41 +346,7 @@ async function openPlayerWindowFromPayload(payload) {
 }
 
 /**
- * Player → GM: show "start the roll" dialog.
- * @param {TokenDocument} tokenDoc
- * @param {Actor} actor
- */
-export async function requestDmLootPrompt(tokenDoc, actor) {
-  if (game.user.isGM) {
-    const { handleDmLootRequest } = await import("./loot-workflow.js");
-    await handleDmLootRequest({
-      tokenUuid: tokenDoc.uuid,
-      actorId: actor.id,
-      fromUserId: game.user.id
-    });
-    return { ok: true };
-  }
-
-  if (!game.users.activeGM) {
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NeedGM"));
-    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NeedGM") };
-  }
-
-  emitLootForge({
-    op: OPS.REQUEST_DM_LOOT,
-    tokenUuid: tokenDoc.uuid,
-    actorId: actor.id
-  });
-  log.info("Socket event emitted", {
-    op: OPS.REQUEST_DM_LOOT,
-    tokenUuid: tokenDoc.uuid,
-    actorId: actor.id
-  });
-  return { ok: true, pending: true };
-}
-
-/**
- * Player → GM: auto-start or claim loot session.
+ * Player → GM: claim / open shared loot session.
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
  * @param {{ claimOnly?: boolean, investigationRoll?: object|null }} [options]
@@ -485,197 +390,9 @@ export async function requestPlayerStartLoot(tokenDoc, actor, {
   log.info("Socket event emitted", {
     op: claimOnly ? OPS.CLAIM_LOOT_SESSION : OPS.PLAYER_START_LOOT,
     tokenUuid: tokenDoc.uuid,
-    actorId: actor.id,
-    hasInvestigationRoll: Boolean(investigationRoll)
+    actorId: actor.id
   });
   return { ok: true, pending: true };
-}
-
-/**
- * Ask a connected player to roll Investigation for looting.
- * Resolves with { total, natural, isNatural20 } or null if cancelled/timeout.
- *
- * @param {User} user
- * @param {Actor} actor
- * @param {TokenDocument} tokenDoc
- * @returns {Promise<object|null>}
- */
-/**
- * Cancel all in-flight remote Investigation waits (e.g. player already submitted a roll).
- * Resolves waiters with `{ superseded: true }` so GM generate does not silent-reroll.
- */
-export function cancelAllPendingInvestigationRolls() {
-  for (const [id, pending] of pendingInvestigationRolls) {
-    clearTimeout(pending.timer);
-    pendingInvestigationRolls.delete(id);
-    if (pending.userId) {
-      emitLootForge({
-        op: OPS.CANCEL_INVESTIGATION_ROLL,
-        requestId: id,
-        targetUserId: pending.userId
-      });
-    }
-    pending.resolve({ superseded: true });
-  }
-}
-
-export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
-  if (!user || !actor || !tokenDoc) return Promise.resolve(null);
-  if (!isUserConnected(user)) return Promise.resolve(null);
-
-  // Local GM should never open interactive PC rolls — caller uses silent fallback.
-  if (user.id === game.user.id) {
-    return Promise.resolve(null);
-  }
-
-  // Cancel any prior pending request for this user (prevents stacked waits / dialogs).
-  for (const [id, pending] of pendingInvestigationRolls) {
-    if (pending.userId === user.id) {
-      clearTimeout(pending.timer);
-      pendingInvestigationRolls.delete(id);
-      emitLootForge({
-        op: OPS.CANCEL_INVESTIGATION_ROLL,
-        requestId: id,
-        targetUserId: user.id
-      });
-      pending.resolve({ superseded: true });
-    }
-  }
-
-  const requestId = foundry.utils.randomID();
-  return new Promise((resolve) => {
-    const timer = setTimeout(() => {
-      pendingInvestigationRolls.delete(requestId);
-      log.warn("Investigation roll request timed out", { requestId, userId: user.id });
-      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationTimeout"));
-      resolve(null);
-    }, 90000);
-
-    pendingInvestigationRolls.set(requestId, {
-      userId: user.id,
-      resolve: (value) => {
-        clearTimeout(timer);
-        pendingInvestigationRolls.delete(requestId);
-        resolve(value);
-      },
-      timer
-    });
-
-    emitLootForge({
-      op: OPS.REQUEST_INVESTIGATION_ROLL,
-      requestId,
-      targetUserId: user.id,
-      actorId: actor.id,
-      tokenUuid: tokenDoc.uuid
-    });
-    log.info("Socket event emitted", {
-      op: OPS.REQUEST_INVESTIGATION_ROLL,
-      targetUserId: user.id,
-      actorId: actor.id,
-      requestId
-    });
-    ui.notifications.info(
-      game.i18n.format("LOOTFORGE.Notify.WaitingForInvestigation", {
-        name: user.name,
-        creature: tokenDoc.name
-      })
-    );
-    ChatMessage.create({
-      content: game.i18n.format("LOOTFORGE.Notify.InvestigationWhisper", {
-        name: tokenDoc.name
-      }),
-      whisper: [user.id],
-      speaker: { alias: "LootForge" }
-    }).catch(() => undefined);
-  });
-}
-
-/**
- * @param {User} user
- * @returns {boolean}
- */
-function isUserConnected(user) {
-  if (!user || user.isGM) return false;
-  if (user.active) return true;
-  // Some Foundry builds expose connection via the users collection only.
-  const live = game.users.get(user.id);
-  return Boolean(live?.active);
-}
-
-/**
- * @param {object} payload
- */
-function onCancelInvestigationRoll(payload) {
-  if (cancelInvestigationDialog(payload.requestId)) {
-    log.info("Investigation roll cancelled remotely", { requestId: payload.requestId });
-    ui.notifications?.info?.(game.i18n.localize("LOOTFORGE.Notify.InvestigationSuperseded"));
-  }
-}
-
-/**
- * @param {object} payload
- */
-async function onRequestInvestigationRoll(payload) {
-  log.info("Socket event received", {
-    op: OPS.REQUEST_INVESTIGATION_ROLL,
-    requestId: payload.requestId,
-    actorId: payload.actorId,
-    localUserId: game.user.id
-  });
-
-  // GMs never handle player Investigation prompts.
-  if (game.user.isGM) {
-    emitLootForge({
-      op: OPS.INVESTIGATION_ROLL_RESULT,
-      requestId: payload.requestId,
-      cancelled: true
-    });
-    return;
-  }
-
-  emitLootForge({
-    op: OPS.INVESTIGATION_ROLL_ACK,
-    requestId: payload.requestId,
-    targetUserId: payload.fromUserId
-  });
-
-  const actor = game.actors.get(payload.actorId) ?? game.user.character;
-  const tokenDoc = await fromUuid(payload.tokenUuid);
-  if (!actor || !tokenDoc) {
-    emitLootForge({
-      op: OPS.INVESTIGATION_ROLL_RESULT,
-      requestId: payload.requestId,
-      cancelled: true
-    });
-    return;
-  }
-
-  // Players auto-roll via double-click now — ignore legacy remote Investigation prompts.
-  emitLootForge({
-    op: OPS.INVESTIGATION_ROLL_RESULT,
-    requestId: payload.requestId,
-    cancelled: true
-  });
-  endInvestigationDialog(payload.requestId);
-}
-
-/**
- * @param {object} payload
- */
-function onInvestigationRollResult(payload) {
-  const pending = pendingInvestigationRolls.get(payload.requestId);
-  if (!pending) return;
-
-  if (payload.cancelled || payload.investigationTotal == null) {
-    pending.resolve(null);
-    return;
-  }
-
-  pending.resolve({
-    total: Number(payload.investigationTotal),
-    natural: Number(payload.naturalDie ?? 0),
-    isNatural20: Boolean(payload.isNatural20)
-  });
 }
 
 /**
@@ -716,135 +433,6 @@ export async function releaseLootForEveryone(tokenDoc) {
   ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootOpenForAll"));
   log.info("Released loot for everyone (free-for-all)", { tokenUuid: tokenDoc.uuid });
   return { ok: true, freeForAll: true };
-}
-
-/**
- * GM assigns loot and notifies the player client(s).
- * @param {TokenDocument} tokenDoc
- * @param {Actor} actor
- * @param {User|null} [user]
- */
-export async function assignLootToActor(tokenDoc, actor, user = null) {
-  if (!game.user.isGM) {
-    throw new Error("Only a GM may assign loot");
-  }
-  if (!canUserModifyToken(tokenDoc) && game.users.activeGM?.id !== game.user.id) {
-    throw new Error("Cannot modify token loot state");
-  }
-
-  const allOwners = resolveAssignedOwnerUsers(actor, { activeOnly: false });
-  const connectedOwners = resolveAssignedOwnerUsers(actor, { activeOnly: true });
-  const preferred = user && !user.isGM && userOwnsActor(actor, user) ? user : null;
-
-  // Also catch players whose primary character is this actor (even if ownership map is odd).
-  const byPrimaryCharacter = game.users.filter(
-    (u) => !u.isGM && isUserConnected(u) && u.character?.id === actor.id
-  );
-
-  const targetMap = new Map();
-  for (const u of connectedOwners) targetMap.set(u.id, u);
-  for (const u of byPrimaryCharacter) targetMap.set(u.id, u);
-  if (preferred && isUserConnected(preferred)) targetMap.set(preferred.id, preferred);
-
-  const uniqueTargets = [...targetMap.values()];
-  const assignedUser = preferred
-    ?? uniqueTargets[0]
-    ?? allOwners[0]
-    ?? byPrimaryCharacter[0]
-    ?? null;
-
-  log.info("Assignment owner resolution", {
-    assignedActorId: actor.id,
-    ownerUserIds: allOwners.map((u) => u.id),
-    connectedOwnerUserIds: connectedOwners.map((u) => u.id),
-    primaryCharacterUserIds: byPrimaryCharacter.map((u) => u.id),
-    emitTargetUserIds: uniqueTargets.map((u) => u.id),
-    assignedUserId: assignedUser?.id ?? null,
-    tokenUuid: tokenDoc.uuid
-  });
-
-  if (assignedUser) {
-    // Force-steal any stale "already looting" lock from a previous attempt.
-    const claim = await claimLootSession(tokenDoc, assignedUser, actor, { force: true });
-    if (!claim.ok) {
-      await updateCorpseState(tokenDoc, {
-        assignedActorId: actor.id,
-        assignedUserId: assignedUser.id,
-        activeLooterUserId: assignedUser.id,
-        activeLooterActorId: actor.id,
-        activeLooterName: actor.name,
-        pendingReview: false,
-        dmApproved: true,
-        freeForAll: false,
-        pendingLooterActorId: null,
-        pendingLooterUserId: null
-      });
-    } else {
-      await updateCorpseState(tokenDoc, {
-        pendingReview: false,
-        dmApproved: true,
-        freeForAll: false,
-        pendingLooterActorId: null,
-        pendingLooterUserId: null
-      });
-    }
-  } else {
-    await updateCorpseState(tokenDoc, {
-      assignedActorId: actor.id,
-      assignedUserId: null,
-      pendingReview: false,
-      dmApproved: true,
-      freeForAll: false,
-      pendingLooterActorId: null,
-      pendingLooterUserId: null
-    });
-  }
-
-  broadcastStateUpdated(tokenDoc.uuid);
-
-  const emitOpen = (target) => {
-    if (!target?.id) return;
-    const emitted = emitLootForge({
-      op: OPS.OPEN_PLAYER_WINDOW,
-      tokenUuid: tokenDoc.uuid,
-      targetUserId: target.id,
-      actorId: actor.id,
-      sceneUuid: tokenDoc.parent?.uuid ?? null,
-      trusted: true
-    });
-    log.info("Socket event emitted", {
-      op: OPS.OPEN_PLAYER_WINDOW,
-      targetUserId: emitted.targetUserId,
-      actorId: emitted.actorId,
-      tokenUuid: emitted.tokenUuid
-    });
-  };
-
-  // Always emit to every plausible connected player owner.
-  if (uniqueTargets.length) {
-    for (const target of uniqueTargets) emitOpen(target);
-    setTimeout(() => {
-      for (const target of uniqueTargets) emitOpen(target);
-    }, 300);
-  } else if (assignedUser) {
-    // Owner listed but not marked active — still try the socket once.
-    emitOpen(assignedUser);
-    ui.notifications.warn(
-      game.i18n.format("LOOTFORGE.Notify.PlayerMaybeOffline", { name: assignedUser.name })
-    );
-    const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
-    await openPlayerLootWindow(tokenDoc);
-  } else {
-    log.warn("No player owners found — opening locally for GM", {
-      assignedActorId: actor.id
-    });
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoConnectedOwners"));
-    const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
-    await openPlayerLootWindow(tokenDoc);
-  }
-
-  await refreshIndicatorsSafe(tokenDoc.uuid);
-  log.info(`Assigned loot on ${tokenDoc.name} → ${actor.name}`);
 }
 
 /**

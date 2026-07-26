@@ -6,40 +6,38 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.2.8** (Fix GM loot window + investigation timeouts) |
+| Version | **0.4.1** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |
 
-## Wolf MVP flow
+## Flow (v0.4+)
 
-1. Wolf reaches 0 HP / dead status.
-2. GM right-clicks the wolf → **Generate Loot**.
-3. LootForge detects beast/wolf context and **always** forces an **Investigation** roll from the player.
-4. **DM Loot Review** opens with LootForge-owned items (pelt, fang, meat, claw, rare alpha fang).
-5. GM can edit quantities, reroll, remove/add items, choose a character.
-6. **Confirm and Assign** sockets the assigned player clients, auto-opens their loot window, and shows a loot-bag above the corpse.
-7. Player **double-clicks** items, uses **Loot All**, or **Done** (leftovers go to the corpse actor inventory).
-8. Corpse flag updates; when empty the bag indicator disappears.
-9. GM can **Reset Loot** to regenerate.
+1. Creature is marked **dead** → white sparkles appear.
+2. A **player** double-clicks the corpse → Investigation auto-rolls (silent; shown in chat).
+3. **DM Review** opens automatically for the GM — edit quantities, reroll, add/remove items.
+4. GM **Save & Close** or **Close** → loot is released free-for-all (no assignee).
+5. Any player double-clicks again → shared Items window; takes live-sync across clients.
+6. Fully looted → sparkles off; corpse is hidden (`hiddenByLootForge`).
+7. GM **Reset Loot** restores the corpse for another pass.
 
-## Player access (no enemy-token ownership required)
+The DM cannot start Investigation by double-clicking — only players initiate that step.
+
+## Player access
 
 Players generally cannot open the Token HUD of an unowned enemy corpse. LootForge provides:
 
 - **Double-click** a dead creature to loot
-- **Auto-open** player loot window on assignment (socket)
-- **Loot-bag PIXI overlay** above the corpse (click to reopen)
+- **WoW-style sparkles** above the corpse (click to loot)
 - Scene control **Loot Targeted Body** (target with `T`, then click)
 - Context menu **Loot Body** where Foundry exposes it
-- Hotkey **Alt+L** (targeted corpse, else nearest assigned corpse)
+- Hotkey **Alt+L** (targeted corpse, else nearest lootable corpse)
 
-### WoW-style looting
+### Shared looting
 
-- Only **one player** can loot a corpse at a time
-- Closing the loot window (or **Done**) leaves untaken items on the **corpse actor inventory** for the next player
-- Setting **Allow all players to loot**: any player may start looting; loot auto-generates
-- When that setting is off: early player loot attempts show **Waiting for the DM**, and the DM gets a **Start Roll** popup
+- After DM Review, loot is **free-for-all** — multiple players may open and take
+- Open loot windows stay in sync when anyone takes an item
+- Closing leaves untaken items for others
 
 ## Install
 
@@ -53,9 +51,7 @@ Enable the module in a dnd5e world and reload.
 
 ## Settings (world)
 
-- Manual generation only  
 - Allow all players to loot  
-- Allow players to request loot from DM  
 - Prevent duplicate generation  
 - Show loot indicators  
 - Enable rare drops  
