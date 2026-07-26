@@ -6,8 +6,21 @@ import { classifyCreature, isDefeated } from "./creature-classifier.js";
 import { generateLoot } from "./loot-generator.js";
 import { claimLootToActor, postLootToChat } from "./loot-claimer.js";
 import { isLooted, resetLooted, setLooted } from "./loot-flags.js";
-import { getLooterActor, rollLootSkill } from "./roll-service.js";
+import { resolveLooterActor, rollLootSkill } from "./roll-service.js";
 import { showLootDialog } from "../ui/loot-dialog.js";
+
+/**
+ * Escape HTML when foundry.utils.escapeHTML is unavailable.
+ * @param {string} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
 
 /**
  * @param {Token} token  Placeable token from the Token HUD / canvas
@@ -35,7 +48,7 @@ export async function lootBody(token) {
       if (game.user.isGM) {
         const reset = await foundry.applications.api.DialogV2.confirm({
           window: { title: game.i18n.localize("LOOTFORGE.HUD.ResetLoot") },
-          content: `<p>${game.i18n.format("LOOTFORGE.Notify.AlreadyLooted", { name: creature.name })}</p>
+          content: `<p>${game.i18n.format("LOOTFORGE.Notify.AlreadyLooted", { name: escapeHtml(creature.name) })}</p>
                     <p>Reset the lootforge.looted flag so this creature can be looted again?</p>`
         });
         if (reset) await resetLooted(tokenDoc);
@@ -45,11 +58,10 @@ export async function lootBody(token) {
       return;
     }
 
-    const looter = getLooterActor();
-    if (!looter) {
-      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoLooter"));
-      return;
-    }
+    // GMs usually have no assigned PC; right-click also selects the corpse.
+    // Prompt for a character when one isn't already clear.
+    const looter = await resolveLooterActor({ excludeActor: creature });
+    if (!looter) return;
 
     const classification = classifyCreature(creature);
     const skillLabel = game.i18n.localize(`LOOTFORGE.Skill.${classification.skill}`);

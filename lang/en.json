@@ -12,7 +12,7 @@
       "WrongSystem": "LootForge currently supports the D&D 5e system only.",
       "NotDefeated": "{name} must be defeated before it can be looted.",
       "AlreadyLooted": "{name} has already been looted.",
-      "NoLooter": "Assign a player character or select an owned character token to loot.",
+      "NoLooter": "No player character available to loot. Create/import a character, place it on the scene, or assign one to your user.",
       "RollCancelled": "Loot roll cancelled.",
       "NoTable": "No prototype loot table found for {name}.",
       "LootGenerated": "Loot harvested from {name}.",
@@ -35,7 +35,10 @@
       "BonusItem": "Natural 20 bonus applied",
       "Claim": "Claim Loot",
       "Close": "Close",
-      "Empty": "No usable materials were recovered."
+      "Empty": "No usable materials were recovered.",
+      "ChooseLooterTitle": "Who is looting?",
+      "ChooseLooter": "Character",
+      "ChooseLooterHint": "Choose which character makes the skill roll and receives the loot."
     },
     "Chat": {
       "LootHeader": "LootForge — {name}",

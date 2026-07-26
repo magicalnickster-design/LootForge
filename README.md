@@ -34,6 +34,8 @@ This repository currently ships a **D&D 5e wolf harvesting prototype**.
 
 **Player tip:** Keep a GM client connected. Players cannot write flags on enemy tokens, so LootForge relays that write to the active GM.
 
+**GM tip:** GMs usually have no assigned character. If more than one PC exists, LootForge asks who is looting. Put at least one character token on the scene for easy testing.
+
 ## Install in a Foundry development world
 
 1. Copy or symlink this repository into your Foundry user data modules folder as **`lootforge`** (folder name must match `module.json` `id`):
