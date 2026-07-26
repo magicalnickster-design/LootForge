@@ -1,42 +1,37 @@
-<section class="lootforge-player-body">
-  <header class="lootforge-creature-header">
-    <img class="lootforge-portrait" src="{{creature.image}}" alt="{{creature.name}}" />
-    <div class="lootforge-creature-meta">
-      <h2>{{creature.name}}</h2>
-      {{#if assignedName}}
-      <p>{{localize "LOOTFORGE.Player.LootFor"}} <strong>{{assignedName}}</strong></p>
-      {{/if}}
+<section class="lootforge-wow-body">
+  <header class="lootforge-wow-header">
+    <div class="lootforge-wow-ornament" aria-hidden="true">
+      <img src="{{bagIcon}}" alt="" />
     </div>
+    <h2 class="lootforge-wow-title">{{localize "LOOTFORGE.Player.WindowTitle"}}</h2>
+    <p class="lootforge-wow-subtitle">{{creature.name}}</p>
   </header>
 
   {{#if empty}}
-  <p class="lootforge-empty">{{localize "LOOTFORGE.Notify.CorpseEmpty"}}</p>
+  <p class="lootforge-wow-empty">{{localize "LOOTFORGE.Notify.CorpseEmpty"}}</p>
   {{else}}
-  <div class="lootforge-item-list">
+  <p class="lootforge-wow-hint">{{hint}}</p>
+  <ul class="lootforge-wow-list">
     {{#each items}}
-    <article class="lootforge-item-row {{rarityClass}}" data-tooltip="{{description}}">
-      <img src="{{img}}" alt="" />
-      <div class="lootforge-item-main">
-        <div class="lootforge-item-title">
-          <strong>{{name}}</strong>
-          <span class="rarity-label">{{rarity}}</span>
-        </div>
-        <div class="lootforge-item-sub">× {{quantity}} · {{valueText}}</div>
+    <li class="lootforge-wow-row {{rarityClass}}" data-entry-id="{{entryId}}" data-tooltip="{{description}}">
+      <div class="lootforge-wow-icon">
+        <img src="{{img}}" alt="" />
+        {{#if qtyLabel}}<span class="lootforge-wow-qty">{{qtyLabel}}</span>{{/if}}
       </div>
-      <button type="button" class="lootforge-take" data-action="takeItem" data-entry-id="{{entryId}}" {{#if ../busy}}disabled{{/if}}>
-        {{localize "LOOTFORGE.Player.TakeItem"}}
-      </button>
-    </article>
+      <span class="lootforge-wow-name">{{name}}</span>
+    </li>
     {{/each}}
-  </div>
+  </ul>
   {{/if}}
 
-  <footer class="lootforge-footer">
-    <button type="button" data-action="closeWindow">{{localize "LOOTFORGE.Dialog.Close"}}</button>
+  <footer class="lootforge-wow-footer">
     {{#unless empty}}
-    <button type="button" class="default" data-action="takeAll" {{#if busy}}disabled{{/if}}>
-      <i class="fa-solid fa-hand-holding"></i> {{localize "LOOTFORGE.Player.TakeAll"}}
+    <button type="button" class="lootforge-wow-btn lootforge-wow-btn-lootall" data-action="takeAll" {{#if busy}}disabled{{/if}}>
+      {{localize "LOOTFORGE.Player.LootAll"}}
     </button>
     {{/unless}}
+    <button type="button" class="lootforge-wow-btn lootforge-wow-btn-done" data-action="doneLoot" {{#if busy}}disabled{{/if}}>
+      {{localize "LOOTFORGE.Player.Done"}}
+    </button>
   </footer>
 </section>

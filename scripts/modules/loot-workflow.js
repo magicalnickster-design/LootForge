@@ -10,6 +10,7 @@ import { generateCreatureLoot } from "./loot-generator.js";
 import { syncLootIndicator } from "./loot-indicator.js";
 import { log } from "./logger.js";
 import { resolveLooterActor } from "./looter-selection.js";
+import { canUserAccessAssignedLoot } from "./ownership.js";
 import { rollLootSkill } from "./roll-helper.js";
 import { getSetting } from "./settings.js";
 import {
@@ -102,18 +103,36 @@ export async function lootBody(token) {
  */
 async function openExistingLoot(tokenDoc, state) {
   if (game.user.isGM) {
+    // GM can open review, or player window once assigned.
+    if (state.assignedActorId) {
+      await openPlayerLootWindow(tokenDoc);
+      return;
+    }
     await openDmLootReview(tokenDoc);
     return;
   }
 
-  const allowed = state.assignedUserId === game.user.id
-    || (state.assignedActorId && game.actors.get(state.assignedActorId)?.isOwner);
-
-  if (!allowed) {
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
+  if (!state.assignedActorId) {
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
+    log.info("Player open blocked: loot not assigned", { tokenUuid: tokenDoc.uuid });
     return;
   }
 
+  if (!canUserAccessAssignedLoot(state, game.user)) {
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
+    log.info("Player open blocked: validation failure", {
+      reason: "not-owner",
+      assignedActorId: state.assignedActorId,
+      assignedUserId: state.assignedUserId,
+      userId: game.user.id
+    });
+    return;
+  }
+
+  log.info("Player window opening via lootBody", {
+    tokenUuid: tokenDoc.uuid,
+    assignedActorId: state.assignedActorId
+  });
   await openPlayerLootWindow(tokenDoc);
 }
 
@@ -133,7 +152,6 @@ async function generateAndReview(token, tokenDoc, creature) {
     return;
   }
 
-  // Harvester for the skill check (may differ from final assigned recipient).
   const roller = await resolveLooterActor({ excludeActor: creature });
   if (!roller) return;
 
@@ -212,7 +230,7 @@ export function getLootActionLabelKey(tokenDoc) {
     return "LOOTFORGE.HUD.Looted";
   }
   if (isLootGenerated(tokenDoc) && hasRemainingLoot(tokenDoc)) {
-    return "LOOTFORGE.HUD.ViewLoot";
+    return game.user.isGM ? "LOOTFORGE.HUD.ViewLoot" : "LOOTFORGE.HUD.LootBody";
   }
   return "LOOTFORGE.HUD.GenerateLoot";
 }

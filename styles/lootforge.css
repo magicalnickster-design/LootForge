@@ -1,4 +1,4 @@
-/* LootForge — Wolf MVP styles */
+/* LootForge — Wolf MVP + WoW-inspired player loot */
 
 .control-icon.lootforge-loot-body {
   color: var(--color-text-primary, #eee);
@@ -77,10 +77,6 @@
   background: color-mix(in srgb, var(--color-cool-4, #222) 30%, transparent);
 }
 
-.lootforge-player-loot .lootforge-item-row {
-  grid-template-columns: 40px 1fr auto;
-}
-
 .lootforge-item-row img {
   width: 36px;
   height: 36px;
@@ -151,7 +147,7 @@
   opacity: 0.85;
 }
 
-/* Rarity accents */
+/* Rarity accents (DM review) */
 .rarity-common { border-left-color: #b0b0b0; }
 .rarity-uncommon { border-left-color: #1eff00; }
 .rarity-rare { border-left-color: #0070dd; }
@@ -177,4 +173,256 @@
 
 .lootforge-assigned {
   color: #c4a35a;
+}
+
+/* -------------------------------------------------------------------------- */
+/* WoW-inspired player loot window                                            */
+/* -------------------------------------------------------------------------- */
+
+.lootforge-wow {
+  --lf-metal: #3a3a3a;
+  --lf-metal-hi: #6a675f;
+  --lf-panel: #1a1a1c;
+  --lf-panel-2: #121214;
+  --lf-gold: #c9a227;
+  --lf-gold-hi: #f0d878;
+  --lf-ink: #e8e0c8;
+  --lf-common: #f5f5f5;
+  --lf-uncommon: #1eff00;
+  --lf-rare: #0070dd;
+  --lf-epic: #a335ee;
+  --lf-legendary: #ff8000;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+
+.lootforge-wow.application {
+  border: 3px solid var(--lf-metal-hi);
+  border-image: linear-gradient(160deg, #8a8578, #2a2a2a 40%, #6a6558) 1;
+  box-shadow:
+    0 0 0 1px #0a0a0a,
+    0 12px 28px rgba(0, 0, 0, 0.55),
+    inset 0 0 40px rgba(0, 0, 0, 0.35);
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(80, 70, 40, 0.35), transparent 55%),
+    linear-gradient(180deg, #2a2926 0%, #141416 40%, #0e0e10 100%);
+}
+
+.lootforge-wow .window-header {
+  background: linear-gradient(180deg, #3d3a32 0%, #221f1a 100%);
+  border-bottom: 1px solid #5a5238;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  color: var(--lf-gold-hi);
+  text-shadow: 0 1px 2px #000;
+}
+
+.lootforge-wow .window-content {
+  padding: 0;
+  background: transparent;
+  color: var(--lf-ink);
+  overflow: visible;
+}
+
+.lootforge-wow-body {
+  position: relative;
+  padding: 1.35rem 0.85rem 0.75rem;
+  min-width: 260px;
+}
+
+.lootforge-wow-header {
+  text-align: center;
+  margin-bottom: 0.55rem;
+  position: relative;
+}
+
+.lootforge-wow-ornament {
+  position: absolute;
+  left: -0.15rem;
+  top: -1.55rem;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #f0d878, #8a6a1a 55%, #3a2a08 100%);
+  border: 2px solid #f0d878;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+  display: grid;
+  place-items: center;
+  animation: lootforge-ornament-in 320ms ease-out;
+}
+
+.lootforge-wow-ornament img {
+  width: 30px;
+  height: 30px;
+  border: none;
+  filter: drop-shadow(0 1px 1px #000);
+}
+
+.lootforge-wow-title {
+  margin: 0;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--lf-gold-hi);
+  text-shadow: 0 1px 0 #000, 0 0 12px rgba(201, 162, 39, 0.35);
+}
+
+.lootforge-wow-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  opacity: 0.8;
+  color: #cfc6a8;
+}
+
+.lootforge-wow-hint {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  opacity: 0.65;
+  text-align: center;
+}
+
+.lootforge-wow-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  max-height: 280px;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55)),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 11px,
+      rgba(255, 255, 255, 0.015) 12px
+    );
+  border: 1px solid #3a372e;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.55);
+}
+
+.lootforge-wow-row {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.28rem 0.35rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 120ms ease, transform 120ms ease;
+  animation: lootforge-row-in 280ms ease-out both;
+}
+
+.lootforge-wow-row:nth-child(1) { animation-delay: 40ms; }
+.lootforge-wow-row:nth-child(2) { animation-delay: 80ms; }
+.lootforge-wow-row:nth-child(3) { animation-delay: 120ms; }
+.lootforge-wow-row:nth-child(4) { animation-delay: 160ms; }
+.lootforge-wow-row:nth-child(5) { animation-delay: 200ms; }
+.lootforge-wow-row:nth-child(6) { animation-delay: 240ms; }
+
+.lootforge-wow-row:hover {
+  background: rgba(201, 162, 39, 0.12);
+  transform: translateX(2px);
+}
+
+.lootforge-wow-row:active {
+  background: rgba(201, 162, 39, 0.22);
+}
+
+.lootforge-wow-icon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #6a5e3a;
+  background: linear-gradient(160deg, #2a2a2e, #121214);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.7);
+  display: grid;
+  place-items: center;
+}
+
+.lootforge-wow-icon img {
+  width: 30px;
+  height: 30px;
+  border: none;
+  object-fit: contain;
+}
+
+.lootforge-wow-qty {
+  position: absolute;
+  right: 1px;
+  bottom: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ff9ec8;
+  text-shadow: 0 0 2px #000, 1px 1px 0 #000;
+  line-height: 1;
+}
+
+.lootforge-wow-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 1px #000;
+}
+
+.lootforge-wow-row.rarity-common .lootforge-wow-name { color: var(--lf-common); }
+.lootforge-wow-row.rarity-uncommon .lootforge-wow-name { color: var(--lf-uncommon); }
+.lootforge-wow-row.rarity-rare .lootforge-wow-name { color: #4ea3ff; }
+.lootforge-wow-row.rarity-epic .lootforge-wow-name { color: #c06bff; }
+.lootforge-wow-row.rarity-legendary .lootforge-wow-name { color: var(--lf-legendary); }
+.lootforge-wow-row.rarity-mythic .lootforge-wow-name { color: #e6cc80; }
+
+.lootforge-wow-empty {
+  text-align: center;
+  opacity: 0.75;
+  font-style: italic;
+  padding: 1rem 0.5rem;
+}
+
+.lootforge-wow-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.lootforge-wow-btn {
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  min-width: 5.5rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #8a7a40;
+  color: #f0e6c0;
+  background: linear-gradient(180deg, #5a4a22 0%, #2a220e 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 230, 150, 0.25);
+  text-shadow: 0 1px 1px #000;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+
+.lootforge-wow-btn:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.lootforge-wow-btn:disabled {
+  opacity: 0.5;
+  filter: grayscale(0.3);
+}
+
+.lootforge-wow-btn-lootall {
+  border-color: #a89040;
+}
+
+.lootforge-wow-btn-done {
+  background: linear-gradient(180deg, #4a3a28 0%, #1c1610 100%);
+  border-color: #6a5a40;
+}
+
+@keyframes lootforge-ornament-in {
+  from { transform: scale(0.7) rotate(-12deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes lootforge-row-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

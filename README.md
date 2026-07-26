@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.2.1** (Wolf MVP + Item compendium) |
+| Version | **0.2.2** (Player loot UX + bag overlay) |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |
@@ -18,17 +18,20 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 3. LootForge detects beast/wolf context and prompts a **Survival** roll (unless disabled in settings).
 4. **DM Loot Review** opens with LootForge-owned items (pelt, fang, meat, claw, rare alpha fang).
 5. GM can edit quantities, reroll, remove/add items, choose a character.
-6. **Confirm and Assign** opens the player loot window for the assignee (or locally if solo GM).
-7. Player **Take** / **Take All** creates stacked `loot` items on the character.
-8. Corpse flag updates; when empty the body is marked **Looted**.
+6. **Confirm and Assign** sockets the assigned player clients, auto-opens their loot window, and shows a loot-bag above the corpse.
+7. Player **double-clicks** items, uses **Loot All**, or **Done** (leftovers go to the corpse actor inventory).
+8. Corpse flag updates; when empty the bag indicator disappears.
 9. GM can **Reset Loot** to regenerate.
 
-## Player / GM controls
+## Player access (no enemy-token ownership required)
 
-- Right-click corpse → Generate Loot / View Loot / Looted  
-- Token toolbar sack button  
-- Token HUD sack icon  
-- **Alt+L**
+Players generally cannot open the Token HUD of an unowned enemy corpse. LootForge provides:
+
+- **Auto-open** player loot window on assignment (socket)
+- **Loot-bag PIXI overlay** above the corpse (click to reopen)
+- Scene control **Loot Targeted Body** (target with `T`, then click)
+- Context menu **Loot Body** where Foundry exposes it
+- Hotkey **Alt+L** (targeted corpse, else nearest assigned corpse)
 
 ## Install
 
@@ -53,15 +56,9 @@ Enable the module in a dnd5e world and reload.
 
 ## Item compendium
 
-Canonical wolf items live in the module pack **LootForge Items** (`lootforge.loot-items`):
+Canonical wolf items live in the module pack **LootForge Items** (`lootforge.loot-items`).
 
-| Item | Document ID | UUID |
-| --- | --- | --- |
-| Wolf Pelt | `LFWolfPelt000001` | `Compendium.lootforge.loot-items.Item.LFWolfPelt000001` |
-| Wolf Fang | `LFWolfFang000001` | `Compendium.lootforge.loot-items.Item.LFWolfFang000001` |
-| Wolf Meat | `LFWolfMeat000001` | `Compendium.lootforge.loot-items.Item.LFWolfMeat000001` |
-| Wolf Claw | `LFWolfClaw000001` | `Compendium.lootforge.loot-items.Item.LFWolfClaw000001` |
-| Alpha Wolf Fang | `LFAlphaFang00001` | `Compendium.lootforge.loot-items.Item.LFAlphaFang00001` |
+Item and UI icons ship under `modules/lootforge/assets/` so Foundry core path changes cannot 404 them.
 
 JSON sources: `packs/src/loot-items/` (developers only). The compiled LevelDB under `packs/loot-items/` is what Foundry loads — **no Node/npm/CLI is required for end users**.
 
@@ -73,28 +70,7 @@ npm run pack
 npm run verify:pack
 ```
 
-**Compendium is treated as read-only source data.** LootForge never writes generated loot into the pack. Flow:
-
-`creature-profiles` → pack Item (clone) → token corpse flags → player embedded Item
-
-Generation rules stay in `scripts/data/creature-profiles.js`.
-
-### Release ZIP — required pack files
-
-These compiled LevelDB files **must** ship (runtime; no Node required):
-
-```text
-packs/loot-items/000004.log
-packs/loot-items/000005.ldb
-packs/loot-items/CURRENT
-packs/loot-items/LOCK
-packs/loot-items/LOG
-packs/loot-items/MANIFEST-000002
-```
-
-Also required: `module.json` pack entry for `loot-items`.
-
-Optional for source/dev releases only: `packs/src/loot-items/*.json`, `tools/`, `package.json`.
+**Compendium is treated as read-only source data.** LootForge never writes generated loot into the pack.
 
 ## Architecture
 
@@ -102,11 +78,14 @@ Optional for source/dev releases only: `packs/src/loot-items/*.json`, `tools/`, 
 packs/
   src/loot-items/        Editable Item JSON sources
   loot-items/            Compiled LevelDB pack
+assets/
+  items/                 Bundled item icons
+  ui/                    Loot-bag overlay icon
 scripts/
   main.js
   applications/          DM review + player window
   data/                  Definition IDs ↔ UUIDs + creature profiles
-  modules/               Context, storage, generator, transfer, sockets
+  modules/               Context, storage, generator, transfer, sockets, indicators
   ui/                    HUD / context / scene controls
 templates/
 styles/

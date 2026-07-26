@@ -2,7 +2,7 @@
   "_id": "LFWolfMeat000001",
   "name": "Wolf Meat",
   "type": "loot",
-  "img": "icons/consumables/meat/steak-raw-red-pink.webp",
+  "img": "modules/lootforge/assets/items/wolf-meat.svg",
   "system": {
     "description": {
       "value": "<p>Raw meat harvested from a wolf. Edible when properly prepared, though most civilized settlements consider it poor fare.</p>",

@@ -1,5 +1,5 @@
 /**
- * Token toolbar sack tool — target/select a corpse, then click.
+ * Token toolbar — Loot Targeted Body (player-visible).
  */
 
 import { lootBody } from "../modules/loot-workflow.js";
@@ -15,7 +15,7 @@ export function registerSceneControls() {
 
     tokenControl.tools.lootforgeLootBody = {
       name: "lootforgeLootBody",
-      title: "LOOTFORGE.HUD.GenerateLoot",
+      title: "LOOTFORGE.HUD.LootTargetedBody",
       icon: "fa-solid fa-sack",
       button: true,
       visible: true,

@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.2.1") {
-  throw new Error(`Expected module version 0.2.1, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.2.2") {
+  throw new Error(`Expected module version 0.2.2, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -76,6 +76,9 @@ try {
     if (!Array.isArray(flags.tags)) throw new Error(`${item.name} tags must be an array`);
     if (flags.stackingKey !== flags.definitionId) {
       throw new Error(`${item.name} stackingKey should match definitionId`);
+    }
+    if (!String(item.img || "").startsWith("modules/lootforge/assets/")) {
+      throw new Error(`${item.name} must use a bundled LootForge icon, got ${item.img}`);
     }
   }
   if (expectedNames.size) {

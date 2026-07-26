@@ -35,7 +35,11 @@ export const OPS = Object.freeze({
   OPEN_PLAYER_WINDOW: "openPlayerWindow",
   TAKE_ITEM: "takeItem",
   TAKE_ALL: "takeAll",
+  DONE_LOOT: "doneLoot",
   STATE_UPDATED: "stateUpdated",
   RESET_LOOT: "resetLoot",
   SET_FLAG: "setLootedFlag"
 });
+
+/** Bundled loot-bag icon for the canvas overlay. */
+export const LOOT_BAG_ICON = `modules/${MODULE_ID}/assets/ui/loot-bag.svg`;

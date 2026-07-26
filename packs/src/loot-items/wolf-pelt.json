@@ -2,7 +2,7 @@
   "_id": "LFWolfPelt000001",
   "name": "Wolf Pelt",
   "type": "loot",
-  "img": "icons/commodities/leather/fur-pelt-brown.webp",
+  "img": "modules/lootforge/assets/items/wolf-pelt.svg",
   "system": {
     "description": {
       "value": "<p>A rough hide taken from a slain wolf. Useful to hunters, leatherworkers, and cold-weather travelers.</p>",

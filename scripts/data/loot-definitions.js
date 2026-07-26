@@ -58,7 +58,7 @@ export const LOOT_DEFINITIONS = {
     category: "monster-part",
     rarity: "common",
     tags: ["beast", "wolf", "hide", "leatherworking"],
-    img: "icons/commodities/leather/fur-pelt-brown.webp",
+    img: `modules/${MODULE_ID}/assets/items/wolf-pelt.svg`,
     description:
       "A rough hide taken from a slain wolf. Useful to hunters, leatherworkers, and cold-weather travelers.",
     price: { value: 8, denomination: "sp" },
@@ -72,7 +72,7 @@ export const LOOT_DEFINITIONS = {
     category: "monster-part",
     rarity: "common",
     tags: ["beast", "wolf", "bone", "trophy"],
-    img: "icons/commodities/bones/tooth-canine-brown.webp",
+    img: `modules/${MODULE_ID}/assets/items/wolf-fang.svg`,
     description:
       "A sharp canine tooth often used in trophies, charms, or primitive jewelry.",
     price: { value: 2, denomination: "sp" },
@@ -86,7 +86,7 @@ export const LOOT_DEFINITIONS = {
     category: "crafting-material",
     rarity: "common",
     tags: ["beast", "wolf", "meat", "cooking"],
-    img: "icons/consumables/meat/steak-raw-red-pink.webp",
+    img: `modules/${MODULE_ID}/assets/items/wolf-meat.svg`,
     description:
       "Raw meat harvested from a wolf. Edible when properly prepared, though most civilized settlements consider it poor fare.",
     price: { value: 3, denomination: "sp" },
@@ -100,7 +100,7 @@ export const LOOT_DEFINITIONS = {
     category: "monster-part",
     rarity: "common",
     tags: ["beast", "wolf", "claw", "crafting"],
-    img: "icons/commodities/claws/claw-bear-brown.webp",
+    img: `modules/${MODULE_ID}/assets/items/wolf-claw.svg`,
     description:
       "A curved claw suitable for use in jewelry, fetishes, or minor crafting recipes.",
     price: { value: 1, denomination: "sp" },
@@ -114,7 +114,7 @@ export const LOOT_DEFINITIONS = {
     category: "rare-collectible",
     rarity: "uncommon",
     tags: ["beast", "wolf", "trophy", "rare"],
-    img: "icons/commodities/bones/tooth-canine-white.webp",
+    img: `modules/${MODULE_ID}/assets/items/alpha-wolf-fang.svg`,
     description:
       "An unusually large fang from a powerful wolf. Hunters value it as proof of a dangerous kill.",
     price: { value: 2, denomination: "gp" },
@@ -152,7 +152,7 @@ export function buildFallbackItemData(def, { quantity = 1, sourceCreature = "" }
   return {
     name: def.name,
     type: "loot",
-    img: def.img || "icons/svg/item-bag.svg",
+    img: def.img || `modules/${MODULE_ID}/assets/ui/loot-bag.svg`,
     system: {
       description: {
         value: `<p>${def.description}</p>`,

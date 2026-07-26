@@ -3,13 +3,14 @@
     "Title": "LootForge",
     "HUD": {
       "LootBody": "Loot Body",
+      "LootTargetedBody": "Loot Targeted Body",
       "GenerateLoot": "Generate Loot",
       "ViewLoot": "View Loot",
       "Looted": "Looted",
       "ResetLoot": "Reset Loot"
     },
     "Keybinding": {
-      "LootTargetHint": "Generate or view loot on the targeted/selected defeated creature."
+      "LootTargetHint": "Open loot for the targeted corpse, or the nearest assigned corpse on this scene (Alt+L)."
     },
     "Quality": {
       "poor": "Poor",
@@ -28,11 +29,13 @@
       "NoTable": "No LootForge profile found for {name}.",
       "Claimed": "Loot claimed by {name}.",
       "Assigned": "Loot assigned to {name}.",
+      "LootAvailable": "Loot available: {name}",
       "PostedToChat": "Loot was posted to chat.",
       "FlagReset": "Loot reset for {name}.",
       "PermissionDenied": "You do not have permission to modify loot on {name}.",
       "NeedGM": "An active GM must be connected for LootForge to update corpse loot.",
-      "SelectOrTarget": "Target or select exactly one defeated creature, then use LootForge (sack / Alt+L / right-click).",
+      "SelectOrTarget": "Target a defeated creature with T, then use Loot Targeted Body (or Alt+L).",
+      "NoAssignedCorpse": "No lootable corpse found. Target a dead body assigned to your character, or stand near one.",
       "PlayersCannotGenerate": "Only the GM can generate loot (unless player requests are enabled in settings).",
       "WaitingForGM": "Loot generated. Waiting for the GM to review and assign it.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
@@ -43,7 +46,8 @@
       "TransferPending": "Loot request sent to the GM…",
       "CharacterMissing": "The selected character no longer exists.",
       "NoItemsToAssign": "There is no loot to assign.",
-      "CorpseEmpty": "The corpse has been fully looted."
+      "CorpseEmpty": "The corpse has been fully looted.",
+      "LootDeposited": "Remaining loot was left on the corpse."
     },
     "Dialog": {
       "Title": "Loot — {name}",
@@ -72,9 +76,13 @@
     "Player": {
       "Title": "Loot",
       "TitleNamed": "Loot — {name}",
+      "WindowTitle": "Items",
       "LootFor": "Loot for",
       "TakeItem": "Take",
-      "TakeAll": "Take All"
+      "TakeAll": "Take All",
+      "LootAll": "Loot All",
+      "Done": "Done",
+      "DoubleClickHint": "Double-click an item to take it."
     },
     "Settings": {
       "ManualGenerationOnly": {
@@ -99,7 +107,7 @@
       },
       "ShowLootIndicators": {
         "Name": "Show loot indicators",
-        "Hint": "Mark tokens that have unclaimed generated loot."
+        "Hint": "Show a loot-bag icon above corpses with unclaimed loot."
       },
       "EnableRareDrops": {
         "Name": "Enable rare drops",

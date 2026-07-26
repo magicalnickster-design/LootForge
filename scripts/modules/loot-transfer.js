@@ -8,6 +8,7 @@
 
 import { getLootDefinition, resolveItemDataForTransfer } from "../data/loot-definitions.js";
 import { log } from "./logger.js";
+import { canUserAccessAssignedLoot, userOwnsActor } from "./ownership.js";
 import {
   getCorpseState,
   hasRemainingLoot,
@@ -75,12 +76,8 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
 
   const state = getCorpseState(tokenDoc);
   if (state.assignedActorId && state.assignedActorId !== actor.id) return false;
-  if (state.assignedUserId && state.assignedUserId !== user.id) {
-    if (!actor.testUserPermission(user, "OWNER")) return false;
-  } else if (!actor.testUserPermission(user, "OWNER")) {
-    return false;
-  }
-  return true;
+  if (!canUserAccessAssignedLoot(state, user)) return false;
+  return userOwnsActor(actor, user) || state.assignedUserId === user.id;
 }
 
 /**
@@ -209,6 +206,66 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
     return { ok: true, state };
   } catch (err) {
     log.error("takeAllCorpseItems failed", err);
+    return {
+      ok: false,
+      error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed")
+    };
+  } finally {
+    releaseLock(lockKey);
+  }
+}
+
+/**
+ * Move any remaining corpse-flag loot onto the dead creature's actor inventory,
+ * then mark the corpse empty/looted. Used by the player Done button.
+ *
+ * @param {TokenDocument} tokenDoc
+ * @param {User} [user]
+ */
+export async function depositRemainingToCorpse(tokenDoc, user = game.user) {
+  const lockKey = `${tokenDoc.uuid}:DONE`;
+  if (!acquireLock(lockKey)) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferBusy") };
+  }
+
+  try {
+    const state = getCorpseState(tokenDoc);
+    if (!user.isGM && !canUserAccessAssignedLoot(state, user)) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
+    }
+
+    const corpseActor = tokenDoc.actor;
+    if (!corpseActor) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
+    }
+
+    if (!hasRemainingLoot(tokenDoc)) {
+      const nextState = await updateCorpseState(tokenDoc, {
+        items: [],
+        looted: true,
+        lootedAt: state.lootedAt ?? Date.now()
+      });
+      return { ok: true, state: nextState, deposited: 0 };
+    }
+
+    const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
+    let deposited = 0;
+    for (const entry of [...state.items]) {
+      if (entry.quantity <= 0) continue;
+      await grantEntryToActor(corpseActor, entry, sourceCreature);
+      deposited += 1;
+    }
+
+    const nextState = await updateCorpseState(tokenDoc, {
+      items: [],
+      looted: true,
+      lootedAt: Date.now()
+    });
+
+    log.info(`Done: deposited ${deposited} remaining entries → ${corpseActor.name}`);
+    return { ok: true, state: nextState, deposited };
+  } catch (err) {
+    log.error("depositRemainingToCorpse failed", err);
     return {
       ok: false,
       error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed")

@@ -1,5 +1,6 @@
 /**
- * Player-facing MMO-style loot window.
+ * Player-facing WoW-inspired loot window (modern D&D twist).
+ * Double-click an item to take it. Loot All / Done.
  */
 
 import { MODULE_ID } from "../modules/constants.js";
@@ -9,7 +10,12 @@ import {
   hasRemainingLoot,
   isCorpseLooted
 } from "../modules/loot-storage.js";
-import { requestTakeAll, requestTakeItem } from "../modules/socket-manager.js";
+import { canUserAccessAssignedLoot, userOwnsActor } from "../modules/ownership.js";
+import {
+  requestDoneLoot,
+  requestTakeAll,
+  requestTakeItem
+} from "../modules/socket-manager.js";
 import { registerLootWindow, unregisterLootWindow } from "./window-registry.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -28,17 +34,19 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
 
   static DEFAULT_OPTIONS = {
     id: "lootforge-player-loot",
-    classes: ["lootforge", "lootforge-player-loot"],
-    position: { width: 480, height: "auto" },
+    classes: ["lootforge", "lootforge-player-loot", "lootforge-wow"],
+    position: { width: 320, height: "auto" },
     window: {
       title: "LOOTFORGE.Player.Title",
       icon: "fa-solid fa-sack",
-      resizable: true
+      resizable: false,
+      frame: true,
+      positioned: true
     },
     actions: {
       takeItem: PlayerLootWindow.#onTakeItem,
       takeAll: PlayerLootWindow.#onTakeAll,
-      closeWindow: PlayerLootWindow.#onClose
+      doneLoot: PlayerLootWindow.#onDone
     }
   };
 
@@ -53,8 +61,7 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   get title() {
-    const name = getCorpseState(this.#tokenDoc).creatureContext?.name ?? this.#tokenDoc.name;
-    return game.i18n.format("LOOTFORGE.Player.TitleNamed", { name });
+    return game.i18n.localize("LOOTFORGE.Player.WindowTitle");
   }
 
   /** @returns {Actor|null} */
@@ -62,7 +69,7 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     const state = getCorpseState(this.#tokenDoc);
     if (state.assignedActorId) {
       const assigned = game.actors.get(state.assignedActorId);
-      if (assigned && (assigned.isOwner || game.user.isGM)) return assigned;
+      if (assigned && (game.user.isGM || userOwnsActor(assigned, game.user))) return assigned;
     }
     if (game.user.character) return game.user.character;
     return null;
@@ -76,23 +83,37 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     return {
       busy: this.#busy,
       empty,
+      bagIcon: `modules/${MODULE_ID}/assets/ui/loot-bag.svg`,
       creature: {
         name: ctx.name ?? this.#tokenDoc.name,
         image: ctx.image ?? this.#tokenDoc.actor?.img
       },
       items: (state.items ?? []).map((item) => ({
         ...item,
-        rarityClass: `rarity-${item.rarity || "common"}`
+        rarityClass: `rarity-${item.rarity || "common"}`,
+        qtyLabel: item.quantity > 1 ? String(item.quantity) : ""
       })),
       assignedName: state.assignedActorId
         ? game.actors.get(state.assignedActorId)?.name
-        : null
+        : null,
+      hint: game.i18n.localize("LOOTFORGE.Player.DoubleClickHint")
     };
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
     registerLootWindow(this.#tokenDoc.uuid, this);
+
+    const list = this.element?.querySelector?.(".lootforge-wow-list");
+    list?.querySelectorAll?.(".lootforge-wow-row")?.forEach((row) => {
+      row.addEventListener("dblclick", async (event) => {
+        event.preventDefault();
+        if (this.#busy) return;
+        const entryId = row.dataset.entryId;
+        if (!entryId) return;
+        await this.#takeEntry(entryId);
+      });
+    });
   }
 
   async _onClose(options) {
@@ -122,17 +143,14 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     }
   }
 
-  static async #onTakeItem(event, target) {
-    event.preventDefault();
-    const app = this;
-    const entryId = target.dataset.entryId;
-    await app.#withBusy(async () => {
-      const actor = app.#resolveActor();
+  async #takeEntry(entryId) {
+    await this.#withBusy(async () => {
+      const actor = this.#resolveActor();
       if (!actor) {
         ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.NoLooter"));
         return;
       }
-      const result = await requestTakeItem(app.#tokenDoc, actor, entryId);
+      const result = await requestTakeItem(this.#tokenDoc, actor, entryId);
       if (!result.ok) {
         ui.notifications.warn(result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
         return;
@@ -142,6 +160,12 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
       }
       log.info("Player took item", entryId);
     });
+  }
+
+  static async #onTakeItem(event, target) {
+    event.preventDefault();
+    const entryId = target.dataset.entryId;
+    await this.#takeEntry(entryId);
   }
 
   static async #onTakeAll(event, _target) {
@@ -164,9 +188,30 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     });
   }
 
-  static async #onClose(event, _target) {
+  static async #onDone(event, _target) {
     event.preventDefault();
-    await this.close();
+    const app = this;
+    await app.#withBusy(async () => {
+      const state = getCorpseState(app.#tokenDoc);
+      if (!canUserAccessAssignedLoot(state, game.user) && !game.user.isGM) {
+        ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
+        return;
+      }
+
+      if (hasRemainingLoot(app.#tokenDoc)) {
+        const result = await requestDoneLoot(app.#tokenDoc);
+        if (!result.ok) {
+          ui.notifications.warn(result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
+          return;
+        }
+        if (result.pending) {
+          ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.TransferPending"));
+        } else {
+          ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootDeposited"));
+        }
+      }
+      await app.close();
+    });
   }
 }
 
@@ -174,6 +219,12 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
  * @param {TokenDocument} tokenDoc
  */
 export async function openPlayerLootWindow(tokenDoc) {
+  log.info("openPlayerLootWindow()", {
+    tokenUuid: tokenDoc?.uuid,
+    userId: game.user.id,
+    isGM: game.user.isGM
+  });
+
   for (const app of foundry.applications.instances.values()) {
     if (app instanceof PlayerLootWindow && app.tokenDoc?.uuid === tokenDoc.uuid) {
       app.render({ force: true });
