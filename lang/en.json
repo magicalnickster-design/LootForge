@@ -27,10 +27,12 @@
       "NoLooter": "No eligible player characters found. Create a character or place one on the scene.",
       "RollCancelled": "Investigation roll cancelled.",
       "RollInvestigation": "Roll Investigation to loot the corpse.",
+      "RollInvestigationNamed": "LootForge needs you to roll Investigation for {name}.",
       "InvestigationRequired": "An Investigation roll is required before loot can be generated.",
       "WaitingForInvestigation": "Waiting for {name} to roll Investigation for {creature}…",
       "InvestigationTimeout": "Investigation roll timed out.",
       "InvestigationFallback": "Player Investigation roll unavailable — rolling locally.",
+      "InvestigationWhisper": "<p><strong>LootForge:</strong> Please roll <em>Investigation</em> to loot <strong>{name}</strong>. A prompt should appear — if not, use <strong>Loot Targeted Body</strong> or Alt+L.</p>",
       "NoTable": "No LootForge profile found for {name}.",
       "Claimed": "Loot claimed by {name}.",
       "Assigned": "Loot assigned to {name}.",
@@ -68,7 +70,10 @@
       "PlayerLootRequest": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Ask them to roll Investigation and generate loot?",
       "PlayerLootReady": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Open the loot window for them?",
       "StartRoll": "Roll Investigation",
-      "OpenForPlayer": "Open for Player"
+      "OpenForPlayer": "Open for Player",
+      "InvestigationTitle": "LootForge — Investigation",
+      "InvestigationPrompt": "Roll <strong>Investigation</strong> to loot <strong>{name}</strong>?",
+      "RollInvestigation": "Roll Investigation"
     },
     "DM": {
       "Title": "LootForge — DM Review",

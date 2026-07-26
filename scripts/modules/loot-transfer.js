@@ -155,8 +155,9 @@ export async function materializeCorpseInventoryLoot(tokenDoc) {
  * @param {TokenDocument} tokenDoc
  * @param {User} user
  * @param {Actor} actor
+ * @param {{ force?: boolean }} [options]  GM assign may force-steal a stale lock.
  */
-export async function claimLootSession(tokenDoc, user, actor) {
+export async function claimLootSession(tokenDoc, user, actor, { force = false } = {}) {
   if (!tokenDoc || !user || !actor) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoLooter") };
   }
@@ -168,7 +169,7 @@ export async function claimLootSession(tokenDoc, user, actor) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
   }
 
-  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id && !force) {
     const name = state.activeLooterName
       || game.users.get(state.activeLooterUserId)?.name
       || "Another player";
@@ -190,7 +191,8 @@ export async function claimLootSession(tokenDoc, user, actor) {
   log.info("Loot session claimed", {
     tokenUuid: tokenDoc.uuid,
     userId: user.id,
-    actorId: actor.id
+    actorId: actor.id,
+    force
   });
   return { ok: true, state };
 }

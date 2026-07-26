@@ -156,14 +156,27 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
  */
 async function openExistingLoot(tokenDoc, state) {
   if (game.user.isGM) {
+    // If a player already holds the session, open DM review instead of fighting the lock.
+    if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
+      ui.notifications.info(
+        game.i18n.format("LOOTFORGE.Notify.LootBusy", {
+          name: state.activeLooterName
+            || game.users.get(state.activeLooterUserId)?.name
+            || "Another player"
+        })
+      );
+      await openDmLootReview(tokenDoc);
+      return;
+    }
+
     if (state.activeLooterUserId || state.assignedActorId || getSetting("allowAllPlayersToLoot")) {
-      const looter = game.user.character
+      const looter = game.actors.get(state.activeLooterActorId)
         ?? game.actors.get(state.assignedActorId)
+        ?? game.user.character
         ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
       if (looter) {
-        const claim = await claimLootSession(tokenDoc, game.user, looter);
+        const claim = await claimLootSession(tokenDoc, game.user, looter, { force: false });
         if (!claim.ok) {
-          ui.notifications.warn(claim.error);
           await openDmLootReview(tokenDoc);
           return;
         }
@@ -177,6 +190,18 @@ async function openExistingLoot(tokenDoc, state) {
     return;
   }
 
+  // Active looter can always reopen their window (fixes stuck "already looting" with no UI).
+  if (state.activeLooterUserId === game.user.id || canUserAccessAssignedLoot(state, game.user)) {
+    const looter = game.actors.get(state.activeLooterActorId)
+      ?? game.actors.get(state.assignedActorId)
+      ?? game.user.character
+      ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
+    if (!looter) return;
+    const result = await requestPlayerStartLoot(tokenDoc, looter, { claimOnly: true });
+    if (!result.ok && result.error) ui.notifications.warn(result.error);
+    return;
+  }
+
   const busyKey = getLootBusyReasonKey(state, game.user);
   if (busyKey) {
     const name = state.activeLooterName
@@ -187,7 +212,6 @@ async function openExistingLoot(tokenDoc, state) {
   }
 
   if (!canUserLootCorpse(tokenDoc, game.user) && !getSetting("allowAllPlayersToLoot")) {
-    // Assigned to someone else and session not free.
     if (state.assignedActorId && !userOwnsActor(game.actors.get(state.assignedActorId), game.user)) {
       ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
       return;
@@ -198,7 +222,6 @@ async function openExistingLoot(tokenDoc, state) {
     ?? (await resolveLooterActor({ excludeActor: tokenDoc.actor }));
   if (!looter) return;
 
-  // Players cannot update enemy tokens — ask GM to claim + open.
   const result = await requestPlayerStartLoot(tokenDoc, looter, { claimOnly: true });
   if (!result.ok && result.error) {
     ui.notifications.warn(result.error);
@@ -440,6 +463,23 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
   }
 
   state = getCorpseState(tokenDoc);
+
+  // Already the active looter — just reopen the window (no busy error).
+  if (state.activeLooterUserId === user.id && hasRemainingLoot(tokenDoc)) {
+    emitLootForge({
+      op: OPS.OPEN_PLAYER_WINDOW,
+      tokenUuid: tokenDoc.uuid,
+      targetUserId: user.id,
+      actorId: actor.id,
+      trusted: true
+    });
+    log.info("Re-opened loot window for active looter", {
+      tokenUuid: tokenDoc.uuid,
+      userId: user.id
+    });
+    return { ok: true, reopened: true };
+  }
+
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
     const name = state.activeLooterName
       || game.users.get(state.activeLooterUserId)?.name
@@ -469,8 +509,18 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     op: OPS.OPEN_PLAYER_WINDOW,
     tokenUuid: tokenDoc.uuid,
     targetUserId: user.id,
-    actorId: actor.id
+    actorId: actor.id,
+    trusted: true
   });
+  setTimeout(() => {
+    emitLootForge({
+      op: OPS.OPEN_PLAYER_WINDOW,
+      tokenUuid: tokenDoc.uuid,
+      targetUserId: user.id,
+      actorId: actor.id,
+      trusted: true
+    });
+  }, 300);
 
   log.info("Player loot session started", {
     tokenUuid: tokenDoc.uuid,

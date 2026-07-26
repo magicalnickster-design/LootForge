@@ -266,6 +266,21 @@ async function handleTakeRequest(payload) {
 }
 
 /**
+ * Wait briefly for a token UUID / flag sync (Foundry may deliver sockets before flags).
+ * @param {string} tokenUuid
+ * @param {number} [attempts]
+ * @returns {Promise<TokenDocument|null>}
+ */
+async function resolveTokenDocSoon(tokenUuid, attempts = 8) {
+  for (let i = 0; i < attempts; i++) {
+    const doc = await fromUuid(tokenUuid);
+    if (doc) return doc;
+    await new Promise((resolve) => setTimeout(resolve, 75));
+  }
+  return null;
+}
+
+/**
  * @param {object} payload
  */
 async function openPlayerWindowFromPayload(payload) {
@@ -277,14 +292,20 @@ async function openPlayerWindowFromPayload(payload) {
     return;
   }
 
-  const tokenDoc = await fromUuid(payload.tokenUuid);
+  // A targeted open socket is authoritative. Do not require local corpse flags to
+  // have synced yet — that race was blocking the player window after assign.
+  const trustedTarget = payload.targetUserId === game.user.id;
+
+  const tokenDoc = await resolveTokenDocSoon(payload.tokenUuid);
   if (!tokenDoc) {
     log.warn("Player window open failed: token UUID unresolved", payload.tokenUuid);
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
     return;
   }
 
   const state = getCorpseState(tokenDoc);
-  const allowed = game.user.isGM
+  const allowed = trustedTarget
+    || game.user.isGM
     || state.activeLooterUserId === game.user.id
     || canUserAccessAssignedLoot(state, game.user)
     || canUserLootCorpse(tokenDoc, game.user);
@@ -294,15 +315,17 @@ async function openPlayerWindowFromPayload(payload) {
       reason: "not-allowed",
       assignedActorId: state.assignedActorId,
       activeLooterUserId: state.activeLooterUserId,
-      localUserId: game.user.id
+      localUserId: game.user.id,
+      trustedTarget
     });
     return;
   }
 
   log.info("Player window opening", {
     tokenUuid: tokenDoc.uuid,
-    assignedActorId: state.assignedActorId,
-    activeLooterUserId: state.activeLooterUserId
+    assignedActorId: state.assignedActorId ?? payload.actorId ?? null,
+    activeLooterUserId: state.activeLooterUserId,
+    trustedTarget
   });
 
   const creatureName = state.creatureContext?.name ?? tokenDoc.name;
@@ -454,6 +477,14 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
         creature: tokenDoc.name
       })
     );
+    // Whisper so the player sees a chat ping even if the toast is missed.
+    ChatMessage.create({
+      content: game.i18n.format("LOOTFORGE.Notify.InvestigationWhisper", {
+        name: tokenDoc.name
+      }),
+      whisper: [user.id],
+      speaker: { alias: "LootForge" }
+    }).catch(() => undefined);
   });
 }
 
@@ -464,7 +495,8 @@ async function onRequestInvestigationRoll(payload) {
   log.info("Socket event received", {
     op: OPS.REQUEST_INVESTIGATION_ROLL,
     requestId: payload.requestId,
-    actorId: payload.actorId
+    actorId: payload.actorId,
+    localUserId: game.user.id
   });
 
   const actor = game.actors.get(payload.actorId) ?? game.user.character;
@@ -477,7 +509,34 @@ async function onRequestInvestigationRoll(payload) {
     return;
   }
 
-  ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
+  const creatureName = (await fromUuid(payload.tokenUuid))?.name ?? "the corpse";
+  ui.notifications.info(
+    game.i18n.format("LOOTFORGE.Notify.RollInvestigationNamed", { name: creatureName })
+  );
+
+  // Modal confirm so the player cannot miss the request behind other windows.
+  const proceed = await foundry.applications.api.DialogV2.confirm({
+    window: { title: game.i18n.localize("LOOTFORGE.Dialog.InvestigationTitle") },
+    content: `<p>${game.i18n.format("LOOTFORGE.Dialog.InvestigationPrompt", {
+      name: creatureName
+    })}</p>`,
+    yes: {
+      label: game.i18n.localize("LOOTFORGE.Dialog.RollInvestigation"),
+      icon: "fa-solid fa-magnifying-glass",
+      default: true
+    },
+    no: { label: game.i18n.localize("LOOTFORGE.Dialog.Close") }
+  });
+
+  if (!proceed) {
+    emitLootForge({
+      op: OPS.INVESTIGATION_ROLL_RESULT,
+      requestId: payload.requestId,
+      cancelled: true
+    });
+    return;
+  }
+
   const { rollInvestigation } = await import("./roll-helper.js");
   const result = await rollInvestigation(actor);
 
@@ -547,12 +606,15 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
   });
 
   if (assignedUser) {
-    const claim = await claimLootSession(tokenDoc, assignedUser, actor);
+    // Force-steal any stale "already looting" lock from a previous attempt.
+    const claim = await claimLootSession(tokenDoc, assignedUser, actor, { force: true });
     if (!claim.ok) {
-      // Still assign ownership flags if claim failed due to empty — update manually.
       await updateCorpseState(tokenDoc, {
         assignedActorId: actor.id,
-        assignedUserId: assignedUser.id
+        assignedUserId: assignedUser.id,
+        activeLooterUserId: assignedUser.id,
+        activeLooterActorId: actor.id,
+        activeLooterName: actor.name
       });
     }
   } else {
@@ -564,22 +626,29 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
 
   broadcastStateUpdated(tokenDoc.uuid);
 
+  const emitOpen = (target) => {
+    const emitted = emitLootForge({
+      op: OPS.OPEN_PLAYER_WINDOW,
+      tokenUuid: tokenDoc.uuid,
+      targetUserId: target.id,
+      actorId: actor.id,
+      sceneUuid: tokenDoc.parent?.uuid ?? null,
+      trusted: true
+    });
+    log.info("Socket event emitted", {
+      op: OPS.OPEN_PLAYER_WINDOW,
+      targetUserId: emitted.targetUserId,
+      actorId: emitted.actorId,
+      tokenUuid: emitted.tokenUuid
+    });
+  };
+
   if (uniqueTargets.length) {
-    for (const target of uniqueTargets) {
-      const emitted = emitLootForge({
-        op: OPS.OPEN_PLAYER_WINDOW,
-        tokenUuid: tokenDoc.uuid,
-        targetUserId: target.id,
-        actorId: actor.id,
-        sceneUuid: tokenDoc.parent?.uuid ?? null
-      });
-      log.info("Socket event emitted", {
-        op: OPS.OPEN_PLAYER_WINDOW,
-        targetUserId: emitted.targetUserId,
-        actorId: emitted.actorId,
-        tokenUuid: emitted.tokenUuid
-      });
-    }
+    for (const target of uniqueTargets) emitOpen(target);
+    // Re-emit after flag sync so a lost race cannot leave the player window closed.
+    setTimeout(() => {
+      for (const target of uniqueTargets) emitOpen(target);
+    }, 300);
   } else {
     log.warn("No connected player owners — opening locally for GM", {
       assignedActorId: actor.id
