@@ -5,12 +5,16 @@
  * sets canvas.tokens.hover and Token#_onClickLeft2 is permission-gated by
  * _canView. We patch those permissions for dead creatures.
  *
- * Only Token#_onClickLeft2 starts loot — no separate board dblclick listener,
- * which previously stacked with the Token handler and opened multiple sessions.
+ * Sheet access is preserved for:
+ * - GMs (always open the actor sheet on double-click)
+ * - Players who own the actor (including dead PCs)
+ *
+ * Loot only starts for dead unowned NPCs (player double-click).
  */
 
 import { isCreatureDead } from "../modules/creature-context.js";
 import { log } from "../modules/logger.js";
+import { userOwnsActor } from "../modules/ownership.js";
 import { lootBody } from "../modules/loot-workflow.js";
 
 let patched = false;
@@ -96,12 +100,41 @@ export function resolveTokenUnderPointer(event = null) {
 }
 
 /**
+ * Should this dead token open the actor sheet instead of starting loot?
+ * @param {Token} token
+ * @returns {boolean}
+ */
+function shouldOpenSheetInsteadOfLoot(token) {
+  // GMs always get the sheet — loot via HUD / Alt+L / scene control.
+  if (game.user.isGM) return true;
+
+  const actor = token?.actor;
+  if (!actor) return false;
+
+  // Dead PCs / owned actors: keep normal sheet access.
+  if (actor.type === "character") return true;
+  if (userOwnsActor(actor, game.user)) return true;
+  try {
+    if (typeof actor.testUserPermission === "function"
+      && actor.testUserPermission(game.user, "OWNER")) {
+      return true;
+    }
+  } catch {
+    // ignore
+  }
+  if (game.user.character?.id === actor.id) return true;
+
+  return false;
+}
+
+/**
  * @param {Token} token
  * @param {Event|null} [event]
  */
 async function tryLootDeadToken(token, event = null) {
   if (!token?.document || !token.actor) return false;
   if (!isCreatureDead(token.document, token.actor)) return false;
+  if (shouldOpenSheetInsteadOfLoot(token)) return false;
 
   event?.preventDefault?.();
   event?.stopPropagation?.();
@@ -169,7 +202,11 @@ function patchTokenDoubleClick() {
     proto._onClickLeft2 = function lootforgeOnClickLeft2(event) {
       try {
         if (isCreatureDead(this.document, this.actor)) {
-          // Prevent the actor sheet from opening for players.
+          if (shouldOpenSheetInsteadOfLoot(this)) {
+            // GM / owned actor — normal Foundry sheet open.
+            return proto._lootforgeOnClickLeft2.call(this, event);
+          }
+          // Unowned dead NPC — loot instead of sheet.
           event?.stopPropagation?.();
           void tryLootDeadToken(this, event);
           return;

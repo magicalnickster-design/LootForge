@@ -37,7 +37,16 @@ const DOC_IDS = Object.freeze({
   "wolf-fang": "LFWolfFang000001",
   "wolf-meat": "LFWolfMeat000001",
   "wolf-claw": "LFWolfClaw000001",
-  "alpha-wolf-fang": "LFAlphaFang00001"
+  "alpha-wolf-fang": "LFAlphaFang00001",
+  "spider-silk": "LFSpiderSilk0001",
+  "spider-fang": "LFSpiderFang0001",
+  "spider-venom-gland": "LFSpiderVenom001",
+  "spider-eye": "LFSpiderEye00001",
+  "salvaged-padded-armor": "LFSalvPadArm0001",
+  "salvaged-chain-shirt": "LFSalvChain00001",
+  "salvaged-scale-mail": "LFSalvScale00001",
+  "salvaged-breastplate": "LFSalvBreast0001",
+  "salvaged-plate-armor": "LFSalvPlate00001"
 });
 
 /**
@@ -119,6 +128,134 @@ export const LOOT_DEFINITIONS = {
       "An unusually large fang from a powerful wolf. Hunters value it as proof of a dangerous kill.",
     price: { value: 2, denomination: "gp" },
     weight: { value: 0.1, units: "lb" }
+  },
+
+  "spider-silk": {
+    id: "spider-silk",
+    documentId: DOC_IDS["spider-silk"],
+    itemUuid: compendiumItemUuid(DOC_IDS["spider-silk"]),
+    name: "Spider Silk",
+    category: "crafting-material",
+    rarity: "common",
+    tags: ["beast", "spider", "silk", "crafting"],
+    img: `modules/${MODULE_ID}/assets/items/spider-silk.svg`,
+    description:
+      "Tough, sticky silk harvested from a spider. Valued by weavers, alchemists, and trapmakers.",
+    price: { value: 5, denomination: "sp" },
+    weight: { value: 0.5, units: "lb" }
+  },
+  "spider-fang": {
+    id: "spider-fang",
+    documentId: DOC_IDS["spider-fang"],
+    itemUuid: compendiumItemUuid(DOC_IDS["spider-fang"]),
+    name: "Spider Fang",
+    category: "monster-part",
+    rarity: "common",
+    tags: ["beast", "spider", "fang", "trophy"],
+    img: `modules/${MODULE_ID}/assets/items/spider-fang.svg`,
+    description:
+      "A hollow fang capable of delivering venom. Useful as a trophy or for crude poison work.",
+    price: { value: 2, denomination: "sp" },
+    weight: { value: 0.1, units: "lb" }
+  },
+  "spider-venom-gland": {
+    id: "spider-venom-gland",
+    documentId: DOC_IDS["spider-venom-gland"],
+    itemUuid: compendiumItemUuid(DOC_IDS["spider-venom-gland"]),
+    name: "Spider Venom Gland",
+    category: "monster-part",
+    rarity: "uncommon",
+    tags: ["beast", "spider", "venom", "alchemy"],
+    img: `modules/${MODULE_ID}/assets/items/spider-venom-gland.svg`,
+    description:
+      "A small sac still holding diluted spider venom. Alchemists prize intact glands.",
+    price: { value: 1, denomination: "gp" },
+    weight: { value: 0.2, units: "lb" }
+  },
+  "spider-eye": {
+    id: "spider-eye",
+    documentId: DOC_IDS["spider-eye"],
+    itemUuid: compendiumItemUuid(DOC_IDS["spider-eye"]),
+    name: "Spider Eye",
+    category: "monster-part",
+    rarity: "common",
+    tags: ["beast", "spider", "eye", "alchemy"],
+    img: `modules/${MODULE_ID}/assets/items/spider-eye.svg`,
+    description:
+      "A glossy spider eye, sometimes used in potions or as a macabre curio.",
+    price: { value: 1, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+
+  "salvaged-padded-armor": {
+    id: "salvaged-padded-armor",
+    documentId: DOC_IDS["salvaged-padded-armor"],
+    itemUuid: compendiumItemUuid(DOC_IDS["salvaged-padded-armor"]),
+    name: "Salvaged Padded Armor",
+    category: "salvaged-armor",
+    rarity: "common",
+    tags: ["construct", "armor", "salvage", "light"],
+    img: `modules/${MODULE_ID}/assets/items/salvaged-padded-armor.svg`,
+    description:
+      "Battered padding pulled from animated armor. Barely serviceable as light protection (AC 11).",
+    price: { value: 5, denomination: "gp" },
+    weight: { value: 8, units: "lb" }
+  },
+  "salvaged-chain-shirt": {
+    id: "salvaged-chain-shirt",
+    documentId: DOC_IDS["salvaged-chain-shirt"],
+    itemUuid: compendiumItemUuid(DOC_IDS["salvaged-chain-shirt"]),
+    name: "Salvaged Chain Shirt",
+    category: "salvaged-armor",
+    rarity: "common",
+    tags: ["construct", "armor", "salvage", "medium"],
+    img: `modules/${MODULE_ID}/assets/items/salvaged-chain-shirt.svg`,
+    description:
+      "A usable chain shirt recovered from animated armor. Offers modest protection (AC 13).",
+    price: { value: 50, denomination: "gp" },
+    weight: { value: 20, units: "lb" }
+  },
+  "salvaged-scale-mail": {
+    id: "salvaged-scale-mail",
+    documentId: DOC_IDS["salvaged-scale-mail"],
+    itemUuid: compendiumItemUuid(DOC_IDS["salvaged-scale-mail"]),
+    name: "Salvaged Scale Mail",
+    category: "salvaged-armor",
+    rarity: "common",
+    tags: ["construct", "armor", "salvage", "medium"],
+    img: `modules/${MODULE_ID}/assets/items/salvaged-scale-mail.svg`,
+    description:
+      "Overlapping scales still fastened after the construct fell. Solid medium armor (AC 14).",
+    price: { value: 50, denomination: "gp" },
+    weight: { value: 45, units: "lb" }
+  },
+  "salvaged-breastplate": {
+    id: "salvaged-breastplate",
+    documentId: DOC_IDS["salvaged-breastplate"],
+    itemUuid: compendiumItemUuid(DOC_IDS["salvaged-breastplate"]),
+    name: "Salvaged Breastplate",
+    category: "salvaged-armor",
+    rarity: "uncommon",
+    tags: ["construct", "armor", "salvage", "medium"],
+    img: `modules/${MODULE_ID}/assets/items/salvaged-breastplate.svg`,
+    description:
+      "A well-kept breastplate salvaged from animated armor. Strong medium protection (AC 14).",
+    price: { value: 400, denomination: "gp" },
+    weight: { value: 20, units: "lb" }
+  },
+  "salvaged-plate-armor": {
+    id: "salvaged-plate-armor",
+    documentId: DOC_IDS["salvaged-plate-armor"],
+    itemUuid: compendiumItemUuid(DOC_IDS["salvaged-plate-armor"]),
+    name: "Salvaged Plate Armor",
+    category: "salvaged-armor",
+    rarity: "uncommon",
+    tags: ["construct", "armor", "salvage", "heavy"],
+    img: `modules/${MODULE_ID}/assets/items/salvaged-plate-armor.svg`,
+    description:
+      "Nearly intact plate recovered from a powerful animated construct. Heavy armor (AC 18).",
+    price: { value: 1500, denomination: "gp" },
+    weight: { value: 65, units: "lb" }
   }
 };
 

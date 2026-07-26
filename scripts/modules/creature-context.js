@@ -52,7 +52,8 @@ export function buildCreatureContext(actor, token, scene = null) {
   const size = String(resolvedActor?.system?.traits?.size ?? "med");
 
   const isDead = isCreatureDead(tokenDoc, resolvedActor);
-  const isWolf = nameLower.includes("wolf") || creatureSubtype.includes("wolf");
+  // True wolves only — not wolf spiders, werewolves, or worgs.
+  const isWolf = isActualWolf(nameLower, creatureSubtype);
   const isBeast = creatureType === "beast" || isWolf;
   const isNamed = looksNamed(name, creatureType);
   const isBoss = Boolean(details.legendary?.value) || /alpha|elder|ancient|dire/i.test(name);
@@ -101,6 +102,20 @@ export function isCreatureDead(tokenDoc, actor = null) {
 }
 
 /**
+ * @param {string} nameLower
+ * @param {string} subtypeLower
+ * @returns {boolean}
+ */
+function isActualWolf(nameLower, subtypeLower) {
+  const hay = `${nameLower} ${subtypeLower}`;
+  if (!/\bwolf\b/.test(hay)) return false;
+  if (/\bspider\b/.test(hay)) return false;
+  if (/\bwerewolf\b/.test(hay)) return false;
+  if (/\bworg\b/.test(hay)) return false;
+  return true;
+}
+
+/**
  * Heuristic: "Wolf" / "Wolf 3" are generic; "Fenrir" style names are named.
  * @param {string} name
  * @param {string} creatureType
@@ -113,7 +128,16 @@ function looksNamed(name, creatureType) {
   if (/^.+\s*\(?\d+\)?$/.test(trimmed)) return false;
   if (trimmed.toLowerCase() === creatureType) return false;
   // Single common noun often means SRD stock creature.
-  const stock = new Set(["wolf", "dire wolf", "worg"]);
+  const stock = new Set([
+    "wolf",
+    "dire wolf",
+    "worg",
+    "spider",
+    "giant spider",
+    "wolf spider",
+    "animated armor",
+    "animated armour"
+  ]);
   if (stock.has(trimmed.toLowerCase())) return false;
   return true;
 }

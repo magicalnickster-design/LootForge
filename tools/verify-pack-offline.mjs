@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.2.8") {
-  throw new Error(`Expected module version 0.2.8, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.4.8") {
+  throw new Error(`Expected module version 0.4.8, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -38,6 +38,23 @@ for (const [kind, ok] of Object.entries(requiredKinds)) {
   if (!ok) throw new Error(`packs/loot-items missing LevelDB component: ${kind}`);
 }
 
+const expectedNames = new Set([
+  "Wolf Pelt",
+  "Wolf Fang",
+  "Wolf Meat",
+  "Wolf Claw",
+  "Alpha Wolf Fang",
+  "Spider Silk",
+  "Spider Fang",
+  "Spider Venom Gland",
+  "Spider Eye",
+  "Salvaged Padded Armor",
+  "Salvaged Chain Shirt",
+  "Salvaged Scale Mail",
+  "Salvaged Breastplate",
+  "Salvaged Plate Armor"
+]);
+
 // Open a TEMPORARY copy so verification never dirties the release pack.
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
 try {
@@ -52,16 +69,11 @@ try {
   for await (const [, value] of db.iterator()) items.push(value);
   await db.close();
 
-  if (items.length !== 5) throw new Error(`Expected 5 pack items, found ${items.length}`);
+  if (items.length !== expectedNames.size) {
+    throw new Error(`Expected ${expectedNames.size} pack items, found ${items.length}`);
+  }
 
   const requiredFlagKeys = ["definitionId", "category", "rarity", "tags", "stackingKey"];
-  const expectedNames = new Set([
-    "Wolf Pelt",
-    "Wolf Fang",
-    "Wolf Meat",
-    "Wolf Claw",
-    "Alpha Wolf Fang"
-  ]);
   for (const item of items) {
     expectedNames.delete(item.name);
     if (item.type !== "loot") throw new Error(`${item.name} is not type loot`);
@@ -92,6 +104,7 @@ try {
 const { buildFallbackItemData, getLootDefinition, resolveItemDataForTransfer } = await import(
   "../scripts/data/loot-definitions.js"
 );
+const { resolveCreatureProfile } = await import("../scripts/data/creature-profiles.js");
 
 const legacyEntry = {
   entryId: "legacy1",
@@ -122,6 +135,27 @@ globalThis.fromUuid = async () => {
 const snapped = await resolveItemDataForTransfer(badUuidEntry, { quantity: 3 });
 if (snapped.system.quantity !== 3) throw new Error("Snapshot fallback quantity wrong");
 if (snapped._id) throw new Error("Snapshot clone must strip _id");
+
+// Profile resolution: wolf spider ≠ wolf; animated armor resolves.
+const wolf = resolveCreatureProfile({ name: "Wolf", creatureType: "beast", creatureSubtype: "" });
+const wolfSpider = resolveCreatureProfile({
+  name: "Wolf Spider",
+  creatureType: "beast",
+  creatureSubtype: ""
+});
+const armor = resolveCreatureProfile({
+  name: "Animated Armor",
+  creatureType: "construct",
+  creatureSubtype: ""
+});
+if (wolf?.id !== "wolf") throw new Error(`Expected wolf profile, got ${wolf?.id}`);
+if (wolfSpider?.id !== "spider") throw new Error(`Expected spider profile for Wolf Spider, got ${wolfSpider?.id}`);
+if (armor?.id !== "animated-armor") {
+  throw new Error(`Expected animated-armor profile, got ${armor?.id}`);
+}
+if (!getLootDefinition("spider-silk") || !getLootDefinition("salvaged-plate-armor")) {
+  throw new Error("Missing spider/armor loot definitions");
+}
 
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);

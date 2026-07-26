@@ -1,0 +1,53 @@
+{
+  "_id": "LFSalvPlate00001",
+  "name": "Salvaged Plate Armor",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/salvaged-plate-armor.svg",
+  "system": {
+    "description": {
+      "value": "<p>Nearly intact plate recovered from a powerful animated construct. Heavy armor (AC 18).</p>",
+      "chat": "Salvaged plate armor (AC 18)."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 65,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1500,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "salvaged-plate-armor",
+      "category": "salvaged-armor",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "armor",
+        "salvage",
+        "heavy"
+      ],
+      "stackingKey": "salvaged-plate-armor",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSalvPlate00001"
+}

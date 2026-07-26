@@ -1,0 +1,53 @@
+{
+  "_id": "LFSpiderSilk0001",
+  "name": "Spider Silk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/spider-silk.svg",
+  "system": {
+    "description": {
+      "value": "<p>Tough, sticky silk harvested from a spider. Valued by weavers, alchemists, and trapmakers.</p>",
+      "chat": "Spider silk for crafting."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "spider-silk",
+      "category": "crafting-material",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "spider",
+        "silk",
+        "crafting"
+      ],
+      "stackingKey": "spider-silk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSpiderSilk0001"
+}

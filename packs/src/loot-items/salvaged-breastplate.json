@@ -1,0 +1,53 @@
+{
+  "_id": "LFSalvBreast0001",
+  "name": "Salvaged Breastplate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/salvaged-breastplate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A well-kept breastplate salvaged from animated armor. Strong medium protection (AC 14).</p>",
+      "chat": "Salvaged breastplate (AC 14)."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 20,
+      "units": "lb"
+    },
+    "price": {
+      "value": 400,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "salvaged-breastplate",
+      "category": "salvaged-armor",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "armor",
+        "salvage",
+        "medium"
+      ],
+      "stackingKey": "salvaged-breastplate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSalvBreast0001"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFSpiderVenom001",
+  "name": "Spider Venom Gland",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/spider-venom-gland.svg",
+  "system": {
+    "description": {
+      "value": "<p>A small sac still holding diluted spider venom. Alchemists prize intact glands.</p>",
+      "chat": "A spider venom gland."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "spider-venom-gland",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "spider",
+        "venom",
+        "alchemy"
+      ],
+      "stackingKey": "spider-venom-gland",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSpiderVenom001"
+}

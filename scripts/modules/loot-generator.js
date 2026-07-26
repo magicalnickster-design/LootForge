@@ -1,5 +1,5 @@
 /**
- * Generate corpse loot entries from creature profiles + survival quality.
+ * Generate corpse loot entries from creature profiles + survival/investigation quality.
  */
 
 import {
@@ -11,8 +11,10 @@ import { resolveCreatureProfile } from "../data/creature-profiles.js";
 import { getSetting } from "./settings.js";
 import { log } from "./logger.js";
 
+const QUALITY_ORDER = ["poor", "standard", "good", "excellent", "exceptional"];
+
 /**
- * Map a survival total to roll quality.
+ * Map a skill total to roll quality.
  * @param {number} total
  * @returns {string}
  */
@@ -23,6 +25,33 @@ export function qualityFromSurvivalTotal(total) {
   if (n >= 15) return "good";
   if (n >= 10) return "standard";
   return "poor";
+}
+
+/**
+ * @param {string} quality
+ * @param {number} [steps=1]
+ * @returns {string}
+ */
+function bumpQuality(quality, steps = 1) {
+  const idx = QUALITY_ORDER.indexOf(quality);
+  if (idx < 0) return quality;
+  return QUALITY_ORDER[Math.min(idx + steps, QUALITY_ORDER.length - 1)];
+}
+
+/**
+ * Resolve which definition a drop uses for a given quality.
+ * @param {object} drop
+ * @param {string} rollQuality
+ * @returns {string|null}
+ */
+function resolveDropDefinitionId(drop, rollQuality) {
+  if (drop?.definitionByQuality) {
+    return drop.definitionByQuality[rollQuality]
+      ?? drop.definitionByQuality.standard
+      ?? Object.values(drop.definitionByQuality)[0]
+      ?? null;
+  }
+  return drop?.definitionId ?? null;
 }
 
 function randomInt(min, max) {
@@ -43,7 +72,8 @@ function chanceSucceeds(chance) {
   return rand < chance;
 }
 
-function applyContextQuantityBonus(qty, context) {
+function applyContextQuantityBonus(qty, context, { allowBonus = true } = {}) {
+  if (!allowBonus) return Math.max(0, qty);
   let result = qty;
   if (context?.size === "lg" || context?.size === "huge") result += 1;
   if (context?.isBoss || context?.isNamed) {
@@ -102,9 +132,11 @@ export async function generateCreatureLoot({
 
   let rollQuality = qualityFromSurvivalTotal(survivalTotal);
   if (context?.isBoss || (context?.isNamed && context?.isWolf)) {
-    const order = ["poor", "standard", "good", "excellent", "exceptional"];
-    const idx = Math.min(order.indexOf(rollQuality) + 1, order.length - 1);
-    rollQuality = order[idx];
+    rollQuality = bumpQuality(rollQuality, 1);
+  }
+  // Nat 20 Investigation on quality-tiered salvage (e.g. animated armor) bumps the tier.
+  if (isNatural20 && profile.drops?.some((d) => d.definitionByQuality)) {
+    rollQuality = bumpQuality(rollQuality, 1);
   }
 
   const enableRare = getSetting("enableRareDrops");
@@ -115,17 +147,23 @@ export async function generateCreatureLoot({
   for (const drop of profile.drops) {
     if (drop.rare && !enableRare) continue;
 
+    const definitionId = resolveDropDefinitionId(drop, rollQuality);
+    if (!definitionId) continue;
+
     const range = drop.quantityByQuality?.[rollQuality] ?? [0, 0];
     const chance = drop.chanceByQuality?.[rollQuality] ?? 1;
-    if (drop.guaranteedFallback) fallbackDefs.push(drop.definitionId);
+    if (drop.guaranteedFallback) fallbackDefs.push(definitionId);
 
     if (!chanceSucceeds(chance)) continue;
 
+    const fixedSingle = Boolean(drop.definitionByQuality)
+      || (range[0] === 1 && range[1] === 1);
     let qty = randomInt(range[0], range[1]);
-    qty = applyContextQuantityBonus(qty, context);
-    if (isNatural20 && qty > 0) qty += 1;
+    qty = applyContextQuantityBonus(qty, context, { allowBonus: !fixedSingle });
+    if (isNatural20 && qty > 0 && !drop.definitionByQuality) qty += 1;
+    if (drop.definitionByQuality) qty = Math.min(1, Math.max(0, qty));
 
-    const entry = await buildLootEntry(drop.definitionId, qty);
+    const entry = await buildLootEntry(definitionId, qty);
     if (entry) items.push(entry);
   }
 
@@ -134,9 +172,10 @@ export async function generateCreatureLoot({
     if (entry) items.push(entry);
   }
 
-  if (isNatural20 && !items.some((i) => i.definitionId === "wolf-fang")) {
-    const fang = await buildLootEntry("wolf-fang", 1);
-    if (fang) items.push(fang);
+  const nat20BonusId = profile.nat20BonusDefinitionId;
+  if (isNatural20 && nat20BonusId && !items.some((i) => i.definitionId === nat20BonusId)) {
+    const bonus = await buildLootEntry(nat20BonusId, 1);
+    if (bonus) items.push(bonus);
   }
 
   log.debug("Generated loot", {
@@ -166,18 +205,28 @@ export async function generateCreatureLoot({
  */
 export async function rerollSingleEntry(context, rollQuality, definitionId) {
   const profile = resolveCreatureProfile(context);
-  const drop = profile?.drops?.find((d) => d.definitionId === definitionId);
+  const drop = profile?.drops?.find((d) => {
+    if (d.definitionId === definitionId) return true;
+    if (d.definitionByQuality) {
+      return Object.values(d.definitionByQuality).includes(definitionId);
+    }
+    return false;
+  });
   if (!drop) return buildLootEntry(definitionId, 1);
 
   if (drop.rare && !getSetting("enableRareDrops")) return null;
 
+  const resolvedId = resolveDropDefinitionId(drop, rollQuality) ?? definitionId;
   const range = drop.quantityByQuality?.[rollQuality] ?? [1, 1];
   const chance = drop.chanceByQuality?.[rollQuality] ?? 1;
   if (!chanceSucceeds(Math.max(chance, 0.35))) {
     const min = range[0];
     if (min <= 0) return null;
   }
+  const fixedSingle = Boolean(drop.definitionByQuality)
+    || (range[0] === 1 && range[1] === 1);
   let qty = randomInt(Math.max(1, range[0]), Math.max(1, range[1]));
-  qty = applyContextQuantityBonus(qty, context);
-  return buildLootEntry(definitionId, qty);
+  qty = applyContextQuantityBonus(qty, context, { allowBonus: !fixedSingle });
+  if (drop.definitionByQuality) qty = 1;
+  return buildLootEntry(resolvedId, qty);
 }

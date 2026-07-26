@@ -1,0 +1,53 @@
+{
+  "_id": "LFSalvChain00001",
+  "name": "Salvaged Chain Shirt",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/salvaged-chain-shirt.svg",
+  "system": {
+    "description": {
+      "value": "<p>A usable chain shirt recovered from animated armor. Offers modest protection (AC 13).</p>",
+      "chat": "Salvaged chain shirt (AC 13)."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 20,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "salvaged-chain-shirt",
+      "category": "salvaged-armor",
+      "rarity": "common",
+      "tags": [
+        "construct",
+        "armor",
+        "salvage",
+        "medium"
+      ],
+      "stackingKey": "salvaged-chain-shirt",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSalvChain00001"
+}

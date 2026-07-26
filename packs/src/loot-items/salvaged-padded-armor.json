@@ -1,0 +1,53 @@
+{
+  "_id": "LFSalvPadArm0001",
+  "name": "Salvaged Padded Armor",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/salvaged-padded-armor.svg",
+  "system": {
+    "description": {
+      "value": "<p>Battered padding pulled from animated armor. Barely serviceable as light protection (AC 11).</p>",
+      "chat": "Salvaged padded armor (AC 11)."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "salvaged-padded-armor",
+      "category": "salvaged-armor",
+      "rarity": "common",
+      "tags": [
+        "construct",
+        "armor",
+        "salvage",
+        "light"
+      ],
+      "stackingKey": "salvaged-padded-armor",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSalvPadArm0001"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFSalvScale00001",
+  "name": "Salvaged Scale Mail",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/salvaged-scale-mail.svg",
+  "system": {
+    "description": {
+      "value": "<p>Overlapping scales still fastened after the construct fell. Solid medium armor (AC 14).</p>",
+      "chat": "Salvaged scale mail (AC 14)."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 45,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "salvaged-scale-mail",
+      "category": "salvaged-armor",
+      "rarity": "common",
+      "tags": [
+        "construct",
+        "armor",
+        "salvage",
+        "medium"
+      ],
+      "stackingKey": "salvaged-scale-mail",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSalvScale00001"
+}
