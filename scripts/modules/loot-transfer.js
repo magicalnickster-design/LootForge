@@ -313,6 +313,11 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
         : {})
     });
 
+    if (empty) {
+      const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
+      await syncLootedCorpseVisibility(tokenDoc);
+    }
+
     log.info(`Transferred ${takeQty}× ${entry.name} → ${actor.name}`);
     return { ok: true, state: nextState };
   } catch (err) {
@@ -365,6 +370,9 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
       assignedUserId: null,
       freeForAll: false
     });
+
+    const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
+    await syncLootedCorpseVisibility(tokenDoc);
 
     log.info(`Take All → ${actor.name} from ${tokenDoc.name}`);
     return { ok: true, state };
@@ -425,6 +433,11 @@ export async function depositRemainingToCorpse(tokenDoc, user = game.user) {
       looted: !stillHas,
       lootedAt: stillHas ? null : Date.now()
     });
+
+    if (!stillHas) {
+      const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
+      await syncLootedCorpseVisibility(tokenDoc);
+    }
 
     log.info(`Loot session closed: free-for-all=${stillHas}, remaining=${remaining.length}`, tokenDoc.uuid);
     return {

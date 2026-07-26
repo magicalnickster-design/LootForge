@@ -51,5 +51,5 @@ export const OPS = Object.freeze({
 /** Looting always uses Investigation — never Survival or another skill. */
 export const LOOT_SKILL = "inv";
 
-/** Bundled loot-bag icon for the canvas overlay. */
+/** Bundled loot-bag icon (player window chrome / item fallbacks). */
 export const LOOT_BAG_ICON = `modules/${MODULE_ID}/assets/ui/loot-bag.svg`;

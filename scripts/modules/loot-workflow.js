@@ -649,6 +649,8 @@ export async function resetCorpseLoot(tokenDoc) {
     return;
   }
   await clearCorpseState(tokenDoc);
+  const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
+  await syncLootedCorpseVisibility(tokenDoc);
   await syncLootIndicator(tokenDoc);
   ui.notifications.info(game.i18n.format("LOOTFORGE.Notify.FlagReset", { name: tokenDoc.name }));
 }
