@@ -7,7 +7,7 @@ import { MODULE_ID } from "../modules/constants.js";
 import { generateCreatureLoot, rerollSingleEntry } from "../modules/loot-generator.js";
 import { log } from "../modules/logger.js";
 import { getLooterCandidates } from "../modules/looter-selection.js";
-import { assignLootToActor, broadcastStateUpdated } from "../modules/socket-manager.js";
+import { broadcastStateUpdated, releaseLootForEveryone } from "../modules/socket-manager.js";
 import {
   getCorpseState,
   setCorpseState,
@@ -127,6 +127,19 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _onClose(options) {
     unregisterLootWindow(this.#tokenDoc.uuid, this);
+
+    // Closing the review releases loot for every player (free-for-all).
+    if (game.user.isGM) {
+      const state = getCorpseState(this.#tokenDoc);
+      if (state.generated && !state.dmApproved && (state.items?.length || state.pendingReview)) {
+        try {
+          await releaseLootForEveryone(this.#tokenDoc);
+        } catch (err) {
+          log.warn("Failed to release loot on DM Review close", err);
+        }
+      }
+    }
+
     return super._onClose(options);
   }
 
@@ -271,24 +284,15 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
     event.preventDefault();
     const app = this;
     await app.#withBusy(async () => {
-      const select = app.element.querySelector('[name="looterId"]');
-      const actorId = select?.value || app.#selectedActorId;
-      const actor = game.actors.get(actorId);
-      if (!actor) {
-        ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.CharacterMissing"));
-        return;
-      }
       const state = getCorpseState(app.#tokenDoc);
       if (!state.items?.length) {
         ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoItemsToAssign"));
         return;
       }
 
-      // Save & Close: release loot to the chosen player (WoW window opens for them).
-      await assignLootToActor(app.#tokenDoc, actor);
-      ui.notifications.info(
-        game.i18n.format("LOOTFORGE.Notify.LootReleasedToPlayer", { name: actor.name })
-      );
+      // Save & Close: release shared loot — players double-click to open the WoW window.
+      await releaseLootForEveryone(app.#tokenDoc);
+      // Mark approved before close so _onClose does not double-release.
       await app.close();
     });
   }

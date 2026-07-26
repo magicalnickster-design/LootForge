@@ -73,14 +73,7 @@
     </div>
   </div>
 
-  <div class="form-group lootforge-assign-row">
-    <label for="lootforge-dm-looter">{{localize "LOOTFORGE.Dialog.ChooseLooter"}}</label>
-    <select id="lootforge-dm-looter" name="looterId">
-      {{#each candidates}}
-      <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
-      {{/each}}
-    </select>
-  </div>
+  <p class="lootforge-assign-hint">{{localize "LOOTFORGE.DM.SaveAndCloseHint"}}</p>
 
   <footer class="lootforge-footer">
     <button type="button" data-action="cancel">{{localize "LOOTFORGE.Dialog.Close"}}</button>

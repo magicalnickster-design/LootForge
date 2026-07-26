@@ -13,6 +13,7 @@ import {
 import {
   canUserModifyToken,
   getCorpseState,
+  hasRemainingLoot,
   updateCorpseState
 } from "./loot-storage.js";
 import {
@@ -649,11 +650,7 @@ async function onRequestInvestigationRoll(payload) {
     return;
   }
 
-  // Chat button instead of a DialogV2 popup.
-  const { postInvestigationPromptChat } = await import("./loot-chat.js");
-  await postInvestigationPromptChat(tokenDoc, actor, game.user);
-
-  // Resolve the GM waiter without a modal — GM uses the Generate Loot chat card after the roll.
+  // Players auto-roll via double-click now — ignore legacy remote Investigation prompts.
   emitLootForge({
     op: OPS.INVESTIGATION_ROLL_RESULT,
     requestId: payload.requestId,
@@ -679,6 +676,46 @@ function onInvestigationRollResult(payload) {
     natural: Number(payload.naturalDie ?? 0),
     isNatural20: Boolean(payload.isNatural20)
   });
+}
+
+/**
+ * GM finished reviewing — release corpse loot for every player (shared free-for-all).
+ * Does not auto-open player windows; players double-click to loot.
+ * @param {TokenDocument} tokenDoc
+ */
+export async function releaseLootForEveryone(tokenDoc) {
+  if (!game.user.isGM) {
+    throw new Error("Only a GM may release loot");
+  }
+
+  if (!hasRemainingLoot(tokenDoc)) {
+    await updateCorpseState(tokenDoc, {
+      pendingReview: false,
+      dmApproved: true,
+      freeForAll: false,
+      pendingInvestigation: null
+    });
+    broadcastStateUpdated(tokenDoc.uuid);
+    return { ok: true, empty: true };
+  }
+
+  await updateCorpseState(tokenDoc, {
+    pendingReview: false,
+    dmApproved: true,
+    freeForAll: true,
+    activeLooterUserId: null,
+    activeLooterActorId: null,
+    activeLooterName: null,
+    assignedActorId: null,
+    assignedUserId: null,
+    pendingInvestigation: null,
+    looted: false
+  });
+
+  broadcastStateUpdated(tokenDoc.uuid);
+  ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootOpenForAll"));
+  log.info("Released loot for everyone (free-for-all)", { tokenUuid: tokenDoc.uuid });
+  return { ok: true, freeForAll: true };
 }
 
 /**

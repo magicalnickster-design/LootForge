@@ -89,8 +89,8 @@ export function canUserLootCorpse(tokenDoc, user = game.user) {
   // DM still editing / approving loot.
   if (isAwaitingDmReview(state)) return false;
 
-  // Shared leftover phase — any player may open/take.
-  if (state.freeForAll) return true;
+  // Shared loot after DM review — any player may open/take.
+  if (state.freeForAll || state.dmApproved) return true;
 
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
     return false;
