@@ -32,8 +32,10 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(tokenDoc, options = {}) {
     super(options);
     this.#tokenDoc = tokenDoc;
+    const state = getCorpseState(tokenDoc);
     this.#selectedActorId = options.initialRollerId
-      ?? getCorpseState(tokenDoc).assignedActorId
+      ?? state.pendingLooterActorId
+      ?? state.assignedActorId
       ?? null;
   }
 
@@ -282,9 +284,10 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
         return;
       }
 
+      // Save & Close: release loot to the chosen player (WoW window opens for them).
       await assignLootToActor(app.#tokenDoc, actor);
       ui.notifications.info(
-        game.i18n.format("LOOTFORGE.Notify.Assigned", { name: actor.name })
+        game.i18n.format("LOOTFORGE.Notify.LootReleasedToPlayer", { name: actor.name })
       );
       await app.close();
     });

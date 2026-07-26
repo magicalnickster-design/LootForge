@@ -33,6 +33,11 @@ import { log } from "./logger.js";
  * @property {string|null} activeLooterUserId
  * @property {string|null} activeLooterActorId
  * @property {string|null} activeLooterName
+ * @property {boolean} pendingReview  Loot generated; waiting for DM Save & Close
+ * @property {boolean} dmApproved     DM released loot to players
+ * @property {boolean} freeForAll     After first looter closes — anyone may loot leftovers together
+ * @property {string|null} pendingLooterActorId
+ * @property {string|null} pendingLooterUserId
  * @property {CorpseLootItem[]} items
  * @property {object} currency
  * @property {boolean} looted
@@ -55,6 +60,11 @@ export function emptyCorpseState() {
     activeLooterUserId: null,
     activeLooterActorId: null,
     activeLooterName: null,
+    pendingReview: false,
+    dmApproved: false,
+    freeForAll: false,
+    pendingLooterActorId: null,
+    pendingLooterUserId: null,
     items: [],
     currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     looted: false,
@@ -176,12 +186,24 @@ export function getActiveLooterUser(state) {
 
 /**
  * Active looter lock is held by a still-connected user.
+ * Free-for-all leftovers are never exclusive.
  * @param {CorpseLootState} state
  * @returns {boolean}
  */
 export function isLootSessionLocked(state) {
+  if (state?.freeForAll) return false;
+  if (state?.pendingReview && !state?.dmApproved) return false;
   const user = getActiveLooterUser(state);
   return Boolean(user?.active);
+}
+
+/**
+ * Loot exists but DM has not released it yet.
+ * @param {CorpseLootState} state
+ * @returns {boolean}
+ */
+export function isAwaitingDmReview(state) {
+  return Boolean(state?.pendingReview && !state?.dmApproved);
 }
 
 /**

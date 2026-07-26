@@ -81,6 +81,13 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
   if (user.isGM) return true;
 
   const state = getCorpseState(tokenDoc);
+  if (state.pendingReview && !state.dmApproved) return false;
+
+  // Shared leftovers: any player may take into their own character.
+  if (state.freeForAll) {
+    return userOwnsActor(actor, user) || user.character?.id === actor.id;
+  }
+
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
     return false;
   }
@@ -169,6 +176,20 @@ export async function claimLootSession(tokenDoc, user, actor, { force = false } 
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
   }
 
+  if (state.pendingReview && !state.dmApproved && !force) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
+  }
+
+  // Shared leftover phase — no exclusive lock; multiple players may view/take.
+  if (state.freeForAll && !force) {
+    log.info("Joined free-for-all loot session", {
+      tokenUuid: tokenDoc.uuid,
+      userId: user.id,
+      actorId: actor.id
+    });
+    return { ok: true, state, shared: true };
+  }
+
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id && !force) {
     const name = state.activeLooterName
       || game.users.get(state.activeLooterUserId)?.name
@@ -185,6 +206,9 @@ export async function claimLootSession(tokenDoc, user, actor, { force = false } 
     activeLooterName: actor.name,
     assignedActorId: actor.id,
     assignedUserId: user.id,
+    pendingReview: false,
+    dmApproved: true,
+    freeForAll: false,
     looted: false
   });
 
@@ -283,7 +307,8 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
           activeLooterActorId: null,
           activeLooterName: null,
           assignedActorId: null,
-          assignedUserId: null
+          assignedUserId: null,
+          freeForAll: false
         }
         : {})
     });
@@ -337,7 +362,8 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
       activeLooterActorId: null,
       activeLooterName: null,
       assignedActorId: null,
-      assignedUserId: null
+      assignedUserId: null,
+      freeForAll: false
     });
 
     log.info(`Take All → ${actor.name} from ${tokenDoc.name}`);
@@ -354,8 +380,8 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
 }
 
 /**
- * Leave loot window: deposit leftovers onto the corpse actor and free the session
- * so another player can loot (WoW-style).
+ * Leave loot window: unlock leftovers for every player (shared pool stays in
+ * the window item list so open UIs stay live-synced).
  *
  * @param {TokenDocument} tokenDoc
  * @param {User} [user]
@@ -369,45 +395,44 @@ export async function depositRemainingToCorpse(tokenDoc, user = game.user) {
   try {
     const state = getCorpseState(tokenDoc);
     if (!user.isGM) {
+      // Free-for-all viewers just close locally — do not disturb the shared pool.
+      if (state.freeForAll) {
+        return { ok: true, state, deposited: 0, freeForAll: true, noop: true };
+      }
       if (state.activeLooterUserId && state.activeLooterUserId !== user.id) {
         return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
       }
       if (!canUserLootCorpse(tokenDoc, user) && state.activeLooterUserId !== user.id) {
-        // Still allow release if they held the session.
         if (state.activeLooterUserId !== user.id) {
           return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
         }
       }
     }
 
-    const corpseActor = tokenDoc.actor;
-    if (!corpseActor) {
-      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
-    }
+    const remaining = (state.items ?? []).filter((i) => Number(i.quantity) > 0);
+    const stillHas = remaining.length > 0 || corpseHasInventoryLoot(tokenDoc);
 
-    let deposited = 0;
-    const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
-    for (const entry of [...(state.items ?? [])]) {
-      if (entry.quantity <= 0) continue;
-      await grantEntryToActor(corpseActor, entry, sourceCreature);
-      deposited += 1;
-    }
-
-    const stillHasInventory = deposited > 0 || corpseHasInventoryLoot(tokenDoc);
+    // Keep items in the shared window pool so multiple players can loot live.
     const nextState = await updateCorpseState(tokenDoc, {
-      items: [],
-      looted: !stillHasInventory,
-      lootedAt: stillHasInventory ? null : Date.now(),
       activeLooterUserId: null,
       activeLooterActorId: null,
       activeLooterName: null,
-      // Free the corpse for the next player (WoW free-for-all leftovers).
       assignedActorId: null,
-      assignedUserId: null
+      assignedUserId: null,
+      pendingReview: false,
+      dmApproved: true,
+      freeForAll: stillHas,
+      looted: !stillHas,
+      lootedAt: stillHas ? null : Date.now()
     });
 
-    log.info(`Loot session closed: deposited ${deposited} → ${corpseActor.name}`, tokenDoc.uuid);
-    return { ok: true, state: nextState, deposited };
+    log.info(`Loot session closed: free-for-all=${stillHas}, remaining=${remaining.length}`, tokenDoc.uuid);
+    return {
+      ok: true,
+      state: nextState,
+      deposited: remaining.length,
+      freeForAll: stillHas
+    };
   } catch (err) {
     log.error("depositRemainingToCorpse failed", err);
     return {

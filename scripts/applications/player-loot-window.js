@@ -144,6 +144,10 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     this.#sessionReleased = true;
 
     const state = getCorpseState(this.#tokenDoc);
+
+    // Free-for-all viewers just leave — leftovers stay in the shared live pool.
+    if (state.freeForAll) return;
+
     const isActive = game.user.isGM
       || state.activeLooterUserId === game.user.id
       || state.assignedUserId === game.user.id;
@@ -153,7 +157,9 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
 
     try {
       const result = await requestDoneLoot(this.#tokenDoc);
-      if (result?.ok && !result.pending && result.deposited > 0) {
+      if (result?.ok && !result.pending && result.freeForAll && result.deposited > 0) {
+        ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootOpenForAll"));
+      } else if (result?.ok && !result.pending && result.deposited > 0) {
         ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootDeposited"));
       }
     } catch (err) {

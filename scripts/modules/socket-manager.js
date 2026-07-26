@@ -2,7 +2,7 @@
  * GM-authoritative socket layer for corpse loot assignment and takes.
  */
 
-import { MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
+import { CORPSE_FLAG, MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
 import { log } from "./logger.js";
 import {
   canUserAccessAssignedLoot,
@@ -53,6 +53,17 @@ export function registerSocketManager() {
     }
   });
 
+  // Live-sync open loot windows whenever corpse flags change (multi-client).
+  Hooks.on("updateToken", (tokenDoc, changes) => {
+    const flagPath = `flags.${MODULE_ID}.${CORPSE_FLAG}`;
+    if (!foundry.utils.hasProperty(changes, flagPath)
+      && !foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`)) {
+      return;
+    }
+    refreshLootWindows(tokenDoc.uuid);
+    void refreshIndicatorsSafe(tokenDoc.uuid);
+  });
+
   log.debug("Socket manager registered");
 }
 
@@ -79,6 +90,33 @@ export function broadcastStateUpdated(tokenUuid) {
 }
 
 /**
+ * Remote clients: wait briefly for flag replication, then refresh open loot UIs.
+ * @param {object} payload
+ */
+async function onStateUpdated(payload) {
+  if (payload.error && payload.targetUserId === game.user.id) {
+    ui.notifications.warn(payload.error);
+  }
+  const tokenUuid = payload.tokenUuid;
+  if (!tokenUuid) return;
+
+  // Immediate pass (local GM often already has the update).
+  refreshLootWindows(tokenUuid);
+
+  // Second pass after document sync so other players see takes live.
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  try {
+    await fromUuid(tokenUuid);
+  } catch {
+    // ignore
+  }
+  refreshLootWindows(tokenUuid);
+  await new Promise((resolve) => setTimeout(resolve, 200));
+  refreshLootWindows(tokenUuid);
+  await refreshIndicatorsSafe(tokenUuid);
+}
+
+/**
  * @param {string} [tokenUuid]
  */
 async function refreshIndicatorsSafe(tokenUuid) {
@@ -99,11 +137,7 @@ async function handleSocketPayload(payload) {
 
   switch (op) {
     case OPS.STATE_UPDATED:
-      refreshLootWindows(payload.tokenUuid);
-      await refreshIndicatorsSafe(payload.tokenUuid);
-      if (payload.error && payload.targetUserId === game.user.id) {
-        ui.notifications.warn(payload.error);
-      }
+      await onStateUpdated(payload);
       return;
 
     case OPS.OPEN_PLAYER_WINDOW:
@@ -723,13 +757,31 @@ export async function assignLootToActor(tokenDoc, actor, user = null) {
         assignedUserId: assignedUser.id,
         activeLooterUserId: assignedUser.id,
         activeLooterActorId: actor.id,
-        activeLooterName: actor.name
+        activeLooterName: actor.name,
+        pendingReview: false,
+        dmApproved: true,
+        freeForAll: false,
+        pendingLooterActorId: null,
+        pendingLooterUserId: null
+      });
+    } else {
+      await updateCorpseState(tokenDoc, {
+        pendingReview: false,
+        dmApproved: true,
+        freeForAll: false,
+        pendingLooterActorId: null,
+        pendingLooterUserId: null
       });
     }
   } else {
     await updateCorpseState(tokenDoc, {
       assignedActorId: actor.id,
-      assignedUserId: null
+      assignedUserId: null,
+      pendingReview: false,
+      dmApproved: true,
+      freeForAll: false,
+      pendingLooterActorId: null,
+      pendingLooterUserId: null
     });
   }
 

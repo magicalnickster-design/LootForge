@@ -31,7 +31,7 @@ export function registerSettings() {
       key: "allowAllPlayersToLoot",
       name: "LOOTFORGE.Settings.AllowAllPlayersToLoot.Name",
       hint: "LOOTFORGE.Settings.AllowAllPlayersToLoot.Hint",
-      default: false
+      default: true
     },
     {
       key: "allowPlayerRequestLoot",

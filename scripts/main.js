@@ -56,5 +56,5 @@ Hooks.once("ready", () => {
     }
   };
 
-  log.info(`Ready v0.2.9 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.3.0 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

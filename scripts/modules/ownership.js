@@ -7,6 +7,7 @@ import {
   corpseHasInventoryLoot,
   getCorpseState,
   hasRemainingLoot,
+  isAwaitingDmReview,
   isLootSessionLocked
 } from "./loot-storage.js";
 
@@ -74,7 +75,7 @@ export function canUserAccessAssignedLoot(state, user = game.user) {
 }
 
 /**
- * WoW-style access: one active looter at a time; free-for-all leftovers when unlocked.
+ * WoW-style access: exclusive first looter, then free-for-all leftovers.
  * @param {TokenDocument} tokenDoc
  * @param {User} [user]
  */
@@ -84,19 +85,25 @@ export function canUserLootCorpse(tokenDoc, user = game.user) {
   if (!hasRemainingLoot(tokenDoc)) return false;
 
   const state = getCorpseState(tokenDoc);
+
+  // DM still editing / approving loot.
+  if (isAwaitingDmReview(state)) return false;
+
+  // Shared leftover phase — any player may open/take.
+  if (state.freeForAll) return true;
+
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
     return false;
   }
 
-  // Free-for-all mode: any player may claim when unlocked.
-  if (getSetting("allowAllPlayersToLoot")) return true;
+  // Allow-all worlds: after DM approval, any player may open when unlocked.
+  if (getSetting("allowAllPlayersToLoot") && state.dmApproved) return true;
 
   // Currently assigned / claimed session.
   if (state.activeLooterUserId === user.id) return true;
   if (canUserAccessAssignedLoot(state, user)) return true;
 
-  // WoW leftovers: after a looter leaves, remaining items sit on the corpse
-  // inventory with no assignee — any player may claim the next session.
+  // Leftovers on corpse inventory with no exclusive lock.
   if (!state.assignedActorId && !state.activeLooterUserId && corpseHasInventoryLoot(tokenDoc)) {
     return true;
   }
@@ -110,6 +117,8 @@ export function canUserLootCorpse(tokenDoc, user = game.user) {
  * @returns {string|null} localization key or null if free
  */
 export function getLootBusyReasonKey(state, user = game.user) {
+  if (isAwaitingDmReview(state)) return "LOOTFORGE.Notify.WaitingForGM";
+  if (state?.freeForAll) return null;
   if (!isLootSessionLocked(state)) return null;
   if (state.activeLooterUserId === user?.id) return null;
   return "LOOTFORGE.Notify.LootBusy";

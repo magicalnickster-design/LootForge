@@ -23,6 +23,7 @@ import {
   clearCorpseState,
   getCorpseState,
   hasRemainingLoot,
+  isAwaitingDmReview,
   isCorpseLooted,
   isLootGenerated,
   isLootSessionLocked,
@@ -140,7 +141,10 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
     const result = await requestPlayerStartLoot(tokenDoc, looter, { investigationRoll });
     if (!result.ok && result.error) {
       ui.notifications.warn(result.error);
+      return;
     }
+    // Player waits — DM Review must Save & Close before the WoW window opens.
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
     return;
   }
 
@@ -162,8 +166,16 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
  */
 async function openExistingLoot(tokenDoc, state) {
   if (game.user.isGM) {
-    // If a player already holds the session, open DM review instead of fighting the lock.
-    if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
+    // Still in DM Review phase — always open the review window.
+    if (isAwaitingDmReview(state)) {
+      await openDmLootReview(tokenDoc, {
+        initialRollerId: state.pendingLooterActorId ?? state.assignedActorId
+      });
+      return;
+    }
+
+    // If a player already holds the exclusive session, open DM review instead of fighting the lock.
+    if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id && !state.freeForAll) {
       ui.notifications.info(
         game.i18n.format("LOOTFORGE.Notify.LootBusy", {
           name: state.activeLooterName
@@ -175,7 +187,7 @@ async function openExistingLoot(tokenDoc, state) {
       return;
     }
 
-    if (state.activeLooterUserId || state.assignedActorId || getSetting("allowAllPlayersToLoot")) {
+    if (state.freeForAll || state.activeLooterUserId || state.assignedActorId || getSetting("allowAllPlayersToLoot")) {
       const looter = game.actors.get(state.activeLooterActorId)
         ?? game.actors.get(state.assignedActorId)
         ?? game.user.character
@@ -196,8 +208,14 @@ async function openExistingLoot(tokenDoc, state) {
     return;
   }
 
+  // Players must wait while the DM finishes generating / editing loot.
+  if (isAwaitingDmReview(state)) {
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
+    return;
+  }
+
   // Active looter can always reopen their window (fixes stuck "already looting" with no UI).
-  if (state.activeLooterUserId === game.user.id || canUserAccessAssignedLoot(state, game.user)) {
+  if (state.activeLooterUserId === game.user.id || canUserAccessAssignedLoot(state, game.user) || state.freeForAll) {
     const looter = game.actors.get(state.activeLooterActorId)
       ?? game.actors.get(state.assignedActorId)
       ?? game.user.character
@@ -296,7 +314,8 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   roller = null,
   openReview = true,
   investigationRoll = null,
-  preferRemotePlayer = true
+  preferRemotePlayer = true,
+  pendingLooterUserId = null
 } = {}) {
   const context = buildCreatureContext(creature, tokenDoc);
   const profile = resolveCreatureProfile(context);
@@ -332,6 +351,12 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     isNatural20
   });
 
+  const rollerOwners = resolveAssignedOwnerUsers(resolvedRoller, { activeOnly: true });
+  const pendingUserId = pendingLooterUserId
+    ?? rollerOwners[0]?.id
+    ?? null;
+
+  // Generated loot stays locked until the DM hits Save & Close.
   const state = await setCorpseState(tokenDoc, {
     generated: true,
     generatedAt: Date.now(),
@@ -348,6 +373,11 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     activeLooterUserId: null,
     activeLooterActorId: null,
     activeLooterName: null,
+    pendingReview: true,
+    dmApproved: false,
+    freeForAll: false,
+    pendingLooterActorId: resolvedRoller.id,
+    pendingLooterUserId: pendingUserId,
     looted: false,
     lootedAt: null
   });
@@ -490,7 +520,7 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
       };
       const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
 
-      // Always open DM Review so the GM sees what was rolled/generated.
+      // Generate + open DM Review only. Player window waits for Save & Close.
       await generateLootForCorpse(
         token ?? { document: tokenDoc, actor: tokenDoc.actor },
         tokenDoc,
@@ -499,7 +529,8 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
           roller: actor,
           openReview: true,
           investigationRoll,
-          preferRemotePlayer: false
+          preferRemotePlayer: false,
+          pendingLooterUserId: user.id
         }
       );
 
@@ -519,6 +550,8 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
         }),
         speaker: { alias: "LootForge" }
       }).catch(() => undefined);
+
+      return { ok: true, awaitingDmReview: true };
     } finally {
       endLootFlow(tokenDoc.uuid);
     }
@@ -527,6 +560,10 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
   }
 
   state = getCorpseState(tokenDoc);
+
+  if (isAwaitingDmReview(state)) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
+  }
 
   // Already the active looter — just reopen the window (no busy error).
   if (state.activeLooterUserId === user.id && hasRemainingLoot(tokenDoc)) {
@@ -544,7 +581,7 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     return { ok: true, reopened: true };
   }
 
-  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
+  if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id && !state.freeForAll) {
     const name = state.activeLooterName
       || game.users.get(state.activeLooterUserId)?.name
       || "Another player";
@@ -559,8 +596,13 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
   }
 
   // Classic assign mode: only the assignee may open until leftovers are freed.
-  if (!allowAll && state.assignedActorId && state.assignedActorId !== actor.id) {
+  if (!allowAll && !state.freeForAll && state.assignedActorId && state.assignedActorId !== actor.id) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NoTakePermission") };
+  }
+
+  // Free-for-all leftovers: anyone may open after DM approval / first looter leaves.
+  if (!state.dmApproved && !state.freeForAll && !state.assignedActorId && !state.activeLooterUserId) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM") };
   }
 
   const claim = await claimLootSession(tokenDoc, user, actor);

@@ -46,12 +46,14 @@
       "SelectOrTarget": "Target a defeated creature with T, then use Loot Targeted Body (or Alt+L).",
       "NoAssignedCorpse": "No lootable corpse found. Target a dead body assigned to your character, or stand near one.",
       "PlayersCannotGenerate": "Only the GM can generate loot (enable Allow all players to loot to let players auto-loot).",
-      "WaitingForGM": "Loot generated. Waiting for the GM to review and assign it.",
+      "WaitingForGM": "Loot generated. Waiting for the DM to review and Save & Close.",
+      "LootReleasedToPlayer": "Loot released to {name} — their loot window should open.",
+      "LootOpenForAll": "Remaining loot is open — any player can double-click the corpse to loot.",
       "WaitingForDM": "Waiting for the DM to start looting {name}.",
       "GeneratingLoot": "Generating loot…",
       "SendingToDM": "Investigation submitted — the DM is reviewing the loot…",
-      "PlayerGeneratedLoot": "{player} rolled Investigation {total} on {name}. DM Review opened.",
-      "PlayerGeneratedLootChat": "<p><strong>LootForge:</strong> <em>{player}</em> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>. DM Review is open.</p>",
+      "PlayerGeneratedLoot": "{player} rolled Investigation {total} on {name}. Edit loot, then Save & Close to open their window.",
+      "PlayerGeneratedLootChat": "<p><strong>LootForge:</strong> <em>{player}</em> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>. DM Review is open — use <strong>Save & Close</strong> to release loot.</p>",
       "LootBusy": "{name} is already looting this corpse.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
       "NoTakePermission": "You do not have permission to take this loot.",
@@ -62,7 +64,7 @@
       "CharacterMissing": "The selected character no longer exists.",
       "NoItemsToAssign": "There is no loot to assign.",
       "CorpseEmpty": "The corpse has been fully looted.",
-      "LootDeposited": "Remaining loot was left on the corpse.",
+      "LootDeposited": "Remaining loot was left for other players.",
       "PlayerMaybeOffline": "{name} may be offline — opened loot locally for the GM as well.",
       "NoConnectedOwners": "No connected player owns that character — opened loot for the GM."
     },
@@ -97,7 +99,8 @@
       "RemoveItem": "Remove item",
       "AddItem": "Add LootForge item",
       "Add": "Add",
-      "ConfirmAssign": "Confirm and Assign"
+      "ConfirmAssign": "Save & Close",
+      "SaveAndClose": "Save & Close"
     },
     "Player": {
       "Title": "Loot",
@@ -108,7 +111,7 @@
       "TakeAll": "Take All",
       "LootAll": "Loot All",
       "Done": "Done",
-      "DoubleClickHint": "Double-click an item to take it. Closing leaves the rest on the corpse."
+      "DoubleClickHint": "Double-click an item to take it. Closing leaves leftovers for everyone — open loot windows stay in sync."
     },
     "Settings": {
       "ManualGenerationOnly": {
@@ -125,7 +128,7 @@
       },
       "AllowAllPlayersToLoot": {
         "Name": "Allow all players to loot",
-        "Hint": "When enabled, any player can start looting: they roll Investigation, loot is generated, the DM Review window opens for the GM, and the player loot window opens for the looter. Only one player may loot at a time; leftovers go to the corpse inventory. When disabled, players who loot early are told to wait and the DM gets a Start Roll prompt."
+        "Hint": "Recommended. Player double-clicks a corpse → rolls Investigation → DM Review opens. After the DM hits Save & Close, that player gets the WoW loot window. When they close it, any player can loot leftovers in the same UI, live-synced. When disabled, players request a DM Start Roll instead."
       },
       "AllowPlayerRequestLoot": {
         "Name": "Allow players to request loot from DM",
