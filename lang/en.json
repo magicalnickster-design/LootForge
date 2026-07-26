@@ -47,11 +47,16 @@
       "NoAssignedCorpse": "No lootable corpse found. Target a dead body assigned to your character, or stand near one.",
       "PlayersCannotGenerate": "Only the GM can generate loot (enable Allow all players to loot to let players auto-loot).",
       "WaitingForGM": "Loot generated. Waiting for the DM to review and Save & Close.",
+      "WaitingForGMGenerate": "Investigation submitted — waiting for the DM to press Generate Loot in chat.",
+      "CheckChatInvestigation": "Check chat — use the Roll Investigation button for {name}.",
+      "CheckChatGenerate": "Check chat — use the Generate Loot button.",
+      "PlayerMustRoll": "The player must press Roll Investigation in their chat.",
+      "InvestigationReadyForGM": "{player} rolled Investigation {total} on {name}. Use Generate Loot in chat.",
       "LootReleasedToPlayer": "Loot released to {name} — their loot window should open.",
       "LootOpenForAll": "Remaining loot is open — any player can double-click the corpse to loot.",
       "WaitingForDM": "Waiting for the DM to start looting {name}.",
       "GeneratingLoot": "Generating loot…",
-      "SendingToDM": "Investigation submitted — the DM is reviewing the loot…",
+      "SendingToDM": "Investigation submitted — the DM can Generate Loot from chat.",
       "PlayerGeneratedLoot": "{player} rolled Investigation {total} on {name}. Edit loot, then Save & Close to open their window.",
       "PlayerGeneratedLootChat": "<p><strong>LootForge:</strong> <em>{player}</em> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>. DM Review is open — use <strong>Save & Close</strong> to release loot.</p>",
       "LootBusy": "{name} is already looting this corpse.",
@@ -67,6 +72,16 @@
       "LootDeposited": "Remaining loot was left for other players.",
       "PlayerMaybeOffline": "{name} may be offline — opened loot locally for the GM as well.",
       "NoConnectedOwners": "No connected player owns that character — opened loot for the GM."
+    },
+    "Chat": {
+      "InvestigationTitle": "LootForge — Investigation",
+      "InvestigationBody": "<strong>{character}</strong> wants to loot <strong>{name}</strong>. Press the button to roll Investigation.",
+      "RollInvestigation": "Roll Investigation",
+      "Rolled": "Rolled",
+      "GenerateTitle": "LootForge — Generate Loot",
+      "GenerateBody": "<strong>{player}</strong> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>.",
+      "GenerateLoot": "Generate Loot",
+      "Generated": "Generated"
     },
     "Dialog": {
       "Title": "Loot — {name}",
@@ -128,7 +143,7 @@
       },
       "AllowAllPlayersToLoot": {
         "Name": "Allow all players to loot",
-        "Hint": "Recommended. Player double-clicks a corpse → rolls Investigation → DM Review opens. After the DM hits Save & Close, that player gets the WoW loot window. When they close it, any player can loot leftovers in the same UI, live-synced. When disabled, players request a DM Start Roll instead."
+        "Hint": "Recommended. Player double-clicks a corpse → chat Roll Investigation button → after the roll, GM gets a chat Generate Loot button → DM Review → Save & Close opens the player WoW window. Leftovers are free-for-all and live-synced."
       },
       "AllowPlayerRequestLoot": {
         "Name": "Allow players to request loot from DM",

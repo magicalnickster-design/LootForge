@@ -43,6 +43,7 @@ export const OPS = Object.freeze({
   CANCEL_INVESTIGATION_ROLL: "cancelInvestigationRoll",
   INVESTIGATION_ROLL_ACK: "investigationRollAck",
   INVESTIGATION_ROLL_RESULT: "investigationRollResult",
+  INVESTIGATION_READY: "investigationReady",
   STATE_UPDATED: "stateUpdated",
   RESET_LOOT: "resetLoot",
   SET_FLAG: "setLootedFlag"

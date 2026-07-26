@@ -6,6 +6,7 @@
 
 import { MODULE_ID } from "./modules/constants.js";
 import { log } from "./modules/logger.js";
+import { registerLootChatHooks } from "./modules/loot-chat.js";
 import { registerLootIndicatorHooks } from "./modules/loot-indicator.js";
 import { registerSettings } from "./modules/settings.js";
 import { registerSocketManager } from "./modules/socket-manager.js";
@@ -35,6 +36,7 @@ Hooks.once("ready", () => {
   }
 
   registerSocketManager();
+  registerLootChatHooks();
   registerLootIndicatorHooks();
   registerTokenHud();
   registerTokenContext();
@@ -56,5 +58,5 @@ Hooks.once("ready", () => {
     }
   };
 
-  log.info(`Ready v0.3.2 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.3.3 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

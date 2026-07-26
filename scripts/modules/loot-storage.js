@@ -39,6 +39,7 @@ import { log } from "./logger.js";
  * @property {boolean} freeForAll     After first looter closes — anyone may loot leftovers together
  * @property {string|null} pendingLooterActorId
  * @property {string|null} pendingLooterUserId
+ * @property {object|null} pendingInvestigation  Chat-flow Investigation result awaiting GM Generate
  * @property {CorpseLootItem[]} items
  * @property {object} currency
  * @property {boolean} looted
@@ -66,6 +67,7 @@ export function emptyCorpseState() {
     freeForAll: false,
     pendingLooterActorId: null,
     pendingLooterUserId: null,
+    pendingInvestigation: null,
     items: [],
     currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     looted: false,

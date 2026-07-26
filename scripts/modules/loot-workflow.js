@@ -17,7 +17,7 @@ import {
   userOwnsActor
 } from "./ownership.js";
 import { rollInvestigation, rollInvestigationSilent } from "./roll-helper.js";
-import { beginLootFlow, endLootFlow, forceBeginLootFlow } from "./session-guard.js";
+import { beginLootFlow, endLootFlow } from "./session-guard.js";
 import { getSetting } from "./settings.js";
 import {
   clearCorpseState,
@@ -34,9 +34,7 @@ import {
   materializeCorpseInventoryLoot
 } from "./loot-transfer.js";
 import {
-  cancelAllPendingInvestigationRolls,
   emitLootForge,
-  requestDmLootPrompt,
   requestPlayerStartLoot,
   requestRemoteInvestigationRoll
 } from "./socket-manager.js";
@@ -140,30 +138,18 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
     ?? (await resolveLooterActor({ excludeActor: creature }));
   if (!looter) return;
 
-  if (getSetting("allowAllPlayersToLoot")) {
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
-    const investigationRoll = await rollInvestigation(looter);
-    if (!investigationRoll) {
-      ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
-      return;
-    }
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.SendingToDM"));
-    const result = await requestPlayerStartLoot(tokenDoc, looter, { investigationRoll });
-    if (!result.ok && result.error) {
-      ui.notifications.warn(result.error);
-      return;
-    }
-    // Player waits — DM Review must Save & Close before the WoW window opens.
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
+  const state = getCorpseState(tokenDoc);
+
+  // Already rolled — waiting on GM Generate Loot chat button.
+  if (state.pendingInvestigation && Number.isFinite(Number(state.pendingInvestigation.total))) {
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGMGenerate"));
     return;
   }
 
-  // Classic: tell the player to wait, ping the DM to start the roll.
-  ui.notifications.info(
-    game.i18n.format("LOOTFORGE.Notify.WaitingForDM", { name: creature.name })
-  );
-  await requestDmLootPrompt(tokenDoc, looter);
-  log.info("Player requested DM loot start", {
+  // Chat button flow: no Investigation popup — prompt appears in chat.
+  const { postInvestigationPromptChat } = await import("./loot-chat.js");
+  await postInvestigationPromptChat(tokenDoc, looter, game.user);
+  log.info("Posted Investigation chat prompt for player loot", {
     tokenUuid: tokenDoc.uuid,
     actorId: looter.id,
     userId: game.user.id
@@ -394,6 +380,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     freeForAll: false,
     pendingLooterActorId: resolvedRoller.id,
     pendingLooterUserId: pendingUserId,
+    pendingInvestigation: null,
     looted: false,
     lootedAt: null
   });
@@ -414,11 +401,26 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
  * @param {Actor} creature
  */
 async function generateAndReview(token, tokenDoc, creature) {
-  // Allow-all: players roll Investigation themselves — GM double-click uses a silent
-  // formula so we never block waiting on a remote roll that races the player path.
+  const state = getCorpseState(tokenDoc);
+
+  // Chat flow: if a player already rolled, open/post the GM Generate card instead of auto-rolling.
+  if (state.pendingInvestigation && Number.isFinite(Number(state.pendingInvestigation.total))) {
+    const actor = game.actors.get(state.pendingLooterActorId)
+      ?? game.actors.get(state.pendingInvestigation.actorId);
+    const user = game.users.get(state.pendingLooterUserId)
+      ?? game.users.get(state.pendingInvestigation.userId);
+    if (actor) {
+      const { postGenerateLootChat } = await import("./loot-chat.js");
+      await postGenerateLootChat(tokenDoc, actor, user, state.pendingInvestigation);
+      ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.CheckChatGenerate"));
+      return;
+    }
+  }
+
+  // No pending player roll — GM may still generate directly (silent Investigation).
   await generateLootForCorpse(token, tokenDoc, creature, {
     openReview: true,
-    preferRemotePlayer: !getSetting("allowAllPlayersToLoot")
+    preferRemotePlayer: false
   });
 }
 
@@ -430,75 +432,41 @@ export async function handleDmLootRequest(payload) {
   const tokenDoc = await fromUuid(payload.tokenUuid);
   if (!tokenDoc) return;
 
-  const flowKey = tokenDoc.uuid;
-  if (!beginLootFlow(flowKey)) return;
+  const requester = game.users.get(payload.fromUserId);
+  const actor = game.actors.get(payload.actorId) ?? requester?.character;
+  const state = getCorpseState(tokenDoc);
 
-  try {
-    const requester = game.users.get(payload.fromUserId);
-    const actor = game.actors.get(payload.actorId) ?? requester?.character;
-    const creatureName = tokenDoc.name;
-    const playerName = requester?.name ?? "A player";
-    const state = getCorpseState(tokenDoc);
+  // Loot already approved / available — open for the player.
+  if (hasRemainingLoot(tokenDoc) && state.dmApproved && actor) {
+    const { assignLootToActor } = await import("./socket-manager.js");
+    await assignLootToActor(tokenDoc, actor, requester);
+    return;
+  }
 
-    const alreadyReady = hasRemainingLoot(tokenDoc) || isLootGenerated(tokenDoc);
-
-    const content = alreadyReady
-      ? `<p>${game.i18n.format("LOOTFORGE.Dialog.PlayerLootReady", {
-        player: playerName,
-        name: creatureName
-      })}</p>`
-      : `<p>${game.i18n.format("LOOTFORGE.Dialog.PlayerLootRequest", {
-        player: playerName,
-        name: creatureName
-      })}</p>`;
-
-    const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: {
-        title: game.i18n.localize("LOOTFORGE.Dialog.LootRequestTitle")
-      },
-      content,
-      yes: {
-        label: alreadyReady
-          ? game.i18n.localize("LOOTFORGE.Dialog.OpenForPlayer")
-          : game.i18n.localize("LOOTFORGE.Dialog.StartRoll"),
-        icon: "fa-solid fa-dice-d20",
-        default: true
-      },
-      no: {
-        label: game.i18n.localize("LOOTFORGE.Dialog.Close")
-      }
+  if (isAwaitingDmReview(state)) {
+    await openDmLootReview(tokenDoc, {
+      initialRollerId: state.pendingLooterActorId ?? actor?.id
     });
+    return;
+  }
 
-    if (!confirmed) return;
+  // Pending Investigation roll — remind GM via Generate chat card.
+  if (state.pendingInvestigation && actor) {
+    const { postGenerateLootChat } = await import("./loot-chat.js");
+    await postGenerateLootChat(tokenDoc, actor, requester, state.pendingInvestigation);
+    return;
+  }
 
-    if (!hasRemainingLoot(tokenDoc) && !state.generated) {
-      const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
-      let investigationRoll = null;
-      if (requester?.active && actor) {
-        investigationRoll = await requestRemoteInvestigationRoll(requester, actor, tokenDoc);
-        if (!investigationRoll) {
-          ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
-          return;
-        }
-      }
-      await generateLootForCorpse(token ?? { document: tokenDoc, actor: tokenDoc.actor }, tokenDoc, tokenDoc.actor, {
-        roller: actor,
-        openReview: true,
-        investigationRoll,
-        preferRemotePlayer: false
-      });
-      return;
-    }
-
-    // Loot exists — assign/open for the requesting player.
-    if (actor) {
-      const { assignLootToActor } = await import("./socket-manager.js");
-      await assignLootToActor(tokenDoc, actor, requester);
-    } else {
-      await openDmLootReview(tokenDoc);
-    }
-  } finally {
-    endLootFlow(flowKey);
+  // Ask the player to roll via chat (no DialogV2 popup).
+  if (requester?.active && actor) {
+    const { postInvestigationPromptChat } = await import("./loot-chat.js");
+    await postInvestigationPromptChat(tokenDoc, actor, requester);
+    ui.notifications.info(
+      game.i18n.format("LOOTFORGE.Notify.WaitingForInvestigation", {
+        name: requester.name,
+        creature: tokenDoc.name
+      })
+    );
   }
 }
 
@@ -524,72 +492,22 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
   let state = getCorpseState(tokenDoc);
 
   if (!hasRemainingLoot(tokenDoc) && !state.generated) {
-    if (!allowAll || claimOnlyMode) {
-      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.PlayersCannotGenerate") };
-    }
-    if (payload.investigationTotal == null) {
-      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.InvestigationRequired") };
-    }
-
-    // Player already rolled — supersede any GM "waiting for Investigation" flow.
-    cancelAllPendingInvestigationRolls();
-    forceBeginLootFlow(tokenDoc.uuid);
-    try {
-      const investigationRoll = {
-        total: Number(payload.investigationTotal),
-        natural: Number(payload.naturalDie ?? 0),
-        isNatural20: Boolean(payload.isNatural20)
-      };
-      const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
-
-      // Generate + open DM Review only. Player window waits for Save & Close.
-      const generated = await generateLootForCorpse(
-        token ?? { document: tokenDoc, actor: tokenDoc.actor },
-        tokenDoc,
-        tokenDoc.actor,
-        {
-          roller: actor,
-          openReview: true,
-          investigationRoll,
-          preferRemotePlayer: false,
-          pendingLooterUserId: user.id
-        }
-      );
-
-      if (!generated) {
-        return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
-      }
-
-      ui.notifications.info(
-        game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
-          player: user.name,
-          name: tokenDoc.name,
-          total: investigationRoll.total
-        })
-      );
-      ChatMessage.create({
-        content: game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLootChat", {
-          player: user.name,
-          character: actor.name,
-          name: tokenDoc.name,
-          total: investigationRoll.total
-        }),
-        speaker: { alias: "LootForge" }
-      }).catch(() => undefined);
-
-      log.info("Player Investigation generated loot — DM Review should be open", {
-        tokenUuid: tokenDoc.uuid,
-        total: investigationRoll.total,
-        itemCount: generated.items?.length ?? 0
+    // Generation is chat-driven (GM Generate Loot button) — players cannot auto-generate.
+    if (payload.investigationTotal != null) {
+      const { handleInvestigationReady } = await import("./loot-chat.js");
+      await handleInvestigationReady({
+        ...payload,
+        fromUserId: user.id
       });
-
-      return { ok: true, awaitingDmReview: true };
-    } finally {
-      endLootFlow(tokenDoc.uuid);
+      return { ok: true, awaitingGmGenerate: true };
     }
-  } else {
-    await materializeCorpseInventoryLoot(tokenDoc);
+    if (!claimOnlyMode) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGMGenerate") };
+    }
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.PlayersCannotGenerate") };
   }
+
+  await materializeCorpseInventoryLoot(tokenDoc);
 
   state = getCorpseState(tokenDoc);
 

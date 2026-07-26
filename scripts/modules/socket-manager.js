@@ -170,6 +170,15 @@ async function handleSocketPayload(payload) {
       await onRequestInvestigationRoll(payload);
       return;
 
+    case OPS.INVESTIGATION_READY:
+      if (!game.user.isGM) return;
+      if (game.users.activeGM?.id !== game.user.id) return;
+      {
+        const { handleInvestigationReady } = await import("./loot-chat.js");
+        await handleInvestigationReady(payload);
+      }
+      return;
+
     case OPS.CANCEL_INVESTIGATION_ROLL:
       if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
       onCancelInvestigationRoll(payload);
@@ -608,9 +617,8 @@ async function onRequestInvestigationRoll(payload) {
     localUserId: game.user.id
   });
 
-  // GMs never show the player Investigation prompt — ignore mistargeted requests.
+  // GMs never handle player Investigation prompts.
   if (game.user.isGM) {
-    log.info("Ignoring Investigation prompt on GM client", { requestId: payload.requestId });
     emitLootForge({
       op: OPS.INVESTIGATION_ROLL_RESULT,
       requestId: payload.requestId,
@@ -619,7 +627,15 @@ async function onRequestInvestigationRoll(payload) {
     return;
   }
 
-  if (!beginInvestigationDialog(payload.requestId)) {
+  emitLootForge({
+    op: OPS.INVESTIGATION_ROLL_ACK,
+    requestId: payload.requestId,
+    targetUserId: payload.fromUserId
+  });
+
+  const actor = game.actors.get(payload.actorId) ?? game.user.character;
+  const tokenDoc = await fromUuid(payload.tokenUuid);
+  if (!actor || !tokenDoc) {
     emitLootForge({
       op: OPS.INVESTIGATION_ROLL_RESULT,
       requestId: payload.requestId,
@@ -628,79 +644,17 @@ async function onRequestInvestigationRoll(payload) {
     return;
   }
 
-  try {
-    // Immediate ACK so the GM knows this client got the request.
-    emitLootForge({
-      op: OPS.INVESTIGATION_ROLL_ACK,
-      requestId: payload.requestId,
-      targetUserId: payload.fromUserId
-    });
+  // Chat button instead of a DialogV2 popup.
+  const { postInvestigationPromptChat } = await import("./loot-chat.js");
+  await postInvestigationPromptChat(tokenDoc, actor, game.user);
 
-    const actor = game.actors.get(payload.actorId) ?? game.user.character;
-    if (!actor) {
-      emitLootForge({
-        op: OPS.INVESTIGATION_ROLL_RESULT,
-        requestId: payload.requestId,
-        cancelled: true
-      });
-      return;
-    }
-
-    const creatureName = (await fromUuid(payload.tokenUuid))?.name ?? "the corpse";
-    ui.notifications.info(
-      game.i18n.format("LOOTFORGE.Notify.RollInvestigationNamed", { name: creatureName })
-    );
-
-    // Modal confirm so the player cannot miss the request behind other windows.
-    const proceed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: game.i18n.localize("LOOTFORGE.Dialog.InvestigationTitle") },
-      content: `<p>${game.i18n.format("LOOTFORGE.Dialog.InvestigationPrompt", {
-        name: creatureName
-      })}</p>`,
-      yes: {
-        label: game.i18n.localize("LOOTFORGE.Dialog.RollInvestigation"),
-        icon: "fa-solid fa-magnifying-glass",
-        default: true
-      },
-      no: { label: game.i18n.localize("LOOTFORGE.Dialog.Close") }
-    });
-
-    // Cancelled/superseded while the dialog was open.
-    if (getActiveInvestigationRequestId() !== payload.requestId) {
-      log.info("Investigation dialog superseded/cancelled before roll", {
-        requestId: payload.requestId
-      });
-      return;
-    }
-
-    if (!proceed) {
-      emitLootForge({
-        op: OPS.INVESTIGATION_ROLL_RESULT,
-        requestId: payload.requestId,
-        cancelled: true
-      });
-      return;
-    }
-
-    const { rollInvestigation } = await import("./roll-helper.js");
-    const result = await rollInvestigation(actor);
-
-    if (getActiveInvestigationRequestId() !== payload.requestId) {
-      return;
-    }
-
-    emitLootForge({
-      op: OPS.INVESTIGATION_ROLL_RESULT,
-      requestId: payload.requestId,
-      actorId: actor.id,
-      cancelled: !result,
-      investigationTotal: result?.total ?? null,
-      naturalDie: result?.natural ?? null,
-      isNatural20: result?.isNatural20 ?? false
-    });
-  } finally {
-    endInvestigationDialog(payload.requestId);
-  }
+  // Resolve the GM waiter without a modal — GM uses the Generate Loot chat card after the roll.
+  emitLootForge({
+    op: OPS.INVESTIGATION_ROLL_RESULT,
+    requestId: payload.requestId,
+    cancelled: true
+  });
+  endInvestigationDialog(payload.requestId);
 }
 
 /**

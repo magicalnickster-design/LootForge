@@ -426,3 +426,53 @@
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Chat prompt cards */
+.lootforge-chat-card {
+  border: 1px solid #6a5a40;
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+  background: linear-gradient(180deg, rgba(40, 32, 22, 0.92) 0%, rgba(22, 18, 12, 0.95) 100%);
+  color: #f0e6d2;
+}
+
+.lootforge-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+  color: #e0c27a;
+}
+
+.lootforge-chat-card p {
+  margin: 0 0 0.65rem;
+  line-height: 1.35;
+}
+
+.lootforge-chat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  border: 1px solid #a89040;
+  border-radius: 4px;
+  padding: 0.35rem 0.7rem;
+  background: linear-gradient(180deg, #5a4828 0%, #2c2214 100%);
+  color: #f5e6c0;
+  font-weight: 600;
+}
+
+.lootforge-chat-btn:hover {
+  filter: brightness(1.12);
+}
+
+.lootforge-chat-btn:disabled,
+.lootforge-chat-btn-done {
+  opacity: 0.75;
+  cursor: default;
+  filter: none;
+}
+
+.lootforge-chat-btn-gm {
+  border-color: #c4a35a;
+}
