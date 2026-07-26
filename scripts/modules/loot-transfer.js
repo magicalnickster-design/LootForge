@@ -329,6 +329,7 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
     const empty = !nextItems.some((i) => i.quantity > 0);
     const nextState = await updateCorpseState(tokenDoc, {
       items: nextItems,
+      currency: aggregateCurrencyFromItems(nextItems),
       looted: empty,
       lootedAt: empty ? Date.now() : state.lootedAt,
       ...(empty
@@ -391,6 +392,7 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
 
     state = await updateCorpseState(tokenDoc, {
       items: [],
+      currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
       looted: true,
       lootedAt: Date.now(),
       activeLooterUserId: null,
