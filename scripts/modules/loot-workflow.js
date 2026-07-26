@@ -178,7 +178,8 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
   try {
     const claim = await requestInvestigationClaim(tokenDoc, looter);
     if (!claim?.ok) {
-      releaseInvestigationClaim(tokenDoc.uuid);
+      // Another player/client already reserved this corpse — stay locked locally.
+      markInvestigationClaimed(tokenDoc.uuid);
       ui.notifications.info(
         claim?.error || game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled")
       );

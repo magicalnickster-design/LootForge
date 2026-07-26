@@ -1,5 +1,7 @@
 /**
- * Context menu + Alt+L keybinding for LootForge.
+ * Alt+L keybinding for LootForge.
+ * Corpse looting itself is double-left-click only (Token patch / sparkles).
+ * No right-click context menu entry — that was a single-action loot path.
  */
 
 import { isCreatureDead } from "../modules/creature-context.js";
@@ -38,7 +40,6 @@ export function resolveNearestLootableCorpse() {
     if (game.user.isGM) {
       return !isLootGenerated(doc) || hasRemainingLoot(doc) || isAwaitingDmReview(getCorpseState(doc));
     }
-    // Players: start Investigation on ungenerated corpses, or open released loot.
     if (!isLootGenerated(doc)) return true;
     if (!hasRemainingLoot(doc)) return false;
     return canUserLootCorpse(doc, game.user);
@@ -98,36 +99,9 @@ export function registerLootKeybinding() {
   });
 }
 
+/**
+ * No-op — right-click context loot removed (double-left-click only).
+ */
 export function registerTokenContext() {
-  const pushEntry = (_app, menuItems) => {
-    if (!Array.isArray(menuItems)) return;
-    if (menuItems.some((entry) => entry?.icon?.includes("fa-sack") && String(entry.name).includes("Loot"))) {
-      return;
-    }
-
-    menuItems.push({
-      name: game.i18n.localize("LOOTFORGE.HUD.LootBody"),
-      icon: '<i class="fa-solid fa-sack"></i>',
-      condition: () => {
-        const t = resolveLootTargetToken();
-        if (!t?.document || !isCreatureDead(t.document, t.actor)) return false;
-        if (game.user.isGM) return true;
-        const doc = t.document;
-        if (!isLootGenerated(doc)) return true;
-        if (!hasRemainingLoot(doc)) return false;
-        return canUserLootCorpse(doc, game.user);
-      },
-      callback: async () => {
-        const t = resolveLootTargetToken();
-        if (!t) {
-          ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.SelectOrTarget"));
-          return;
-        }
-        await lootBody(t);
-      }
-    });
-  };
-
-  Hooks.on("getTokenPlaceableContextOptions", pushEntry);
-  Hooks.on("getTokenContextOptions", pushEntry);
+  // Intentionally empty.
 }

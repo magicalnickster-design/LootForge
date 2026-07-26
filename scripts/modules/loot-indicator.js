@@ -12,6 +12,7 @@ import { getSetting } from "./settings.js";
 import {
   getCorpseState,
   hasRemainingLoot,
+  isAwaitingDmReview,
   isCorpseLooted,
   isLootGenerated,
   isLootSessionLocked
@@ -23,10 +24,14 @@ const overlays = new Map();
 /** @type {Map<string, Function>} token id → ticker callback */
 const tickers = new Map();
 
+/** @type {Map<string, number>} token id → last left-click ms (sparkle dblclick) */
+const sparkleClickAt = new Map();
+
 let hooksRegistered = false;
 let starTexture = null;
 
 const STAR_COUNT = 10;
+const SPARKLE_DBLCLICK_MS = 400;
 
 /**
  * Tiny white cross/star texture (canvas-generated — Pixi 7/8 safe).
@@ -86,9 +91,15 @@ export function shouldShowLootIndicator(tokenDoc) {
  */
 export function canInteractWithLootIndicator(tokenDoc) {
   if (!shouldShowLootIndicator(tokenDoc)) return false;
-  if (game.user.isGM) return true;
 
   const state = getCorpseState(tokenDoc);
+
+  // GM: only when there is loot to review / open — players start Investigation.
+  if (game.user.isGM) {
+    return isAwaitingDmReview(state)
+      || (isLootGenerated(tokenDoc) && hasRemainingLoot(tokenDoc));
+  }
+
   if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
     return false;
   }
@@ -307,15 +318,26 @@ async function upsertOverlay(token) {
     }
 
     container.on("pointerdown", (event) => {
+      // Left button only — ignore right/middle clicks entirely.
+      const button = event.button ?? event.data?.button ?? 0;
+      if (button !== 0) return;
       event.stopPropagation?.();
       event.data?.originalEvent?.stopPropagation?.();
     });
     container.on("pointertap", async (event) => {
+      const button = event.button ?? event.data?.button ?? 0;
+      if (button !== 0) return;
       event.stopPropagation?.();
-      await onSparkleClicked(token);
-    });
-    container.on("click", async (event) => {
-      event.stopPropagation?.();
+
+      // Require a double left-click (same as Token loot). Single click does nothing.
+      const id = token.id;
+      const now = Date.now();
+      const last = sparkleClickAt.get(id) ?? 0;
+      if (now - last > SPARKLE_DBLCLICK_MS) {
+        sparkleClickAt.set(id, now);
+        return;
+      }
+      sparkleClickAt.delete(id);
       await onSparkleClicked(token);
     });
 
@@ -341,20 +363,9 @@ async function upsertOverlay(token) {
  */
 async function onSparkleClicked(token) {
   const tokenDoc = token.document;
-  if (!canInteractWithLootIndicator(tokenDoc)) {
-    const state = getCorpseState(tokenDoc);
-    if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
-      const name = state.activeLooterName
-        || game.users.get(state.activeLooterUserId)?.name
-        || "Another player";
-      ui.notifications.warn(game.i18n.format("LOOTFORGE.Notify.LootBusy", { name }));
-    } else {
-      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
-    }
-    return;
-  }
+  if (!canInteractWithLootIndicator(tokenDoc)) return;
 
-  log.info("Loot sparkles clicked", {
+  log.info("Loot sparkles double-clicked", {
     tokenUuid: tokenDoc.uuid,
     userId: game.user.id
   });
@@ -369,6 +380,7 @@ async function onSparkleClicked(token) {
  */
 function destroyOverlay(id, container) {
   stopSparkleAnimation(id);
+  sparkleClickAt.delete(id);
   try {
     container.removeAllListeners?.();
     container.parent?.removeChild?.(container);

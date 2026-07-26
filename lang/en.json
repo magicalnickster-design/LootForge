@@ -9,7 +9,7 @@
       "ResetLoot": "Reset Loot"
     },
     "Keybinding": {
-      "LootTargetHint": "Open loot for the targeted corpse, or the nearest lootable corpse on this scene (Alt+L)."
+      "LootTargetHint": "Loot the targeted corpse, or the nearest lootable corpse (Alt+L). Canvas looting is double-left-click only."
     },
     "Quality": {
       "poor": "Poor",
