@@ -1,0 +1,20 @@
+{
+  "name": "lootforge",
+  "version": "0.2.1",
+  "private": true,
+  "description": "LootForge Foundry VTT module — interactive creature looting for Gambits Forge.",
+  "type": "module",
+  "scripts": {
+    "pack:loot-items": "node tools/pack-loot-items.mjs",
+    "pack": "npm run pack:loot-items"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magicalnickster-design/LootForge.git"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "^3.0.4",
+    "classic-level": "^3.0.0"
+  }
+}

@@ -152,7 +152,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
       const context = state.creatureContext;
       if (!context) return;
 
-      const generated = generateCreatureLoot({
+      const generated = await generateCreatureLoot({
         context,
         survivalTotal: state.survivalTotal ?? 10,
         naturalDie: state.naturalDie ?? 0,
@@ -182,7 +182,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
       const state = getCorpseState(app.#tokenDoc);
       const entry = state.items.find((i) => i.entryId === entryId);
       if (!entry) return;
-      const next = rerollSingleEntry(state.creatureContext, state.rollQuality, entry.definitionId);
+      const next = await rerollSingleEntry(state.creatureContext, state.rollQuality, entry.definitionId);
       let items;
       if (!next) {
         items = state.items.filter((i) => i.entryId !== entryId);
@@ -257,7 +257,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
           i.definitionId === definitionId ? { ...i, quantity: i.quantity + 1 } : i
         ));
       } else {
-        const entry = buildLootEntry(definitionId, 1);
+        const entry = await buildLootEntry(definitionId, 1);
         items = entry ? [...state.items, entry] : state.items;
       }
       await updateCorpseState(app.#tokenDoc, { items });

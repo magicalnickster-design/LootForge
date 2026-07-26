@@ -1,8 +1,12 @@
 /**
  * Transfer corpse loot entries onto a player character actor.
+ *
+ * Prefer cloning from the module Item compendium via fromUuid.
+ * Fall back to the stored itemData snapshot, then definition fallback.
+ * Never mutates the compendium source Item.
  */
 
-import { definitionToItemData, getLootDefinition } from "../data/loot-definitions.js";
+import { getLootDefinition, resolveItemDataForTransfer } from "../data/loot-definitions.js";
 import { log } from "./logger.js";
 import {
   getCorpseState,
@@ -13,10 +17,6 @@ import {
 /** In-flight transfer locks keyed by tokenUuid:entryId or tokenUuid:ALL */
 const transferLocks = new Set();
 
-/**
- * @param {string} lockKey
- * @returns {boolean} true if lock acquired
- */
 function acquireLock(lockKey) {
   if (transferLocks.has(lockKey)) return false;
   transferLocks.add(lockKey);
@@ -28,7 +28,6 @@ function releaseLock(lockKey) {
 }
 
 /**
- * Find an existing stackable LootForge item on the actor.
  * @param {Actor} actor
  * @param {string} definitionId
  * @returns {Item|null}
@@ -43,7 +42,25 @@ function findStackableItem(actor, definitionId) {
 }
 
 /**
- * Permission: assigned player/owner or GM.
+ * Enrich legacy corpse entries (pre-compendium) with UUID / snapshot when possible.
+ * @param {import("./loot-storage.js").CorpseLootItem} entry
+ * @returns {import("./loot-storage.js").CorpseLootItem}
+ */
+function normalizeLegacyEntry(entry) {
+  if (!entry) return entry;
+  const def = getLootDefinition(entry.definitionId);
+  if (!def) return entry;
+  return {
+    ...entry,
+    itemUuid: entry.itemUuid || def.itemUuid,
+    name: entry.name || def.name,
+    img: entry.img || def.img,
+    rarity: entry.rarity || def.rarity,
+    description: entry.description || def.description
+  };
+}
+
+/**
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
  * @param {User} [user]
@@ -56,7 +73,6 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
   const state = getCorpseState(tokenDoc);
   if (state.assignedActorId && state.assignedActorId !== actor.id) return false;
   if (state.assignedUserId && state.assignedUserId !== user.id) {
-    // Allow if user owns the assigned actor.
     if (!actor.testUserPermission(user, "OWNER")) return false;
   } else if (!actor.testUserPermission(user, "OWNER")) {
     return false;
@@ -65,41 +81,41 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
 }
 
 /**
- * Create or stack items on the actor.
  * @param {Actor} actor
  * @param {import("./loot-storage.js").CorpseLootItem} entry
  * @param {string} sourceCreature
  * @returns {Promise<Item|null>}
  */
 async function grantEntryToActor(actor, entry, sourceCreature) {
-  const def = getLootDefinition(entry.definitionId);
-  if (!def) throw new Error(`Unknown loot definition: ${entry.definitionId}`);
+  const normalized = normalizeLegacyEntry(entry);
+  const definitionId = normalized.definitionId;
 
-  const existing = findStackableItem(actor, entry.definitionId);
+  const existing = findStackableItem(actor, definitionId);
   if (existing) {
-    const nextQty = Number(existing.system?.quantity ?? 0) + Number(entry.quantity ?? 0);
+    const nextQty = Number(existing.system?.quantity ?? 0) + Number(normalized.quantity ?? 0);
     await existing.update({ "system.quantity": nextQty });
     return existing;
   }
 
-  const data = definitionToItemData(def, {
-    quantity: entry.quantity,
+  const data = await resolveItemDataForTransfer(normalized, {
+    quantity: normalized.quantity,
     sourceCreature
   });
+
+  // Safety: never carry a document id into create.
+  delete data._id;
+
   const created = await actor.createEmbeddedDocuments("Item", [data]);
   return created?.[0] ?? null;
 }
 
 /**
- * Take one corpse entry (or a partial quantity).
- *
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
  * @param {string} entryId
  * @param {object} [options]
- * @param {number} [options.quantity]  defaults to full stack
+ * @param {number} [options.quantity]
  * @param {User} [options.user]
- * @returns {Promise<{ ok: boolean, error?: string, state?: object }>}
  */
 export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user = game.user } = {}) {
   const lockKey = `${tokenDoc.uuid}:${entryId}`;
@@ -154,7 +170,6 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
 }
 
 /**
- * Take all remaining items.
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
  * @param {User} [user]

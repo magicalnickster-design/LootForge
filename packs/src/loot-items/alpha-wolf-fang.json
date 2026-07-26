@@ -1,0 +1,53 @@
+{
+  "_id": "LFAlphaFang00001",
+  "name": "Alpha Wolf Fang",
+  "type": "loot",
+  "img": "icons/commodities/bones/tooth-canine-white.webp",
+  "system": {
+    "description": {
+      "value": "<p>An unusually large fang from a powerful wolf. Hunters value it as proof of a dangerous kill.</p>",
+      "chat": "An unusually large fang from a powerful wolf."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "alpha-wolf-fang",
+      "category": "rare-collectible",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "wolf",
+        "trophy",
+        "rare"
+      ],
+      "stackingKey": "alpha-wolf-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAlphaFang00001"
+}

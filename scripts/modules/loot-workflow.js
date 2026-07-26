@@ -152,7 +152,7 @@ async function generateAndReview(token, tokenDoc, creature) {
     isNatural20 = rollResult.isNatural20;
   }
 
-  const generated = generateCreatureLoot({
+  const generated = await generateCreatureLoot({
     context,
     survivalTotal,
     naturalDie,

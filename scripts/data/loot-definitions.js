@@ -1,88 +1,124 @@
 /**
- * LootForge-owned item definitions for the Wolf MVP.
- * These are not DMG treasure tables and do not require the SRD compendium.
+ * LootForge definition registry.
+ *
+ * Canonical Item documents live in the module compendium:
+ *   Compendium.lootforge.loot-items
+ *
+ * This file maps stable definitionIds → compendium UUIDs and keeps a thin
+ * fallback snapshot for worlds where UUID resolution is unavailable.
  */
+
+import { MODULE_ID } from "../modules/constants.js";
+
+/** Pack collection id as declared in module.json. */
+export const LOOT_ITEMS_PACK = `${MODULE_ID}.loot-items`;
 
 /**
  * @typedef {object} LootDefinition
  * @property {string} id
- * @property {string} name
- * @property {string} type              dnd5e Item type
+ * @property {string} itemUuid              Canonical Compendium UUID
+ * @property {string} documentId            Fixed pack document _id
+ * @property {string} name                  Display name (UI / fallback)
  * @property {string} category
- * @property {string} rarity            common|uncommon|rare|epic|legendary|mythic
- * @property {{ value: number, denomination: string }} price
- * @property {{ value: number, units: string }} weight
- * @property {string} description
+ * @property {string} rarity
  * @property {string[]} tags
  * @property {string} img
+ * @property {string} description
+ * @property {{ value: number, denomination: string }} price
+ * @property {{ value: number, units: string }} weight
  */
+
+/**
+ * Stable document IDs used when packing packs/src/loot-items.
+ * Changing these breaks existing UUID references — treat as immutable.
+ */
+const DOC_IDS = Object.freeze({
+  "wolf-pelt": "LFWolfPelt000001",
+  "wolf-fang": "LFWolfFang000001",
+  "wolf-meat": "LFWolfMeat000001",
+  "wolf-claw": "LFWolfClaw000001",
+  "alpha-wolf-fang": "LFAlphaFang00001"
+});
+
+/**
+ * @param {string} documentId
+ * @returns {string}
+ */
+export function compendiumItemUuid(documentId) {
+  return `Compendium.${LOOT_ITEMS_PACK}.Item.${documentId}`;
+}
 
 /** @type {Record<string, LootDefinition>} */
 export const LOOT_DEFINITIONS = {
   "wolf-pelt": {
     id: "wolf-pelt",
+    documentId: DOC_IDS["wolf-pelt"],
+    itemUuid: compendiumItemUuid(DOC_IDS["wolf-pelt"]),
     name: "Wolf Pelt",
-    type: "loot",
     category: "monster-part",
     rarity: "common",
-    price: { value: 8, denomination: "sp" },
-    weight: { value: 4, units: "lb" },
+    tags: ["beast", "wolf", "hide", "leatherworking"],
+    img: "icons/commodities/leather/fur-pelt-brown.webp",
     description:
       "A rough hide taken from a slain wolf. Useful to hunters, leatherworkers, and cold-weather travelers.",
-    tags: ["beast", "wolf", "hide", "leatherworking"],
-    img: "icons/commodities/leather/fur-pelt-brown.webp"
+    price: { value: 8, denomination: "sp" },
+    weight: { value: 4, units: "lb" }
   },
   "wolf-fang": {
     id: "wolf-fang",
+    documentId: DOC_IDS["wolf-fang"],
+    itemUuid: compendiumItemUuid(DOC_IDS["wolf-fang"]),
     name: "Wolf Fang",
-    type: "loot",
     category: "monster-part",
     rarity: "common",
-    price: { value: 2, denomination: "sp" },
-    weight: { value: 0.1, units: "lb" },
+    tags: ["beast", "wolf", "bone", "trophy"],
+    img: "icons/commodities/bones/tooth-canine-brown.webp",
     description:
       "A sharp canine tooth often used in trophies, charms, or primitive jewelry.",
-    tags: ["beast", "wolf", "bone", "trophy"],
-    img: "icons/commodities/bones/tooth-canine-brown.webp"
+    price: { value: 2, denomination: "sp" },
+    weight: { value: 0.1, units: "lb" }
   },
   "wolf-meat": {
     id: "wolf-meat",
+    documentId: DOC_IDS["wolf-meat"],
+    itemUuid: compendiumItemUuid(DOC_IDS["wolf-meat"]),
     name: "Wolf Meat",
-    type: "loot",
     category: "crafting-material",
     rarity: "common",
-    price: { value: 3, denomination: "sp" },
-    weight: { value: 2, units: "lb" },
+    tags: ["beast", "wolf", "meat", "cooking"],
+    img: "icons/consumables/meat/steak-raw-red-pink.webp",
     description:
       "Raw meat harvested from a wolf. Edible when properly prepared, though most civilized settlements consider it poor fare.",
-    tags: ["beast", "wolf", "meat", "cooking"],
-    img: "icons/consumables/meat/steak-raw-red-pink.webp"
+    price: { value: 3, denomination: "sp" },
+    weight: { value: 2, units: "lb" }
   },
   "wolf-claw": {
     id: "wolf-claw",
+    documentId: DOC_IDS["wolf-claw"],
+    itemUuid: compendiumItemUuid(DOC_IDS["wolf-claw"]),
     name: "Wolf Claw",
-    type: "loot",
     category: "monster-part",
     rarity: "common",
-    price: { value: 1, denomination: "sp" },
-    weight: { value: 0.05, units: "lb" },
+    tags: ["beast", "wolf", "claw", "crafting"],
+    img: "icons/commodities/claws/claw-bear-brown.webp",
     description:
       "A curved claw suitable for use in jewelry, fetishes, or minor crafting recipes.",
-    tags: ["beast", "wolf", "claw", "crafting"],
-    img: "icons/commodities/claws/claw-bear-brown.webp"
+    price: { value: 1, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
   },
   "alpha-wolf-fang": {
     id: "alpha-wolf-fang",
+    documentId: DOC_IDS["alpha-wolf-fang"],
+    itemUuid: compendiumItemUuid(DOC_IDS["alpha-wolf-fang"]),
     name: "Alpha Wolf Fang",
-    type: "loot",
     category: "rare-collectible",
     rarity: "uncommon",
-    price: { value: 2, denomination: "gp" },
-    weight: { value: 0.1, units: "lb" },
+    tags: ["beast", "wolf", "trophy", "rare"],
+    img: "icons/commodities/bones/tooth-canine-white.webp",
     description:
       "An unusually large fang from a powerful wolf. Hunters value it as proof of a dangerous kill.",
-    tags: ["beast", "wolf", "trophy", "rare"],
-    img: "icons/commodities/bones/tooth-canine-white.webp"
+    price: { value: 2, denomination: "gp" },
+    weight: { value: 0.1, units: "lb" }
   }
 };
 
@@ -102,28 +138,20 @@ export function listLootDefinitions() {
 }
 
 /**
- * Convert a LootForge definition into valid dnd5e embedded Item create data.
+ * Build a fallback Item create-data object when the compendium UUID cannot be resolved.
+ * Not the canonical source — the pack Item is.
  *
- * @param {string|LootDefinition} definitionOrId
+ * @param {LootDefinition} def
  * @param {object} [options]
  * @param {number} [options.quantity=1]
  * @param {string} [options.sourceCreature=""]
  * @returns {object}
  */
-export function definitionToItemData(definitionOrId, { quantity = 1, sourceCreature = "" } = {}) {
-  const def = typeof definitionOrId === "string"
-    ? getLootDefinition(definitionOrId)
-    : definitionOrId;
-
-  if (!def) {
-    throw new Error(`Unknown LootForge definition: ${definitionOrId}`);
-  }
-
+export function buildFallbackItemData(def, { quantity = 1, sourceCreature = "" } = {}) {
   const qty = Math.max(1, Math.floor(Number(quantity) || 1));
-
   return {
     name: def.name,
-    type: def.type || "loot",
+    type: "loot",
     img: def.img || "icons/svg/item-bag.svg",
     system: {
       description: {
@@ -150,14 +178,141 @@ export function definitionToItemData(definitionOrId, { quantity = 1, sourceCreat
         tags: [...(def.tags ?? [])],
         sourceCreature: sourceCreature || "",
         generatedByLootForge: true,
-        stackingKey: def.id
+        stackingKey: def.id,
+        itemUuid: def.itemUuid
       }
     }
   };
 }
 
 /**
- * Format a definition price for UI display.
+ * @deprecated Use buildFallbackItemData / resolveItemDataForTransfer
+ */
+export function definitionToItemData(definitionOrId, options = {}) {
+  const def = typeof definitionOrId === "string"
+    ? getLootDefinition(definitionOrId)
+    : definitionOrId;
+  if (!def) throw new Error(`Unknown LootForge definition: ${definitionOrId}`);
+  return buildFallbackItemData(def, options);
+}
+
+/**
+ * Clone create-data from a resolved Item document (never mutates the source).
+ * @param {Item|object} doc
+ * @param {object} [options]
+ * @param {number} [options.quantity=1]
+ * @param {string} [options.sourceCreature=""]
+ * @param {LootDefinition|null} [options.definition]
+ * @returns {object}
+ */
+export function cloneItemDataFromDocument(doc, {
+  quantity = 1,
+  sourceCreature = "",
+  definition = null
+} = {}) {
+  const data = typeof doc.toObject === "function"
+    ? doc.toObject()
+    : foundry.utils.duplicate(doc);
+
+  delete data._id;
+  delete data.folder;
+  delete data.sort;
+  delete data._stats;
+  if (data.ownership) delete data.ownership;
+
+  data.system ??= {};
+  data.system.quantity = Math.max(1, Math.floor(Number(quantity) || 1));
+
+  const def = definition ?? getLootDefinition(data.flags?.lootforge?.definitionId);
+  data.flags ??= {};
+  data.flags.lootforge = {
+    ...(data.flags.lootforge ?? {}),
+    definitionId: def?.id ?? data.flags.lootforge?.definitionId,
+    category: def?.category ?? data.flags.lootforge?.category,
+    rarity: def?.rarity ?? data.flags.lootforge?.rarity,
+    tags: def?.tags ? [...def.tags] : (data.flags.lootforge?.tags ?? []),
+    stackingKey: def?.id ?? data.flags.lootforge?.stackingKey,
+    itemUuid: def?.itemUuid ?? data.flags.lootforge?.itemUuid,
+    sourceCreature: sourceCreature || data.flags.lootforge?.sourceCreature || "",
+    generatedByLootForge: true
+  };
+
+  return data;
+}
+
+/**
+ * Resolve Item create-data: pack UUID → stored snapshot → definition fallback.
+ *
+ * @param {object} entry  Corpse loot entry
+ * @param {object} [options]
+ * @param {number} [options.quantity]
+ * @param {string} [options.sourceCreature=""]
+ * @returns {Promise<object>}
+ */
+export async function resolveItemDataForTransfer(entry, {
+  quantity,
+  sourceCreature = ""
+} = {}) {
+  const qty = Math.max(1, Math.floor(Number(quantity ?? entry.quantity) || 1));
+  const def = getLootDefinition(entry.definitionId);
+  const uuid = entry.itemUuid || def?.itemUuid;
+
+  if (uuid && typeof fromUuid === "function") {
+    try {
+      const doc = await fromUuid(uuid);
+      if (doc) {
+        return cloneItemDataFromDocument(doc, {
+          quantity: qty,
+          sourceCreature,
+          definition: def
+        });
+      }
+    } catch (err) {
+      console.warn("LootForge | fromUuid failed, using snapshot/fallback", uuid, err);
+    }
+  }
+
+  if (entry.itemData) {
+    const data = foundry.utils.duplicate(entry.itemData);
+    delete data._id;
+    data.system ??= {};
+    data.system.quantity = qty;
+    foundry.utils.setProperty(data, "flags.lootforge.sourceCreature", sourceCreature);
+    foundry.utils.setProperty(data, "flags.lootforge.generatedByLootForge", true);
+    return data;
+  }
+
+  if (!def) throw new Error(`Unknown LootForge definition: ${entry.definitionId}`);
+  return buildFallbackItemData(def, { quantity: qty, sourceCreature });
+}
+
+/**
+ * Build a quantity-neutral snapshot for corpse storage.
+ * Prefer cloning from the live pack document.
+ *
+ * @param {LootDefinition} def
+ * @returns {Promise<object>}
+ */
+export async function buildItemSnapshot(def) {
+  if (def?.itemUuid && typeof fromUuid === "function") {
+    try {
+      const doc = await fromUuid(def.itemUuid);
+      if (doc) {
+        const data = cloneItemDataFromDocument(doc, {
+          quantity: 1,
+          definition: def
+        });
+        // Snapshot stores quantity 1; transfer overwrites.
+        return data;
+      }
+    } catch (err) {
+      console.warn("LootForge | snapshot fromUuid failed", def.itemUuid, err);
+    }
+  }
+  return buildFallbackItemData(def, { quantity: 1 });
+}
+
+/**
  * @param {LootDefinition} def
  * @returns {string}
  */

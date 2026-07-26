@@ -9,6 +9,8 @@ import { log } from "./logger.js";
  * @typedef {object} CorpseLootItem
  * @property {string} entryId
  * @property {string} definitionId
+ * @property {string} [itemUuid]     Canonical Compendium.lootforge.loot-items UUID
+ * @property {object} [itemData]     Fallback Item create-data snapshot
  * @property {string} name
  * @property {number} quantity
  * @property {string} img

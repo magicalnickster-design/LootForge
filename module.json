@@ -2,7 +2,7 @@
   "id": "lootforge",
   "title": "LootForge",
   "description": "Interactive looting and harvesting for defeated creatures. Built for Gambits Forge.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
@@ -38,6 +38,26 @@
       "path": "lang/en.json"
     }
   ],
+  "packs": [
+    {
+      "name": "loot-items",
+      "label": "LootForge Items",
+      "path": "packs/loot-items",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "LootForge",
+      "sorting": "a",
+      "packs": ["loot-items"]
+    }
+  ],
   "socket": true,
   "url": "https://github.com/magicalnickster-design/LootForge",
   "readme": "README.md",
@@ -45,7 +65,7 @@
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs", "json"],
-      "paths": ["styles", "templates", "lang"]
+      "paths": ["styles", "templates", "lang", "packs/src"]
     }
   }
 }

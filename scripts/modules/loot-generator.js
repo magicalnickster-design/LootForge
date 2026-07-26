@@ -2,7 +2,11 @@
  * Generate corpse loot entries from creature profiles + survival quality.
  */
 
-import { formatDefinitionValue, getLootDefinition } from "../data/loot-definitions.js";
+import {
+  buildItemSnapshot,
+  formatDefinitionValue,
+  getLootDefinition
+} from "../data/loot-definitions.js";
 import { resolveCreatureProfile } from "../data/creature-profiles.js";
 import { getSetting } from "./settings.js";
 import { log } from "./logger.js";
@@ -21,12 +25,6 @@ export function qualityFromSurvivalTotal(total) {
   return "poor";
 }
 
-/**
- * Inclusive random int.
- * @param {number} min
- * @param {number} max
- * @returns {number}
- */
 function randomInt(min, max) {
   const lo = Math.min(min, max);
   const hi = Math.max(min, max);
@@ -36,10 +34,6 @@ function randomInt(min, max) {
   return Math.floor(rand * (hi - lo + 1)) + lo;
 }
 
-/**
- * @param {number} chance 0–1
- * @returns {boolean}
- */
 function chanceSucceeds(chance) {
   if (chance >= 1) return true;
   if (chance <= 0) return false;
@@ -49,12 +43,6 @@ function chanceSucceeds(chance) {
   return rand < chance;
 }
 
-/**
- * Apply size / named / boss modifiers as quantity bonuses.
- * @param {number} qty
- * @param {object} context
- * @returns {number}
- */
 function applyContextQuantityBonus(qty, context) {
   let result = qty;
   if (context?.size === "lg" || context?.size === "huge") result += 1;
@@ -66,36 +54,42 @@ function applyContextQuantityBonus(qty, context) {
 
 /**
  * Build a stored corpse loot entry from a definition + quantity.
+ * Stores itemUuid + fallback itemData snapshot for durable transfers.
+ *
  * @param {string} definitionId
  * @param {number} quantity
- * @returns {import("./loot-storage.js").CorpseLootItem|null}
+ * @returns {Promise<import("./loot-storage.js").CorpseLootItem|null>}
  */
-export function buildLootEntry(definitionId, quantity) {
+export async function buildLootEntry(definitionId, quantity) {
   const def = getLootDefinition(definitionId);
   if (!def || quantity <= 0) return null;
+
+  const itemData = await buildItemSnapshot(def);
+
   return {
     entryId: foundry.utils.randomID(),
     definitionId: def.id,
-    name: def.name,
+    itemUuid: def.itemUuid,
     quantity: Math.floor(quantity),
-    img: def.img,
+    name: itemData.name || def.name,
+    img: itemData.img || def.img,
     rarity: def.rarity,
     valueText: formatDefinitionValue(def),
-    description: def.description
+    description: def.description,
+    // Fallback snapshot — never the live pack document.
+    itemData
   };
 }
 
 /**
- * Generate loot items for a creature context + survival result.
- *
  * @param {object} options
- * @param {object} options.context          buildCreatureContext result
+ * @param {object} options.context
  * @param {number} options.survivalTotal
  * @param {number} [options.naturalDie=0]
  * @param {boolean} [options.isNatural20=false]
- * @returns {{ profileId: string, rollQuality: string, items: object[] }}
+ * @returns {Promise<{ profileId: string, rollQuality: string, items: object[] }>}
  */
-export function generateCreatureLoot({
+export async function generateCreatureLoot({
   context,
   survivalTotal,
   naturalDie = 0,
@@ -107,7 +101,6 @@ export function generateCreatureLoot({
   }
 
   let rollQuality = qualityFromSurvivalTotal(survivalTotal);
-  // Named/boss wolves nudge quality up one step (cap exceptional).
   if (context?.isBoss || (context?.isNamed && context?.isWolf)) {
     const order = ["poor", "standard", "good", "excellent", "exceptional"];
     const idx = Math.min(order.indexOf(rollQuality) + 1, order.length - 1);
@@ -132,20 +125,17 @@ export function generateCreatureLoot({
     qty = applyContextQuantityBonus(qty, context);
     if (isNatural20 && qty > 0) qty += 1;
 
-    const entry = buildLootEntry(drop.definitionId, qty);
+    const entry = await buildLootEntry(drop.definitionId, qty);
     if (entry) items.push(entry);
   }
 
-  // Believable harvest: never return a completely empty wolf corpse.
   if (!items.length && fallbackDefs.length) {
-    const defId = fallbackDefs[0];
-    const entry = buildLootEntry(defId, 1);
+    const entry = await buildLootEntry(fallbackDefs[0], 1);
     if (entry) items.push(entry);
   }
 
-  // Nat 20: ensure at least one fang if somehow still empty of interesting bits.
   if (isNatural20 && !items.some((i) => i.definitionId === "wolf-fang")) {
-    const fang = buildLootEntry("wolf-fang", 1);
+    const fang = await buildLootEntry("wolf-fang", 1);
     if (fang) items.push(fang);
   }
 
@@ -154,7 +144,11 @@ export function generateCreatureLoot({
     rollQuality,
     survivalTotal,
     naturalDie,
-    items
+    items: items.map((i) => ({
+      definitionId: i.definitionId,
+      itemUuid: i.itemUuid,
+      quantity: i.quantity
+    }))
   });
 
   return {
@@ -165,13 +159,12 @@ export function generateCreatureLoot({
 }
 
 /**
- * Reroll a single entry in place (new quantity from profile for current quality).
  * @param {object} context
  * @param {string} rollQuality
  * @param {string} definitionId
- * @returns {import("./loot-storage.js").CorpseLootItem|null}
+ * @returns {Promise<import("./loot-storage.js").CorpseLootItem|null>}
  */
-export function rerollSingleEntry(context, rollQuality, definitionId) {
+export async function rerollSingleEntry(context, rollQuality, definitionId) {
   const profile = resolveCreatureProfile(context);
   const drop = profile?.drops?.find((d) => d.definitionId === definitionId);
   if (!drop) return buildLootEntry(definitionId, 1);
@@ -181,7 +174,6 @@ export function rerollSingleEntry(context, rollQuality, definitionId) {
   const range = drop.quantityByQuality?.[rollQuality] ?? [1, 1];
   const chance = drop.chanceByQuality?.[rollQuality] ?? 1;
   if (!chanceSucceeds(Math.max(chance, 0.35))) {
-    // Soft miss on reroll still yields minimum 1 for UX when range allows.
     const min = range[0];
     if (min <= 0) return null;
   }

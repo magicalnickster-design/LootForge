@@ -1,0 +1,53 @@
+{
+  "_id": "LFWolfMeat000001",
+  "name": "Wolf Meat",
+  "type": "loot",
+  "img": "icons/consumables/meat/steak-raw-red-pink.webp",
+  "system": {
+    "description": {
+      "value": "<p>Raw meat harvested from a wolf. Edible when properly prepared, though most civilized settlements consider it poor fare.</p>",
+      "chat": "Raw meat harvested from a wolf."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "wolf-meat",
+      "category": "crafting-material",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "wolf",
+        "meat",
+        "cooking"
+      ],
+      "stackingKey": "wolf-meat",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWolfMeat000001"
+}
