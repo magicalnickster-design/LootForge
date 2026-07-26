@@ -5,7 +5,7 @@
  */
 
 import { MODULE_ID } from "./constants.js";
-import { isCreatureDead } from "./creature-context.js";
+import { isLootableTarget } from "./creature-context.js";
 import { log } from "./logger.js";
 import { getSetting } from "./settings.js";
 import {
@@ -70,8 +70,9 @@ function getStarTexture() {
  */
 export function shouldShowLootIndicator(tokenDoc) {
   if (!tokenDoc || !getSetting("showLootIndicators")) return false;
-  if (!isCreatureDead(tokenDoc, tokenDoc.actor)) return false;
-  // Fully emptied corpses lose sparkles (and are hidden separately).
+  // Dead creatures OR LootForge Chest/Container tokens.
+  if (!isLootableTarget(tokenDoc, tokenDoc.actor)) return false;
+  // Fully emptied targets lose sparkles (and are hidden separately).
   if (isCorpseLooted(tokenDoc) && !hasRemainingLoot(tokenDoc)) return false;
   const state = getCorpseState(tokenDoc);
   if (state.looted && !hasRemainingLoot(tokenDoc)) return false;
@@ -97,7 +98,7 @@ export async function syncLootedCorpseVisibility(tokenDoc) {
 
   const state = getCorpseState(tokenDoc);
   const wasCorpse = Boolean(state.generated || state.looted)
-    || isCreatureDead(tokenDoc, tokenDoc.actor);
+    || isLootableTarget(tokenDoc, tokenDoc.actor);
   const fullyLooted = wasCorpse
     && Boolean(state.generated || state.looted)
     && !hasRemainingLoot(tokenDoc);

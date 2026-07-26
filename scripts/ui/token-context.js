@@ -4,7 +4,7 @@
  * No right-click context menu entry — that was a single-action loot path.
  */
 
-import { isCreatureDead } from "../modules/creature-context.js";
+import { isLootableTarget } from "../modules/creature-context.js";
 import { MODULE_ID } from "../modules/constants.js";
 import {
   getCorpseState,
@@ -36,7 +36,7 @@ export function resolveNearestLootableCorpse() {
   const placeables = canvas.tokens?.placeables ?? [];
   const candidates = placeables.filter((token) => {
     const doc = token.document;
-    if (!doc || !isCreatureDead(doc, token.actor)) return false;
+    if (!doc || !isLootableTarget(doc, token.actor)) return false;
     if (game.user.isGM) {
       return !isLootGenerated(doc) || hasRemainingLoot(doc) || isAwaitingDmReview(getCorpseState(doc));
     }
@@ -77,7 +77,7 @@ export function resolveLootHotkeyToken() {
   const targeted = resolveLootTargetToken();
   if (targeted) {
     const doc = targeted.document;
-    if (doc && isCreatureDead(doc, targeted.actor)) return targeted;
+    if (doc && isLootableTarget(doc, targeted.actor)) return targeted;
   }
   return resolveNearestLootableCorpse();
 }

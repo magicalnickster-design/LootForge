@@ -1,18 +1,18 @@
 /**
- * Double-click a dead creature to loot (WoW-style).
+ * Double-click a lootable target (dead creature or Chest/Container).
  *
  * Players usually cannot hover/control unowned enemy tokens, so Foundry never
  * sets canvas.tokens.hover and Token#_onClickLeft2 is permission-gated by
- * _canView. We patch those permissions for dead creatures.
+ * _canView. We patch those permissions for lootable targets.
  *
  * Sheet access is preserved for:
  * - GMs (always open the actor sheet on double-click)
  * - Players who own the actor (including dead PCs)
  *
- * Loot only starts for dead unowned NPCs (player double-click).
+ * Loot only starts for unowned lootable NPCs/containers (player double-click).
  */
 
-import { isCreatureDead } from "../modules/creature-context.js";
+import { isLootableTarget } from "../modules/creature-context.js";
 import { log } from "../modules/logger.js";
 import { userOwnsActor } from "../modules/ownership.js";
 import { lootBody } from "../modules/loot-workflow.js";
@@ -133,7 +133,7 @@ function shouldOpenSheetInsteadOfLoot(token) {
  */
 async function tryLootDeadToken(token, event = null) {
   if (!token?.document || !token.actor) return false;
-  if (!isCreatureDead(token.document, token.actor)) return false;
+  if (!isLootableTarget(token.document, token.actor)) return false;
   if (shouldOpenSheetInsteadOfLoot(token)) return false;
 
   event?.preventDefault?.();
@@ -177,7 +177,7 @@ function patchTokenDoubleClick() {
     proto._lootforgeCanView = proto._canView;
     proto._canView = function lootforgeCanView(user, event) {
       try {
-        if (isCreatureDead(this.document, this.actor)) return true;
+        if (isLootableTarget(this.document, this.actor)) return true;
       } catch {
         // fall through
       }
@@ -189,7 +189,7 @@ function patchTokenDoubleClick() {
     proto._lootforgeCanHover = proto._canHover;
     proto._canHover = function lootforgeCanHover(user, event) {
       try {
-        if (isCreatureDead(this.document, this.actor)) return true;
+        if (isLootableTarget(this.document, this.actor)) return true;
       } catch {
         // fall through
       }
@@ -201,12 +201,12 @@ function patchTokenDoubleClick() {
     proto._lootforgeOnClickLeft2 = proto._onClickLeft2;
     proto._onClickLeft2 = function lootforgeOnClickLeft2(event) {
       try {
-        if (isCreatureDead(this.document, this.actor)) {
+        if (isLootableTarget(this.document, this.actor)) {
           if (shouldOpenSheetInsteadOfLoot(this)) {
             // GM / owned actor — normal Foundry sheet open.
             return proto._lootforgeOnClickLeft2.call(this, event);
           }
-          // Unowned dead NPC — loot instead of sheet.
+          // Unowned lootable NPC / container — loot instead of sheet.
           event?.stopPropagation?.();
           void tryLootDeadToken(this, event);
           return;

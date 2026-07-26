@@ -10,6 +10,7 @@ import { registerLootIndicatorHooks } from "./modules/loot-indicator.js";
 import { registerInvestigationReadyHook } from "./modules/loot-workflow.js";
 import { registerSettings } from "./modules/settings.js";
 import { registerSocketManager } from "./modules/socket-manager.js";
+import { ensureWorldLootActors, registerContainerTokenHooks } from "./modules/world-actors.js";
 import { registerSceneControls } from "./ui/scene-controls.js";
 import { registerTokenDoubleClickLoot } from "./ui/token-dblclick.js";
 import { registerLootKeybinding, registerTokenContext } from "./ui/token-context.js";
@@ -41,6 +42,10 @@ Hooks.once("ready", () => {
   registerTokenHud();
   registerTokenContext();
   registerTokenDoubleClickLoot();
+  registerContainerTokenHooks();
+
+  // Seed Chest + Container into the world Actors tab (GM only).
+  void ensureWorldLootActors();
 
   // Public API for macros / other modules.
   game.modules.get(MODULE_ID).api = {
@@ -55,8 +60,9 @@ Hooks.once("ready", () => {
     openPlayerWindow: async (tokenDoc) => {
       const { openPlayerLootWindow } = await import("./applications/player-loot-window.js");
       return openPlayerLootWindow(tokenDoc);
-    }
+    },
+    ensureWorldLootActors
   };
 
-  log.info(`Ready v0.4.7 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.5.2 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

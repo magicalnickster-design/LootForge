@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c48a48"/>
+      <stop offset="45%" stop-color="#8a5528"/>
+      <stop offset="100%" stop-color="#4a2c14"/>
+    </linearGradient>
+    <linearGradient id="lid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d4a060"/>
+      <stop offset="100%" stop-color="#6a3c18"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0c860"/>
+      <stop offset="100%" stop-color="#8a6820"/>
+    </linearGradient>
+  </defs>
+  <!-- shadow -->
+  <ellipse cx="64" cy="112" rx="42" ry="8" fill="#000" opacity=".28"/>
+  <!-- body -->
+  <path d="M22 58h84v42c0 6-4 10-10 10H32c-6 0-10-4-10-10V58z" fill="url(#wood)" stroke="#2a1608" stroke-width="2.5"/>
+  <!-- wood planks -->
+  <path d="M22 72h84M22 86h84" stroke="#3a2010" stroke-width="1.5" opacity=".45"/>
+  <!-- lid -->
+  <path d="M18 58c0-18 12-34 46-34s46 16 46 34H18z" fill="url(#lid)" stroke="#2a1608" stroke-width="2.5"/>
+  <path d="M28 48c8-12 24-18 36-18s28 6 36 18" fill="none" stroke="#f0d0a0" stroke-opacity=".25" stroke-width="3"/>
+  <!-- metal bands -->
+  <rect x="20" y="54" width="88" height="8" rx="2" fill="url(#metal)" stroke="#4a3810" stroke-width="1.2"/>
+  <rect x="30" y="96" width="68" height="6" rx="1.5" fill="url(#metal)" stroke="#4a3810" stroke-width="1"/>
+  <!-- lock plate -->
+  <rect x="54" y="62" width="20" height="22" rx="3" fill="url(#metal)" stroke="#4a3810" stroke-width="1.4"/>
+  <circle cx="64" cy="72" r="4" fill="#3a2810"/>
+  <path d="M64 76v6" stroke="#3a2810" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- corner bosses -->
+  <circle cx="30" cy="64" r="3" fill="#c4a040"/><circle cx="98" cy="64" r="3" fill="#c4a040"/>
+</svg>

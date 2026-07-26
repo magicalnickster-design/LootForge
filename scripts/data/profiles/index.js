@@ -6,6 +6,7 @@
  */
 
 import { animatedArmorProfile } from "./animated-armor.js";
+import { containerProfile } from "./container.js";
 import { goblinProfile } from "./goblin.js";
 import { spiderProfile } from "./spider.js";
 import { wolfProfile } from "./wolf.js";
@@ -14,10 +15,11 @@ import { wolfProfile } from "./wolf.js";
  * Specific profiles first (spider before wolf, etc.).
  * Registry key may differ from profile.id (animatedArmor → animated-armor).
  */
-export const PROFILE_ORDER = ["spider", "animatedArmor", "goblin", "wolf"];
+export const PROFILE_ORDER = ["container", "spider", "animatedArmor", "goblin", "wolf"];
 
 /** @type {Record<string, import("../creature-profiles.js").CreatureProfile>} */
 export const CREATURE_PROFILES = {
+  container: containerProfile,
   spider: spiderProfile,
   animatedArmor: animatedArmorProfile,
   goblin: goblinProfile,
@@ -49,6 +51,10 @@ function nameHitsProfile(profile, nameLower) {
  */
 export function resolveCreatureProfile(context) {
   if (!context) return null;
+
+  // Chests / blank containers always use the container multi-pool profile.
+  if (context.isContainer) return CREATURE_PROFILES.container;
+
   const name = String(context.name ?? "").toLowerCase();
   const type = String(context.creatureType ?? "").toLowerCase();
   const subtype = String(context.creatureSubtype ?? "").toLowerCase();

@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Fully transparent token art  place over existing map scenery. -->
+  <rect width="64" height="64" fill="none" opacity="0"/>
+</svg>

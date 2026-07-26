@@ -2,7 +2,7 @@
  * Token HUD — Generate / View Loot button on defeated tokens.
  */
 
-import { isCreatureDead } from "../modules/creature-context.js";
+import { isLootableTarget } from "../modules/creature-context.js";
 import {
   hasRemainingLoot,
   isCorpseLooted,
@@ -22,7 +22,7 @@ export function registerTokenHud() {
     const token = hud.object;
     const tokenDoc = token?.document;
     if (!tokenDoc?.actor) return;
-    if (!isCreatureDead(tokenDoc, token.actor)) return;
+    if (!isLootableTarget(tokenDoc, token.actor)) return;
 
     const root = toElement(html);
     const column = root?.querySelector(".col.left");

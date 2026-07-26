@@ -6,7 +6,7 @@
 import { resolveCreatureProfile } from "../data/creature-profiles.js";
 import { openDmLootReview } from "../applications/dm-loot-review.js";
 import { openPlayerLootWindow } from "../applications/player-loot-window.js";
-import { buildCreatureContext, isCreatureDead } from "./creature-context.js";
+import { buildCreatureContext, isLootableTarget } from "./creature-context.js";
 import { generateCreatureLoot } from "./loot-generator.js";
 import { syncLootIndicator } from "./loot-indicator.js";
 import { log } from "./logger.js";
@@ -93,7 +93,7 @@ export async function lootBody(token) {
       return;
     }
 
-    if (!isCreatureDead(tokenDoc, creature)) {
+    if (!isLootableTarget(tokenDoc, creature)) {
       ui.notifications.warn(
         game.i18n.format("LOOTFORGE.Notify.NotDefeated", { name: creature.name })
       );

@@ -3,7 +3,9 @@
  * Safe against missing DDB / incomplete actor data.
  */
 
+import { MODULE_ID } from "./constants.js";
 import { log } from "./logger.js";
+import { isLootContainerActor } from "./world-actors.js";
 
 /**
  * @typedef {object} CreatureContext
@@ -18,6 +20,7 @@ import { log } from "./logger.js";
  * @property {number} challengeRating
  * @property {string} size
  * @property {boolean} isDead
+ * @property {boolean} isContainer
  * @property {boolean} isNamed
  * @property {boolean} isBoss
  * @property {string[]} environmentTags
@@ -52,9 +55,11 @@ export function buildCreatureContext(actor, token, scene = null) {
   const size = String(resolvedActor?.system?.traits?.size ?? "med");
 
   const isDead = isCreatureDead(tokenDoc, resolvedActor);
+  const isContainer = isLootContainerActor(resolvedActor)
+    || Boolean(tokenDoc?.getFlag?.(MODULE_ID, "isContainer"));
   // True wolves only — not wolf spiders, werewolves, or worgs.
   const isWolf = isActualWolf(nameLower, creatureSubtype);
-  const isBeast = creatureType === "beast" || isWolf;
+  const isBeast = !isContainer && (creatureType === "beast" || isWolf);
   const isNamed = looksNamed(name, creatureType);
   const isBoss = Boolean(details.legendary?.value) || /alpha|elder|ancient|dire/i.test(name);
 
@@ -70,6 +75,7 @@ export function buildCreatureContext(actor, token, scene = null) {
     challengeRating,
     size,
     isDead,
+    isContainer,
     isNamed,
     isBoss,
     environmentTags: inferEnvironmentTags(resolvedScene),
@@ -99,6 +105,35 @@ export function isCreatureDead(tokenDoc, actor = null) {
 
   const hp = actor?.system?.attributes?.hp?.value ?? tokenDoc?.actor?.system?.attributes?.hp?.value;
   return Number.isFinite(hp) && hp <= 0;
+}
+
+/**
+ * True for LootForge Chest / Container actors (and tokens flagged as containers).
+ * @param {TokenDocument|null} tokenDoc
+ * @param {Actor|null} [actor]
+ * @returns {boolean}
+ */
+export function isLootContainer(tokenDoc, actor = null) {
+  const resolved = actor ?? tokenDoc?.actor ?? null;
+  if (isLootContainerActor(resolved)) return true;
+  try {
+    if (tokenDoc?.getFlag?.(MODULE_ID, "isContainer")) return true;
+  } catch {
+    // ignore
+  }
+  return Boolean(tokenDoc?.flags?.[MODULE_ID]?.isContainer);
+}
+
+/**
+ * Anything players may loot: dead creatures OR LootForge containers.
+ * @param {TokenDocument|null} tokenDoc
+ * @param {Actor|null} [actor]
+ * @returns {boolean}
+ */
+export function isLootableTarget(tokenDoc, actor = null) {
+  const resolved = actor ?? tokenDoc?.actor ?? null;
+  if (isLootContainer(tokenDoc, resolved)) return true;
+  return isCreatureDead(tokenDoc, resolved);
 }
 
 /**
@@ -136,7 +171,9 @@ function looksNamed(name, creatureType) {
     "giant spider",
     "wolf spider",
     "animated armor",
-    "animated armour"
+    "animated armour",
+    "chest",
+    "container"
   ]);
   if (stock.has(trimmed.toLowerCase())) return false;
   return true;

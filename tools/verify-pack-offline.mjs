@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.1") {
-  throw new Error(`Expected module version 0.5.1, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.2") {
+  throw new Error(`Expected module version 0.5.2, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -198,11 +198,18 @@ const hobgoblin = resolveCreatureProfile({
   creatureType: "humanoid",
   creatureSubtype: "goblinoid"
 });
+const chest = resolveCreatureProfile({
+  name: "Chest",
+  creatureType: "construct",
+  creatureSubtype: "",
+  isContainer: true
+});
 if (wolf?.id !== "wolf") throw new Error(`Expected wolf profile, got ${wolf?.id}`);
 if (wolfSpider?.id !== "spider") throw new Error(`Expected spider profile for Wolf Spider, got ${wolfSpider?.id}`);
 if (armor?.id !== "animated-armor") throw new Error(`Expected animated-armor profile, got ${armor?.id}`);
 if (goblin?.id !== "goblin") throw new Error(`Expected goblin profile, got ${goblin?.id}`);
 if (hobgoblin?.id === "goblin") throw new Error("Hobgoblin must not resolve to goblin profile");
+if (chest?.id !== "container") throw new Error(`Expected container profile for Chest, got ${chest?.id}`);
 if (!getLootDefinition("goblin-ear") || !getLootDefinition("bandit-orders")) {
   throw new Error("Missing goblin loot definitions");
 }

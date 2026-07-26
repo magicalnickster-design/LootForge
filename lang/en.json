@@ -20,7 +20,7 @@
     },
     "Notify": {
       "WrongSystem": "LootForge currently supports the D&D 5e system only.",
-      "NotDefeated": "{name} must be defeated before it can be looted.",
+      "NotDefeated": "{name} is not lootable yet (defeat the creature, or place a LootForge Chest/Container).",
       "AlreadyLooted": "{name} has already been looted.",
       "AlreadyLootedEmpty": "This corpse has already been looted.",
       "NoLooter": "No eligible player characters found. Create a character or place one on the scene.",
