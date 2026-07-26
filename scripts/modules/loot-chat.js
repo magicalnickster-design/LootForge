@@ -1,19 +1,22 @@
 /**
- * Chat-card driven Investigation + Generate Loot prompts (no DialogV2 popups).
+ * Chat-card driven Investigation + Generate Loot prompts (no roll/config popups).
  */
 
-import { MODULE_ID } from "./constants.js";
+import { MODULE_ID, OPS } from "./constants.js";
 import { log } from "./logger.js";
 import { getCorpseState, updateCorpseState } from "./loot-storage.js";
-import { rollInvestigation } from "./roll-helper.js";
+import { rollInvestigationSilent } from "./roll-helper.js";
 
 let registered = false;
+
+/** @type {Set<string>} */
+const postedGenerateKeys = new Set();
 
 /**
  * @returns {string[]}
  */
 function gmUserIds() {
-  return game.users.filter((u) => u.isGM).map((u) => u.id);
+  return game.users.filter((u) => u.isGM && u.active !== false).map((u) => u.id);
 }
 
 /**
@@ -44,8 +47,8 @@ export async function postInvestigationPromptChat(tokenDoc, actor, user = game.u
         <strong>${game.i18n.localize("LOOTFORGE.Chat.InvestigationTitle")}</strong>
       </header>
       <p>${game.i18n.format("LOOTFORGE.Chat.InvestigationBody", {
-        character: actor.name,
-        name: creatureName
+        character: foundry.utils.escapeHTML?.(actor.name) ?? actor.name,
+        name: foundry.utils.escapeHTML?.(creatureName) ?? creatureName
       })}</p>
       <button type="button" class="lootforge-chat-btn"
         data-lootforge-action="roll-investigation"
@@ -88,31 +91,49 @@ export async function postInvestigationPromptChat(tokenDoc, actor, user = game.u
 }
 
 /**
- * GM-only chat card: Generate Loot after a completed Investigation roll.
+ * GM-visible Generate Loot card (whispered to GMs only).
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
  * @param {User} user
  * @param {{ total: number, natural?: number, isNatural20?: boolean }} roll
+ * @param {{ force?: boolean }} [options]
  */
-export async function postGenerateLootChat(tokenDoc, actor, user, roll) {
+export async function postGenerateLootChat(tokenDoc, actor, user, roll, { force = false } = {}) {
   if (!tokenDoc || !actor || !roll) return null;
+
+  const key = `${tokenDoc.uuid}:${Number(roll.total)}:${actor.id}`;
+  if (!force && postedGenerateKeys.has(key)) {
+    log.info("Skipping duplicate Generate Loot chat card", { key });
+    return null;
+  }
+  postedGenerateKeys.add(key);
+  setTimeout(() => postedGenerateKeys.delete(key), 15000);
 
   const gms = gmUserIds();
   if (!gms.length) {
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NeedGM"));
-    return null;
+    // Fall back to every GM user id even if active flag is odd.
+    const allGms = game.users.filter((u) => u.isGM).map((u) => u.id);
+    if (!allGms.length) {
+      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NeedGM"));
+      return null;
+    }
+    gms.push(...allGms);
   }
+
+  const playerName = foundry.utils.escapeHTML?.(user?.name ?? "Player") ?? (user?.name ?? "Player");
+  const characterName = foundry.utils.escapeHTML?.(actor.name) ?? actor.name;
+  const creatureName = foundry.utils.escapeHTML?.(tokenDoc.name) ?? tokenDoc.name;
 
   const content = `
     <div class="lootforge-chat-card" data-lootforge-card="generate">
       <header class="lootforge-chat-header">
-        <i class="fa-solid fa-treasure-chest"></i>
+        <i class="fa-solid fa-coins"></i>
         <strong>${game.i18n.localize("LOOTFORGE.Chat.GenerateTitle")}</strong>
       </header>
       <p>${game.i18n.format("LOOTFORGE.Chat.GenerateBody", {
-        player: user?.name ?? "Player",
-        character: actor.name,
-        name: tokenDoc.name,
+        player: playerName,
+        character: characterName,
+        name: creatureName,
         total: roll.total
       })}</p>
       <button type="button" class="lootforge-chat-btn lootforge-chat-btn-gm"
@@ -129,30 +150,102 @@ export async function postGenerateLootChat(tokenDoc, actor, user, roll) {
     </div>
   `;
 
-  const msg = await ChatMessage.create({
-    content,
-    whisper: gms,
-    speaker: { alias: "LootForge" },
-    flags: {
-      [MODULE_ID]: {
-        card: "generate",
-        tokenUuid: tokenDoc.uuid,
-        actorId: actor.id,
-        userId: user?.id ?? null,
-        investigationTotal: Number(roll.total),
-        naturalDie: Number(roll.natural ?? 0),
-        isNatural20: Boolean(roll.isNatural20)
+  try {
+    const msg = await ChatMessage.create({
+      content,
+      whisper: [...new Set(gms)],
+      speaker: { alias: "LootForge" },
+      flags: {
+        [MODULE_ID]: {
+          card: "generate",
+          tokenUuid: tokenDoc.uuid,
+          actorId: actor.id,
+          userId: user?.id ?? null,
+          investigationTotal: Number(roll.total),
+          naturalDie: Number(roll.natural ?? 0),
+          isNatural20: Boolean(roll.isNatural20)
+        }
       }
-    }
-  });
+    });
 
-  log.info("Posted GM Generate Loot chat prompt", {
-    tokenUuid: tokenDoc.uuid,
-    total: roll.total,
-    messageId: msg?.id
-  });
+    log.info("Posted GM Generate Loot chat prompt", {
+      tokenUuid: tokenDoc.uuid,
+      total: roll.total,
+      messageId: msg?.id,
+      whisper: gms,
+      fromUserId: game.user.id,
+      isGM: game.user.isGM
+    });
 
-  return msg;
+    return msg;
+  } catch (err) {
+    log.error("Failed to post Generate Loot chat card", err);
+    ui.notifications.error("LootForge: could not post Generate Loot to chat.");
+    postedGenerateKeys.delete(key);
+    return null;
+  }
+}
+
+/**
+ * Notify GMs that Investigation is ready — store flags + post Generate card.
+ * @param {object} payload
+ */
+export async function handleInvestigationReady(payload) {
+  if (!game.user.isGM) return;
+
+  // Only one GM client should write flags + post (prefer active GM).
+  const activeId = game.users.activeGM?.id;
+  if (activeId && activeId !== game.user.id) {
+    log.info("Non-active GM ignoring Investigation ready", {
+      activeId,
+      localUserId: game.user.id
+    });
+    return;
+  }
+
+  const tokenDoc = await fromUuid(payload.tokenUuid);
+  const actor = game.actors.get(payload.actorId);
+  const user = game.users.get(payload.fromUserId);
+  if (!tokenDoc || !actor) {
+    log.warn("Investigation ready missing token/actor", payload);
+    return;
+  }
+
+  const roll = {
+    total: Number(payload.investigationTotal),
+    natural: Number(payload.naturalDie ?? 0),
+    isNatural20: Boolean(payload.isNatural20)
+  };
+  if (!Number.isFinite(roll.total)) {
+    log.warn("Investigation ready missing total", payload);
+    return;
+  }
+
+  try {
+    await updateCorpseState(tokenDoc, {
+      pendingInvestigation: {
+        ...roll,
+        actorId: actor.id,
+        userId: user?.id ?? payload.fromUserId,
+        at: Date.now()
+      },
+      pendingLooterActorId: actor.id,
+      pendingLooterUserId: user?.id ?? payload.fromUserId ?? null,
+      pendingReview: false,
+      dmApproved: false
+    });
+  } catch (err) {
+    log.error("Failed to store pending Investigation on corpse", err);
+  }
+
+  await postGenerateLootChat(tokenDoc, actor, user, roll);
+  ui.notifications.info(
+    game.i18n.format("LOOTFORGE.Notify.InvestigationReadyForGM", {
+      player: user?.name ?? "Player",
+      name: tokenDoc.name,
+      total: roll.total
+    })
+  );
 }
 
 /**
@@ -169,7 +262,6 @@ async function onRollInvestigationClick(button) {
     ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
     return;
   }
-  // GMs should not roll for the player from this card — player must click it.
   if (game.user.isGM && userId && userId !== game.user.id) {
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.PlayerMustRoll"));
     return;
@@ -186,8 +278,11 @@ async function onRollInvestigationClick(button) {
   button.classList.add("lootforge-chat-btn-done");
 
   try {
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
-    const roll = await rollInvestigation(actor);
+    // Silent formula roll — no dnd5e roll-config popup (chat button is the only prompt).
+    const roll = await rollInvestigationSilent(actor, {
+      createMessage: true,
+      flavor: game.i18n.localize("LOOTFORGE.Notify.RollInvestigation")
+    });
     if (!roll) {
       button.disabled = false;
       button.classList.remove("lootforge-chat-btn-done");
@@ -195,8 +290,7 @@ async function onRollInvestigationClick(button) {
       return;
     }
 
-    // Persist pending roll on the corpse for the GM Generate button / reconnects.
-    if (game.user.isGM || tokenDoc.isOwner) {
+    if (game.user.isGM) {
       await updateCorpseState(tokenDoc, {
         pendingInvestigation: {
           total: Number(roll.total),
@@ -214,9 +308,10 @@ async function onRollInvestigationClick(button) {
       });
       await postGenerateLootChat(tokenDoc, actor, game.user, roll);
     } else {
-      // Players usually cannot update enemy token flags — ask GM via socket.
+      // Never update enemy token flags as a player — always ask the GM client.
+      // Also whisper the Generate card from this client so the GM sees it even if
+      // the socket handler is delayed.
       const { emitLootForge } = await import("./socket-manager.js");
-      const { OPS } = await import("./constants.js");
       emitLootForge({
         op: OPS.INVESTIGATION_READY,
         tokenUuid: tokenDoc.uuid,
@@ -225,6 +320,17 @@ async function onRollInvestigationClick(button) {
         naturalDie: Number(roll.natural ?? 0),
         isNatural20: Boolean(roll.isNatural20)
       });
+      log.info("Emitted INVESTIGATION_READY to GM", {
+        tokenUuid: tokenDoc.uuid,
+        total: roll.total
+      });
+
+      // Player-side whisper fallback (GM-only recipients).
+      try {
+        await postGenerateLootChat(tokenDoc, actor, game.user, roll);
+      } catch (err) {
+        log.warn("Player could not whisper Generate card; GM socket should post it", err);
+      }
     }
 
     button.innerHTML = `<i class="fa-solid fa-check"></i> ${game.i18n.localize("LOOTFORGE.Chat.Rolled")}`;
@@ -318,49 +424,6 @@ async function onGenerateLootClick(button) {
 }
 
 /**
- * GM: player finished Investigation via chat — store roll + post Generate card.
- * @param {object} payload
- */
-export async function handleInvestigationReady(payload) {
-  if (!game.user.isGM) return;
-  if (game.users.activeGM?.id !== game.user.id) return;
-
-  const tokenDoc = await fromUuid(payload.tokenUuid);
-  const actor = game.actors.get(payload.actorId);
-  const user = game.users.get(payload.fromUserId);
-  if (!tokenDoc || !actor) return;
-
-  const roll = {
-    total: Number(payload.investigationTotal),
-    natural: Number(payload.naturalDie ?? 0),
-    isNatural20: Boolean(payload.isNatural20)
-  };
-  if (!Number.isFinite(roll.total)) return;
-
-  await updateCorpseState(tokenDoc, {
-    pendingInvestigation: {
-      ...roll,
-      actorId: actor.id,
-      userId: user?.id ?? payload.fromUserId,
-      at: Date.now()
-    },
-    pendingLooterActorId: actor.id,
-    pendingLooterUserId: user?.id ?? payload.fromUserId ?? null,
-    pendingReview: false,
-    dmApproved: false
-  });
-
-  await postGenerateLootChat(tokenDoc, actor, user, roll);
-  ui.notifications.info(
-    game.i18n.format("LOOTFORGE.Notify.InvestigationReadyForGM", {
-      player: user?.name ?? "Player",
-      name: tokenDoc.name,
-      total: roll.total
-    })
-  );
-}
-
-/**
  * @param {ChatMessage} message
  * @param {HTMLElement|JQuery} html
  */
@@ -375,7 +438,6 @@ function bindChatCardButtons(message, html) {
     if (button.dataset.lootforgeBound === "1") return;
     button.dataset.lootforgeBound = "1";
 
-    // Hide Generate button on non-GM clients if the whisper somehow leaked.
     if (button.dataset.lootforgeAction === "generate-loot" && !game.user.isGM) {
       button.style.display = "none";
       return;
@@ -402,7 +464,6 @@ export function registerLootChatHooks() {
     bindChatCardButtons(message, html);
   });
 
-  // Foundry v13+/v14 HTML variant
   Hooks.on("renderChatMessageHTML", (message, html) => {
     bindChatCardButtons(message, html);
   });

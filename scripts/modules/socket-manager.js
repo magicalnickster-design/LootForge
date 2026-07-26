@@ -24,10 +24,8 @@ import {
 } from "./loot-transfer.js";
 import { refreshLootWindows } from "../applications/window-registry.js";
 import {
-  beginInvestigationDialog,
   cancelInvestigationDialog,
-  endInvestigationDialog,
-  getActiveInvestigationRequestId
+  endInvestigationDialog
 } from "./session-guard.js";
 
 let registered = false;
