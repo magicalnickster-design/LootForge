@@ -1,7 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#d04040"/><stop offset="100%" stop-color="#802020"/>
-  </linearGradient></defs>
-  <rect x="10" y="10" width="44" height="44" rx="8" fill="url(#g)" stroke="#802020" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="10" fill="#fff" fill-opacity=".18"/>
+  <defs>
+    <linearGradient id="f" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff7070"/>
+      <stop offset="40%" stop-color="#d03030"/>
+      <stop offset="100%" stop-color="#601818"/>
+    </linearGradient>
+  </defs>
+  <!-- quill -->
+  <path d="M40 50c-2-8-6-20-10-30" fill="none" stroke="#d8c8a0" stroke-width="2" stroke-linecap="round"/>
+  <!-- vane -->
+  <path d="M28 8c8 2 16 10 20 22 2 6 2 12 0 16-6-4-14-10-20-18-4-6-6-12-4-16 1-2 2-4 4-4z" fill="url(#f)" stroke="#401010" stroke-width="1.2"/>
+  <!-- barbs -->
+  <path d="M30 14c6 4 12 10 16 18M28 22c6 4 12 10 14 14M28 30c5 4 10 8 12 10" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1.2"/>
+  <!-- rachis -->
+  <path d="M30 12c4 8 8 20 10 34" fill="none" stroke="#401010" stroke-width="1.3" opacity=".7"/>
 </svg>

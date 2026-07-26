@@ -1,7 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#7a7a70"/><stop offset="100%" stop-color="#3a3a34"/>
-  </linearGradient></defs>
-  <rect x="10" y="10" width="44" height="44" rx="8" fill="url(#g)" stroke="#3a3a34" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="10" fill="#fff" fill-opacity=".18"/>
+  <defs>
+    <linearGradient id="st" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9a9a90"/>
+      <stop offset="100%" stop-color="#3a3a34"/>
+    </linearGradient>
+  </defs>
+  <!-- base -->
+  <ellipse cx="32" cy="56" rx="16" ry="4" fill="#2a2a24"/>
+  <path d="M18 54h28l-4-10H22z" fill="url(#st)" stroke="#1a1a16" stroke-width="1.2"/>
+  <!-- body -->
+  <path d="M24 44h16l2-16H22z" fill="url(#st)" stroke="#1a1a16" stroke-width="1.2"/>
+  <!-- head oversized -->
+  <ellipse cx="32" cy="20" rx="12" ry="14" fill="url(#st)" stroke="#1a1a16" stroke-width="1.3"/>
+  <!-- huge eyes -->
+  <ellipse cx="26" cy="20" rx="4.5" ry="5.5" fill="#1a1a14"/>
+  <ellipse cx="38" cy="20" rx="4.5" ry="5.5" fill="#1a1a14"/>
+  <circle cx="27" cy="19" r="1.5" fill="#c8c8a0" opacity=".5"/>
+  <circle cx="39" cy="19" r="1.5" fill="#c8c8a0" opacity=".5"/>
+  <!-- mouth slit -->
+  <path d="M28 28h8" stroke="#1a1a14" stroke-width="1.5" stroke-linecap="round"/>
 </svg>

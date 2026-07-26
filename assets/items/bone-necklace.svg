@@ -1,7 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#e0d4b8"/><stop offset="100%" stop-color="#7a6a48"/>
-  </linearGradient></defs>
-  <rect x="10" y="10" width="44" height="44" rx="8" fill="url(#g)" stroke="#7a6a48" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="10" fill="#fff" fill-opacity=".18"/>
+  <defs>
+    <linearGradient id="bn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0e6d0"/>
+      <stop offset="100%" stop-color="#b8a078"/>
+    </linearGradient>
+  </defs>
+  <!-- cord -->
+  <path d="M12 18c8 14 14 22 20 28 6-6 12-14 20-28" fill="none" stroke="#6a4a28" stroke-width="2" stroke-linecap="round"/>
+  <!-- bones -->
+  <g fill="url(#bn)" stroke="#6a5530" stroke-width="1">
+    <ellipse cx="18" cy="28" rx="3" ry="7" transform="rotate(-25 18 28)"/>
+    <ellipse cx="26" cy="36" rx="3" ry="7" transform="rotate(-10 26 36)"/>
+    <ellipse cx="32" cy="42" rx="3.5" ry="8"/>
+    <ellipse cx="38" cy="36" rx="3" ry="7" transform="rotate(10 38 36)"/>
+    <ellipse cx="46" cy="28" rx="3" ry="7" transform="rotate(25 46 28)"/>
+  </g>
+  <!-- beads -->
+  <circle cx="22" cy="32" r="2.2" fill="#6a3030" stroke="#3a1818" stroke-width="0.8"/>
+  <circle cx="42" cy="32" r="2.2" fill="#305060" stroke="#182830" stroke-width="0.8"/>
+  <circle cx="32" cy="48" r="2.5" fill="#8a6030" stroke="#4a3010" stroke-width="0.8"/>
 </svg>

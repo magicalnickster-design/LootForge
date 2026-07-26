@@ -1,7 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#e8dcc8"/><stop offset="100%" stop-color="#a89070"/>
-  </linearGradient></defs>
-  <rect x="10" y="10" width="44" height="44" rx="8" fill="url(#g)" stroke="#a89070" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="10" fill="#fff" fill-opacity=".18"/>
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f4ecd8"/>
+      <stop offset="100%" stop-color="#c8b090"/>
+    </linearGradient>
+  </defs>
+  <!-- knuckle ends -->
+  <ellipse cx="18" cy="20" rx="8" ry="7" fill="url(#b)" stroke="#7a6540" stroke-width="1.3"/>
+  <ellipse cx="46" cy="44" rx="8" ry="7" fill="url(#b)" stroke="#7a6540" stroke-width="1.3"/>
+  <!-- shaft -->
+  <path d="M22 24c6 4 14 12 20 18" fill="none" stroke="#e8d8b8" stroke-width="9" stroke-linecap="round"/>
+  <path d="M22 24c6 4 14 12 20 18" fill="none" stroke="#7a6540" stroke-width="1.3" stroke-linecap="round"/>
+  <!-- marrow hint -->
+  <path d="M24 26c5 3 12 10 16 14" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="2" stroke-linecap="round"/>
+  <!-- joint notch -->
+  <circle cx="32" cy="34" r="2.5" fill="#b09870"/>
 </svg>

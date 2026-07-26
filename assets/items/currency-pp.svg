@@ -1,7 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs><radialGradient id="c" cx="35%" cy="35%" r="65%">
-    <stop offset="0%" stop-color="#e8eef4"/><stop offset="100%" stop-color="#6a7888"/>
-  </radialGradient></defs>
-  <circle cx="32" cy="32" r="20" fill="url(#c)" stroke="#6a7888" stroke-width="2"/>
-  <circle cx="32" cy="32" r="12" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2"/>
+  <defs>
+    <radialGradient id="p" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="#c8d0d8"/>
+      <stop offset="100%" stop-color="#586068"/>
+    </radialGradient>
+  </defs>
+  <circle cx="28" cy="36" r="16" fill="url(#p)" stroke="#2a3038" stroke-width="1.5" opacity=".85"/>
+  <circle cx="36" cy="28" r="18" fill="url(#p)" stroke="#2a3038" stroke-width="1.5"/>
+  <circle cx="36" cy="28" r="12" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2"/>
+  <text x="36" y="33" text-anchor="middle" font-size="14" font-family="Georgia, serif" fill="#2a3038" font-weight="bold">P</text>
 </svg>

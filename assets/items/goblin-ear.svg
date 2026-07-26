@@ -1,7 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#6b8f5a"/><stop offset="100%" stop-color="#3d5a32"/>
-  </linearGradient></defs>
-  <rect x="10" y="10" width="44" height="44" rx="8" fill="url(#g)" stroke="#3d5a32" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="10" fill="#fff" fill-opacity=".18"/>
+  <defs>
+    <linearGradient id="e" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8fbf6a"/>
+      <stop offset="55%" stop-color="#5a8a40"/>
+      <stop offset="100%" stop-color="#2f4a22"/>
+    </linearGradient>
+    <linearGradient id="in" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c8e090"/>
+      <stop offset="100%" stop-color="#6a9048"/>
+    </linearGradient>
+  </defs>
+  <!-- pointed goblin ear -->
+  <path d="M18 48c2-16 6-28 14-36 4-4 10-8 16-10 2-1 4 1 3 3-4 8-6 16-6 26 0 8 2 14 6 18-10 2-20 2-28 2-3 0-5-1-5-3z" fill="url(#e)" stroke="#243818" stroke-width="1.5"/>
+  <path d="M26 44c2-12 5-22 11-30 3-4 7-7 12-9" fill="none" stroke="url(#in)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+  <path d="M28 46c1-10 3-18 7-24" fill="none" stroke="#1e2e14" stroke-width="1.2" opacity=".45"/>
+  <!-- severed edge -->
+  <ellipse cx="22" cy="50" rx="8" ry="3" fill="#6a2020" opacity=".55"/>
+  <path d="M16 49c4 2 10 2 14 0" fill="none" stroke="#a04040" stroke-width="1.2"/>
 </svg>
