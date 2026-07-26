@@ -42,8 +42,11 @@ export const OPS = Object.freeze({
   STATE_UPDATED: "stateUpdated"
 });
 
-/** Looting always uses Investigation — never Survival or another skill. */
-export const LOOT_SKILL = "inv";
+/** dnd5e skill ids */
+export const LOOT_SKILL_INV = "inv";
+export const LOOT_SKILL_SUR = "sur";
+/** @deprecated Prefer resolveLootSkill() — beasts use Survival. */
+export const LOOT_SKILL = LOOT_SKILL_INV;
 
 /** Bundled loot-bag icon (player window chrome / item fallbacks). */
 export const LOOT_BAG_ICON = `modules/${MODULE_ID}/assets/ui/loot-bag.svg`;

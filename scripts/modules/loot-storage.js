@@ -28,6 +28,7 @@ import { log } from "./logger.js";
  * @property {object|null} creatureContext
  * @property {number|null} survivalTotal
  * @property {number|null} naturalDie
+ * @property {string|null} lootSkill  dnd5e skill id used for the roll (inv / sur)
  * @property {string|null} rollQuality
  * @property {string|null} assignedActorId
  * @property {string|null} assignedUserId
@@ -56,6 +57,7 @@ export function emptyCorpseState() {
     creatureContext: null,
     survivalTotal: null,
     naturalDie: null,
+    lootSkill: null,
     rollQuality: null,
     assignedActorId: null,
     assignedUserId: null,

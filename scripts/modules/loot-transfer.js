@@ -12,7 +12,7 @@ import {
   resolveItemDataForTransfer
 } from "../data/loot-definitions.js";
 import { log } from "./logger.js";
-import { canUserLootCorpse, userOwnsActor } from "./ownership.js";
+import { canUserLootCorpse, canUserReceiveLootAs, userOwnsActor } from "./ownership.js";
 import { getSetting } from "./settings.js";
 import {
   corpseHasInventoryLoot,
@@ -83,9 +83,9 @@ export function canTakeLoot(tokenDoc, actor, user = game.user) {
   const state = getCorpseState(tokenDoc);
   if (state.pendingReview && !state.dmApproved) return false;
 
-  // Shared loot: any player may take into their own character.
+  // Shared loot: any player may take into a character they control.
   if (state.freeForAll || state.dmApproved) {
-    return userOwnsActor(actor, user) || user.character?.id === actor.id;
+    return canUserReceiveLootAs(actor, user);
   }
 
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {

@@ -24,9 +24,10 @@
       "AlreadyLooted": "{name} has already been looted.",
       "AlreadyLootedEmpty": "This corpse has already been looted.",
       "NoLooter": "No eligible player characters found. Create a character or place one on the scene.",
-      "RollCancelled": "Investigation roll cancelled.",
+      "RollCancelled": "Loot skill roll cancelled.",
       "RollInvestigation": "Rolling Investigation to loot the corpse…",
-      "InvestigationAlreadyRolled": "Investigation was already rolled for this corpse — waiting for the DM.",
+      "RollLootSkill": "Rolling {skill} to loot the corpse…",
+      "InvestigationAlreadyRolled": "A loot skill was already rolled for this corpse — waiting for the DM.",
       "LootInProgress": "LootForge is already handling this corpse — wait for the current roll/session to finish.",
       "NoTable": "No LootForge profile found for {name}.",
       "LootAvailable": "Loot available: {name}",
@@ -38,7 +39,7 @@
       "WaitingForGM": "Waiting for the DM to finish reviewing the loot.",
       "PlayersMustInitiate": "Only players can start looting a corpse — ask a player to double-click it.",
       "LootOpenForAll": "Loot is ready — any player can double-click the corpse to loot.",
-      "PlayerGeneratedLoot": "{player} rolled Investigation {total} on {name}. Review the loot, then Save & Close.",
+      "PlayerGeneratedLoot": "{player} rolled {skill} {total} on {name}. Review the loot, then Save & Close.",
       "LootBusy": "{name} is already looting this corpse.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
       "NoTakePermission": "You do not have permission to take this loot.",
@@ -59,6 +60,10 @@
       "Close": "Close",
       "Empty": "No usable materials were recovered."
     },
+    "Skill": {
+      "Investigation": "Investigation",
+      "Survival": "Survival"
+    },
     "DM": {
       "Title": "LootForge — DM Review",
       "TitleNamed": "LootForge — {name}",
@@ -66,6 +71,7 @@
       "CR": "CR",
       "Size": "Size",
       "Investigation": "Investigation",
+      "Survival": "Survival",
       "Natural": "Natural",
       "RolledBy": "Rolled by",
       "RerollAll": "Reroll All",

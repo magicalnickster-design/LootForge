@@ -79,6 +79,14 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
       if (assigned && (game.user.isGM || userOwnsActor(assigned, game.user))) return assigned;
     }
     if (game.user.character) return game.user.character;
+
+    // Controlled character token (User.character may be unset).
+    for (const token of canvas.tokens?.controlled ?? []) {
+      const actor = token.actor;
+      if (actor?.type === "character" && (game.user.isGM || userOwnsActor(actor, game.user))) {
+        return actor;
+      }
+    }
     return null;
   }
 
@@ -191,10 +199,8 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
         ui.notifications.warn(result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
         return;
       }
-      if (result.pending) {
-        ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.TransferPending"));
-      }
-      log.info("Player took item", entryId);
+      // Pending takes refresh via corpse flag sync — avoid toast spam.
+      log.info("Player took item", entryId, { pending: Boolean(result.pending) });
     });
   }
 
@@ -217,12 +223,11 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
         ui.notifications.warn(result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
         return;
       }
-      if (result.pending) {
-        ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.TransferPending"));
-      } else {
+      if (!result.pending) {
         app.#sessionReleased = true;
         await app.close();
       }
+      // Pending: window stays open and syncs when the GM applies the take.
     });
   }
 

@@ -79,6 +79,27 @@ export function canUserAccessAssignedLoot(state, user = game.user) {
  * @param {TokenDocument} tokenDoc
  * @param {User} [user]
  */
+/**
+ * Can this user receive loot into this actor?
+ * @param {Actor} actor
+ * @param {User} user
+ * @returns {boolean}
+ */
+export function canUserReceiveLootAs(actor, user = game.user) {
+  if (!actor || !user) return false;
+  if (user.isGM) return true;
+  if (user.character?.id === actor.id) return true;
+  if (userOwnsActor(actor, user)) return true;
+  try {
+    if (typeof actor.testUserPermission === "function") {
+      if (actor.testUserPermission(user, "OWNER")) return true;
+    }
+  } catch {
+    // ignore
+  }
+  return false;
+}
+
 export function canUserLootCorpse(tokenDoc, user = game.user) {
   if (!tokenDoc || !user) return false;
   if (user.isGM) return true;

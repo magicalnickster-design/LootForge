@@ -13,6 +13,7 @@ import {
   updateCorpseState
 } from "../modules/loot-storage.js";
 import { syncLootIndicator } from "../modules/loot-indicator.js";
+import { lootSkillLabel, resolveLootSkill } from "../modules/roll-helper.js";
 import { resetCorpseLoot } from "../modules/loot-workflow.js";
 import { registerLootWindow, unregisterLootWindow } from "./window-registry.js";
 
@@ -87,6 +88,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
       },
       survivalTotal: state.survivalTotal ?? "—",
       naturalDie: state.naturalDie ?? "—",
+      lootSkillLabel: lootSkillLabel(state.lootSkill ?? resolveLootSkill(ctx)),
       rollQuality: state.rollQuality
         ? game.i18n.localize(`LOOTFORGE.Quality.${state.rollQuality}`)
         : "—",

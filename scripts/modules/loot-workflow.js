@@ -16,7 +16,12 @@ import {
   getLootBusyReasonKey,
   resolveAssignedOwnerUsers
 } from "./ownership.js";
-import { rollInvestigation, rollInvestigationSilent } from "./roll-helper.js";
+import {
+  lootSkillLabel,
+  resolveLootSkill,
+  rollLootSkill,
+  rollLootSkillSilent
+} from "./roll-helper.js";
 import {
   beginLootFlow,
   claimInvestigationLocal,
@@ -198,10 +203,16 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
   }
 
   try {
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
-    const investigationRoll = await rollInvestigationSilent(looter, {
+    const creatureContext = buildCreatureContext(creature, tokenDoc);
+    const skillId = resolveLootSkill(creatureContext);
+    const skillName = lootSkillLabel(skillId);
+    const rollFlavor = game.i18n.format("LOOTFORGE.Notify.RollLootSkill", { skill: skillName });
+
+    ui.notifications.info(rollFlavor);
+    const investigationRoll = await rollLootSkillSilent(looter, {
       createMessage: true,
-      flavor: game.i18n.localize("LOOTFORGE.Notify.RollInvestigation")
+      flavor: rollFlavor,
+      skill: skillId
     });
     if (!investigationRoll) {
       releaseInvestigationClaim(tokenDoc.uuid);
@@ -215,20 +226,21 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
       actorId: looter.id,
       investigationTotal: Number(investigationRoll.total),
       naturalDie: Number(investigationRoll.natural ?? 0),
-      isNatural20: Boolean(investigationRoll.isNatural20)
+      isNatural20: Boolean(investigationRoll.isNatural20),
+      lootSkill: skillId
     };
 
     // Fast path: module socket.
     emitLootForge(readyPayload);
 
     // Reliable path: whispered chat flag — Foundry always delivers this to GMs.
-    // Sockets alone were dropping when activeGM was null.
     const gmIds = game.users.filter((u) => u.isGM).map((u) => u.id);
     await ChatMessage.create({
       speaker: { alias: "LootForge" },
       whisper: gmIds.length ? gmIds : undefined,
       content: game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
         player: game.user.name,
+        skill: skillName,
         name: tokenDoc.name,
         total: investigationRoll.total
       }),
@@ -240,10 +252,11 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
       }
     });
 
-    log.info("Auto Investigation complete — notified GM (socket + chat)", {
+    log.info("Auto loot skill complete — notified GM (socket + chat)", {
       tokenUuid: tokenDoc.uuid,
       actorId: looter.id,
       total: investigationRoll.total,
+      skill: skillId,
       moduleId: MODULE_ID,
       gmIds
     });
@@ -345,9 +358,11 @@ export async function handleInvestigationReady(payload) {
       if (isAwaitingDmReview(state) || (state.generated && !state.dmApproved)) {
         log.info("Loot already awaiting review — reopening DM Review", tokenDoc.uuid);
         await openDmLootReview(tokenDoc);
+        const skillName = lootSkillLabel(state.lootSkill ?? resolveLootSkill(state.creatureContext));
         ui.notifications.info(
           game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
             player: user?.name ?? actor.name,
+            skill: skillName,
             name: tokenDoc.name,
             total: state.survivalTotal ?? roll.total
           })
@@ -387,7 +402,8 @@ export async function handleInvestigationReady(payload) {
         roller: actor,
         openReview: true,
         investigationRoll: roll,
-        pendingLooterUserId: user?.id ?? null
+        pendingLooterUserId: user?.id ?? null,
+        lootSkill: payload.lootSkill ?? null
       }
     );
 
@@ -400,9 +416,11 @@ export async function handleInvestigationReady(payload) {
     // Belt-and-suspenders: open review even if generateLootForCorpse skipped it.
     await openDmLootReview(tokenDoc);
 
+    const skillName = lootSkillLabel(generated.lootSkill ?? payload.lootSkill ?? resolveLootSkill(generated.creatureContext));
     ui.notifications.info(
       game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
         player: user?.name ?? actor.name,
+        skill: skillName,
         name: tokenDoc.name,
         total: roll.total
       })
@@ -505,31 +523,34 @@ async function openExistingLoot(tokenDoc, state) {
 }
 
 /**
- * Resolve Investigation for generate — prefer a provided player roll; never open remote prompts.
+ * Resolve loot skill roll — prefer a provided player roll; never open remote prompts.
  *
  * @param {Actor} roller
  * @param {object|null} [providedRoll]
+ * @param {string} [skillId]
  * @returns {Promise<object|null>}
  */
-async function resolveInvestigationRoll(roller, providedRoll = null) {
+async function resolveLootRoll(roller, providedRoll = null, skillId = null) {
   if (providedRoll && Number.isFinite(Number(providedRoll.total))) {
     return {
       total: Number(providedRoll.total),
       natural: Number(providedRoll.natural ?? 0),
-      isNatural20: Boolean(providedRoll.isNatural20)
+      isNatural20: Boolean(providedRoll.isNatural20),
+      skill: skillId ?? providedRoll.skill ?? null
     };
   }
 
   if (!game.user.isGM) {
-    return rollInvestigation(roller);
+    return rollLootSkill(roller, skillId);
   }
 
   // Macro / edge fallback: silent only — never pop the roll UI on the DM.
-  return rollInvestigationSilent(roller);
+  return rollLootSkillSilent(roller, { skill: skillId });
 }
 
 /**
- * Generate loot on a corpse (GM authoritative). Always uses Investigation.
+ * Generate loot on a corpse (GM authoritative).
+ * Beasts use Survival; other creatures use Investigation.
  *
  * @param {Token} token
  * @param {TokenDocument} tokenDoc
@@ -538,12 +559,14 @@ async function resolveInvestigationRoll(roller, providedRoll = null) {
  * @param {Actor} [options.roller]
  * @param {boolean} [options.openReview=true]
  * @param {{ total: number, natural?: number, isNatural20?: boolean }|null} [options.investigationRoll]
+ * @param {string|null} [options.lootSkill]
  */
 export async function generateLootForCorpse(token, tokenDoc, creature, {
   roller = null,
   openReview = true,
   investigationRoll = null,
-  pendingLooterUserId = null
+  pendingLooterUserId = null,
+  lootSkill = null
 } = {}) {
   if (getSetting("preventDuplicateGeneration") && isLootGenerated(tokenDoc)) {
     log.info("Prevent duplicate generation — opening existing review", tokenDoc.uuid);
@@ -565,7 +588,8 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   const resolvedRoller = roller ?? await resolveLooterActor({ excludeActor: creature });
   if (!resolvedRoller) return null;
 
-  const rollResult = await resolveInvestigationRoll(resolvedRoller, investigationRoll);
+  const skillId = lootSkill || resolveLootSkill(context);
+  const rollResult = await resolveLootRoll(resolvedRoller, investigationRoll, skillId);
   if (!rollResult) {
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
     return null;
@@ -595,6 +619,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     creatureContext: context,
     survivalTotal,
     naturalDie,
+    lootSkill: skillId,
     rollQuality: generated.rollQuality,
     profileId: generated.profileId,
     items: generated.items,
@@ -615,7 +640,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   });
 
   await syncLootIndicator(tokenDoc);
-  log.info(`Generated ${state.items.length} loot entries for ${creature.name} (Investigation ${survivalTotal})`);
+  log.info(`Generated ${state.items.length} loot entries for ${creature.name} (${lootSkillLabel(skillId)} ${survivalTotal})`);
 
   if (openReview && game.user.isGM) {
     await openDmLootReview(tokenDoc);

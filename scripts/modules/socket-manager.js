@@ -29,6 +29,9 @@ let registered = false;
 /** @type {Map<string, number>} tokenUuid → last auto-open ms */
 const recentAutoOpens = new Map();
 
+/** @type {Set<string>} dedupe socket + chat take handoffs */
+const processedTakeKeys = new Set();
+
 /**
  * Primary connected GM who should handle authoritative socket ops.
  * Falls back when Foundry's activeGM getter is null (common on some hosts).
@@ -39,9 +42,33 @@ function isResponsibleGm() {
   const activeGms = game.users.filter((u) => u.isGM && u.active);
   const elected = game.users.activeGM
     ?? activeGms.sort((a, b) => a.id.localeCompare(b.id))[0]
-    ?? null;
-  if (!elected) return true;
+    ?? game.user;
   return elected.id === game.user.id;
+}
+
+/**
+ * Socket + whispered chat flag so GM-side ops are not dropped.
+ * @param {object} payload
+ */
+function emitGmHandoff(payload) {
+  const full = emitLootForge(payload);
+  const gmIds = game.users.filter((u) => u.isGM).map((u) => u.id);
+  if (!gmIds.length) return full;
+
+  ChatMessage.create({
+    speaker: { alias: "LootForge" },
+    whisper: gmIds,
+    content: `<p class="lootforge-handoff" data-lootforge-op="${payload.op}">LootForge</p>`,
+    flags: {
+      [MODULE_ID]: {
+        ...payload,
+        fromUserId: game.user.id,
+        handoff: true
+      }
+    }
+  }).catch((err) => log.warn("GM handoff chat failed", err));
+
+  return full;
 }
 
 /**
@@ -78,6 +105,28 @@ export function registerSocketManager() {
 
     refreshLootWindows(tokenDoc.uuid);
     void refreshIndicatorsSafe(tokenDoc.uuid);
+  });
+
+  // Chat backup for take ops (deleted after handling so GM chat stays clean).
+  Hooks.on("createChatMessage", async (message) => {
+    if (!game.user.isGM) return;
+    const flag = message.flags?.[MODULE_ID];
+    if (!flag?.handoff || !flag.op) return;
+    if (!isResponsibleGm()) return;
+
+    const op = flag.op;
+    if (op !== OPS.TAKE_ITEM && op !== OPS.TAKE_ALL && op !== OPS.DONE_LOOT) return;
+
+    log.info("Take handoff via chat", { op, tokenUuid: flag.tokenUuid, entryId: flag.entryId });
+    await handleTakeRequest({
+      ...flag,
+      fromUserId: flag.fromUserId ?? message.author?.id ?? message.user
+    });
+    try {
+      if (message.id) await message.delete();
+    } catch {
+      // ignore delete races
+    }
   });
 
   log.debug("Socket manager registered");
@@ -226,46 +275,76 @@ async function onPlayerStartLoot(payload) {
 /**
  * @param {object} payload
  */
+/**
+ * @param {object} payload
+ * @param {string} error
+ */
+function rejectTake(payload, error) {
+  log.warn("Take request rejected", { op: payload.op, error, tokenUuid: payload.tokenUuid });
+  if (payload.fromUserId) {
+    emitLootForge({
+      op: OPS.STATE_UPDATED,
+      tokenUuid: payload.tokenUuid,
+      error,
+      targetUserId: payload.fromUserId
+    });
+  }
+}
+
 async function handleTakeRequest(payload) {
+  const dedupeKey = [
+    payload.op,
+    payload.tokenUuid,
+    payload.entryId ?? "ALL",
+    payload.fromUserId,
+    payload.actorId
+  ].join(":");
+  if (processedTakeKeys.has(dedupeKey)) {
+    log.info("Ignoring duplicate take handoff", { dedupeKey });
+    return;
+  }
+  processedTakeKeys.add(dedupeKey);
+  setTimeout(() => processedTakeKeys.delete(dedupeKey), 4000);
+
   const tokenDoc = await fromUuid(payload.tokenUuid);
   if (!tokenDoc) {
-    log.warn("Take request: token not found", payload.tokenUuid);
+    rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
     return;
   }
 
   const actor = game.actors.get(payload.actorId);
   if (!actor && payload.op !== OPS.DONE_LOOT) {
-    log.warn("Take request: actor not found", payload.actorId);
+    rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.NoLooter"));
     return;
   }
 
   const requestingUser = game.users.get(payload.fromUserId);
-  if (!requestingUser) return;
+  if (!requestingUser) {
+    rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
+    return;
+  }
 
   const state = getCorpseState(tokenDoc);
   const shared = Boolean(state.freeForAll || state.dmApproved);
 
   if (payload.op !== OPS.DONE_LOOT) {
     if (!shared && state.activeLooterUserId && state.activeLooterUserId !== requestingUser.id) {
-      log.warn("Take request rejected: another looter", {
-        tokenUuid: payload.tokenUuid,
-        fromUserId: payload.fromUserId
-      });
+      rejectTake(
+        payload,
+        game.i18n.format("LOOTFORGE.Notify.LootBusy", {
+          name: state.activeLooterName
+            || game.users.get(state.activeLooterUserId)?.name
+            || "Another player"
+        })
+      );
       return;
     }
     if (!shared && state.assignedActorId && state.assignedActorId !== actor.id) {
-      log.warn("Take request rejected: actor not assigned", {
-        tokenUuid: payload.tokenUuid,
-        actorId: payload.actorId
-      });
+      rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
       return;
     }
     if (!canTakeLoot(tokenDoc, actor, requestingUser)) {
-      log.warn("Take request rejected: permission", {
-        tokenUuid: payload.tokenUuid,
-        actorId: payload.actorId,
-        fromUserId: payload.fromUserId
-      });
+      rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
       return;
     }
   } else if (
@@ -274,10 +353,7 @@ async function handleTakeRequest(payload) {
     && state.activeLooterUserId !== requestingUser.id
     && !requestingUser.isGM
   ) {
-    log.warn("Done request rejected: not active looter", {
-      tokenUuid: payload.tokenUuid,
-      fromUserId: payload.fromUserId
-    });
+    rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
     return;
   }
 
@@ -288,7 +364,7 @@ async function handleTakeRequest(payload) {
     result = await takeAllCorpseItems(tokenDoc, actor, requestingUser);
   } else {
     if (!payload.entryId || !state.items.some((i) => i.entryId === payload.entryId)) {
-      log.warn("Take request rejected: invalid entryId", payload.entryId);
+      rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.ItemGone"));
       return;
     }
     result = await takeCorpseItem(tokenDoc, actor, payload.entryId, {
@@ -298,15 +374,16 @@ async function handleTakeRequest(payload) {
   }
 
   if (!result.ok) {
-    emitLootForge({
-      op: OPS.STATE_UPDATED,
-      tokenUuid: tokenDoc.uuid,
-      error: result.error,
-      targetUserId: payload.fromUserId
-    });
+    rejectTake(payload, result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
     return;
   }
 
+  log.info("Take request completed", {
+    op: payload.op,
+    tokenUuid: tokenDoc.uuid,
+    actorId: actor?.id,
+    userId: requestingUser.id
+  });
   broadcastStateUpdated(tokenDoc.uuid);
 }
 
@@ -569,7 +646,7 @@ export async function requestTakeItem(tokenDoc, actor, entryId) {
     return result;
   }
 
-  emitLootForge({
+  emitGmHandoff({
     op: OPS.TAKE_ITEM,
     tokenUuid: tokenDoc.uuid,
     actorId: actor.id,
@@ -589,7 +666,7 @@ export async function requestTakeAll(tokenDoc, actor) {
     return result;
   }
 
-  emitLootForge({
+  emitGmHandoff({
     op: OPS.TAKE_ALL,
     tokenUuid: tokenDoc.uuid,
     actorId: actor.id
@@ -609,10 +686,10 @@ export async function requestDoneLoot(tokenDoc) {
   }
 
   const state = getCorpseState(tokenDoc);
-  emitLootForge({
+  emitGmHandoff({
     op: OPS.DONE_LOOT,
     tokenUuid: tokenDoc.uuid,
-    actorId: state.assignedActorId ?? state.activeLooterActorId
+    actorId: state.assignedActorId ?? state.activeLooterActorId ?? game.user.character?.id
   });
   return { ok: true, pending: true };
 }

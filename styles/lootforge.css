@@ -476,3 +476,8 @@
 .lootforge-chat-btn-gm {
   border-color: #c4a35a;
 }
+
+/* Internal GM handoff whispers (auto-deleted after handling). */
+.chat-message .lootforge-handoff {
+  display: none;
+}
