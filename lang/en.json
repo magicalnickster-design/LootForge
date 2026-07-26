@@ -67,7 +67,7 @@
       "LootRequestTitle": "LootForge — Loot Request",
       "PlayerLootRequest": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Ask them to roll Investigation and generate loot?",
       "PlayerLootReady": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Open the loot window for them?",
-      "StartRoll": "Start Roll",
+      "StartRoll": "Roll Investigation",
       "OpenForPlayer": "Open for Player"
     },
     "DM": {
