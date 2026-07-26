@@ -29,6 +29,9 @@ let registered = false;
 /** @type {Set<string>} */
 const dmPromptTokens = new Set();
 
+/** @type {Map<string, { resolve: Function, reject: Function, timer: any }>} */
+const pendingInvestigationRolls = new Map();
+
 /**
  * Register socket listeners (ready).
  */
@@ -120,6 +123,16 @@ async function handleSocketPayload(payload) {
       if (!game.user.isGM) return;
       if (game.users.activeGM?.id !== game.user.id) return;
       await onPlayerStartLoot(payload);
+      return;
+
+    case OPS.REQUEST_INVESTIGATION_ROLL:
+      if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
+      await onRequestInvestigationRoll(payload);
+      return;
+
+    case OPS.INVESTIGATION_ROLL_RESULT:
+      if (!game.user.isGM) return;
+      onInvestigationRollResult(payload);
       return;
 
     case OPS.TAKE_ITEM:
@@ -340,16 +353,28 @@ export async function requestDmLootPrompt(tokenDoc, actor) {
  * Player → GM: auto-start or claim loot session.
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
- * @param {{ claimOnly?: boolean }} [options]
+ * @param {{ claimOnly?: boolean, investigationRoll?: object|null }} [options]
  */
-export async function requestPlayerStartLoot(tokenDoc, actor, { claimOnly = false } = {}) {
+export async function requestPlayerStartLoot(tokenDoc, actor, {
+  claimOnly = false,
+  investigationRoll = null
+} = {}) {
+  const rollPayload = investigationRoll
+    ? {
+      investigationTotal: Number(investigationRoll.total),
+      naturalDie: Number(investigationRoll.natural ?? 0),
+      isNatural20: Boolean(investigationRoll.isNatural20)
+    }
+    : {};
+
   if (game.user.isGM) {
     const { handlePlayerStartLoot } = await import("./loot-workflow.js");
     return handlePlayerStartLoot({
       tokenUuid: tokenDoc.uuid,
       actorId: actor.id,
       fromUserId: game.user.id,
-      claimOnly
+      claimOnly,
+      ...rollPayload
     }, { claimOnly });
   }
 
@@ -363,14 +388,127 @@ export async function requestPlayerStartLoot(tokenDoc, actor, { claimOnly = fals
     op: claimOnly ? OPS.CLAIM_LOOT_SESSION : OPS.PLAYER_START_LOOT,
     tokenUuid: tokenDoc.uuid,
     actorId: actor.id,
-    claimOnly
+    claimOnly,
+    ...rollPayload
   });
   log.info("Socket event emitted", {
     op: claimOnly ? OPS.CLAIM_LOOT_SESSION : OPS.PLAYER_START_LOOT,
     tokenUuid: tokenDoc.uuid,
-    actorId: actor.id
+    actorId: actor.id,
+    hasInvestigationRoll: Boolean(investigationRoll)
   });
   return { ok: true, pending: true };
+}
+
+/**
+ * Ask a connected player to roll Investigation for looting.
+ * Resolves with { total, natural, isNatural20 } or null if cancelled/timeout.
+ *
+ * @param {User} user
+ * @param {Actor} actor
+ * @param {TokenDocument} tokenDoc
+ * @returns {Promise<object|null>}
+ */
+export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
+  if (!user?.active || !actor || !tokenDoc) return Promise.resolve(null);
+
+  // Local user (or GM rolling for themselves): roll immediately.
+  if (user.id === game.user.id) {
+    return import("./roll-helper.js").then(({ rollInvestigation }) => rollInvestigation(actor));
+  }
+
+  const requestId = foundry.utils.randomID();
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      pendingInvestigationRolls.delete(requestId);
+      log.warn("Investigation roll request timed out", { requestId, userId: user.id });
+      ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationTimeout"));
+      resolve(null);
+    }, 120000);
+
+    pendingInvestigationRolls.set(requestId, {
+      resolve: (value) => {
+        clearTimeout(timer);
+        pendingInvestigationRolls.delete(requestId);
+        resolve(value);
+      },
+      timer
+    });
+
+    emitLootForge({
+      op: OPS.REQUEST_INVESTIGATION_ROLL,
+      requestId,
+      targetUserId: user.id,
+      actorId: actor.id,
+      tokenUuid: tokenDoc.uuid
+    });
+    log.info("Socket event emitted", {
+      op: OPS.REQUEST_INVESTIGATION_ROLL,
+      targetUserId: user.id,
+      actorId: actor.id,
+      requestId
+    });
+    ui.notifications.info(
+      game.i18n.format("LOOTFORGE.Notify.WaitingForInvestigation", {
+        name: user.name,
+        creature: tokenDoc.name
+      })
+    );
+  });
+}
+
+/**
+ * @param {object} payload
+ */
+async function onRequestInvestigationRoll(payload) {
+  log.info("Socket event received", {
+    op: OPS.REQUEST_INVESTIGATION_ROLL,
+    requestId: payload.requestId,
+    actorId: payload.actorId
+  });
+
+  const actor = game.actors.get(payload.actorId) ?? game.user.character;
+  if (!actor) {
+    emitLootForge({
+      op: OPS.INVESTIGATION_ROLL_RESULT,
+      requestId: payload.requestId,
+      cancelled: true
+    });
+    return;
+  }
+
+  ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
+  const { rollInvestigation } = await import("./roll-helper.js");
+  const result = await rollInvestigation(actor);
+
+  emitLootForge({
+    op: OPS.INVESTIGATION_ROLL_RESULT,
+    requestId: payload.requestId,
+    actorId: actor.id,
+    cancelled: !result,
+    investigationTotal: result?.total ?? null,
+    naturalDie: result?.natural ?? null,
+    isNatural20: result?.isNatural20 ?? false
+  });
+}
+
+/**
+ * @param {object} payload
+ */
+function onInvestigationRollResult(payload) {
+  const pending = pendingInvestigationRolls.get(payload.requestId);
+  if (!pending) return;
+
+  if (payload.cancelled || payload.investigationTotal == null) {
+    pending.resolve(null);
+    return;
+  }
+
+  pending.resolve({
+    total: Number(payload.investigationTotal),
+    natural: Number(payload.naturalDie ?? 0),
+    isNatural20: Boolean(payload.isNatural20)
+  });
 }
 
 /**

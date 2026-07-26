@@ -13,9 +13,10 @@ import { resolveLooterActor } from "./looter-selection.js";
 import {
   canUserLootCorpse,
   getLootBusyReasonKey,
+  resolveAssignedOwnerUsers,
   userOwnsActor
 } from "./ownership.js";
-import { rollLootSkill } from "./roll-helper.js";
+import { rollInvestigation } from "./roll-helper.js";
 import { getSetting } from "./settings.js";
 import {
   clearCorpseState,
@@ -33,7 +34,8 @@ import {
 import {
   emitLootForge,
   requestDmLootPrompt,
-  requestPlayerStartLoot
+  requestPlayerStartLoot,
+  requestRemoteInvestigationRoll
 } from "./socket-manager.js";
 import { OPS } from "./constants.js";
 
@@ -122,8 +124,14 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
   if (!looter) return;
 
   if (getSetting("allowAllPlayersToLoot")) {
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
+    const investigationRoll = await rollInvestigation(looter);
+    if (!investigationRoll) {
+      ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
+      return;
+    }
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.GeneratingLoot"));
-    const result = await requestPlayerStartLoot(tokenDoc, looter);
+    const result = await requestPlayerStartLoot(tokenDoc, looter, { investigationRoll });
     if (!result.ok && result.error) {
       ui.notifications.warn(result.error);
     }
@@ -198,7 +206,38 @@ async function openExistingLoot(tokenDoc, state) {
 }
 
 /**
- * Generate loot on a corpse (GM authoritative). Optionally skip DM review.
+ * Resolve an Investigation roll for the looter — always Investigation, from the player when possible.
+ *
+ * @param {Actor} roller
+ * @param {TokenDocument} tokenDoc
+ * @param {object|null} [providedRoll]
+ * @returns {Promise<object|null>}
+ */
+async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null) {
+  if (providedRoll && Number.isFinite(Number(providedRoll.total))) {
+    return {
+      total: Number(providedRoll.total),
+      natural: Number(providedRoll.natural ?? 0),
+      isNatural20: Boolean(providedRoll.isNatural20)
+    };
+  }
+
+  // Prefer a connected owning player so they make the Investigation check.
+  const owners = resolveAssignedOwnerUsers(roller, { activeOnly: true });
+  const playerOwner = owners[0] ?? null;
+
+  if (playerOwner && playerOwner.id !== game.user.id) {
+    const remote = await requestRemoteInvestigationRoll(playerOwner, roller, tokenDoc);
+    if (remote) return remote;
+    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationFallback"));
+  }
+
+  // Local roll (player looting themselves, or solo GM testing).
+  return rollInvestigation(roller);
+}
+
+/**
+ * Generate loot on a corpse (GM authoritative). Always uses Investigation.
  *
  * @param {Token} token
  * @param {TokenDocument} tokenDoc
@@ -206,12 +245,12 @@ async function openExistingLoot(tokenDoc, state) {
  * @param {object} [options]
  * @param {Actor} [options.roller]
  * @param {boolean} [options.openReview=true]
- * @param {boolean} [options.skipSurvivalPrompt=false]
+ * @param {{ total: number, natural?: number, isNatural20?: boolean }|null} [options.investigationRoll]
  */
 export async function generateLootForCorpse(token, tokenDoc, creature, {
   roller = null,
   openReview = true,
-  skipSurvivalPrompt = false
+  investigationRoll = null
 } = {}) {
   const context = buildCreatureContext(creature, tokenDoc);
   const profile = resolveCreatureProfile(context);
@@ -225,20 +264,15 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   const resolvedRoller = roller ?? await resolveLooterActor({ excludeActor: creature });
   if (!resolvedRoller) return null;
 
-  let survivalTotal = Number(getSetting("defaultSurvivalDC")) || 10;
-  let naturalDie = 0;
-  let isNatural20 = false;
-
-  if (getSetting("requireSurvivalRoll") && !skipSurvivalPrompt) {
-    const rollResult = await rollLootSkill(resolvedRoller, "sur");
-    if (!rollResult) {
-      ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
-      return null;
-    }
-    survivalTotal = rollResult.total;
-    naturalDie = rollResult.natural;
-    isNatural20 = rollResult.isNatural20;
+  const rollResult = await resolveInvestigationRoll(resolvedRoller, tokenDoc, investigationRoll);
+  if (!rollResult) {
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
+    return null;
   }
+
+  const survivalTotal = rollResult.total;
+  const naturalDie = rollResult.natural;
+  const isNatural20 = rollResult.isNatural20;
 
   const generated = await generateCreatureLoot({
     context,
@@ -268,7 +302,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   });
 
   await syncLootIndicator(tokenDoc);
-  log.info(`Generated ${state.items.length} loot entries for ${creature.name}`);
+  log.info(`Generated ${state.items.length} loot entries for ${creature.name} (Investigation ${survivalTotal})`);
 
   if (openReview && game.user.isGM) {
     await openDmLootReview(tokenDoc, { initialRollerId: resolvedRoller.id });
@@ -333,10 +367,18 @@ export async function handleDmLootRequest(payload) {
 
   if (!hasRemainingLoot(tokenDoc) && !state.generated) {
     const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
+    let investigationRoll = null;
+    if (requester?.active && actor) {
+      investigationRoll = await requestRemoteInvestigationRoll(requester, actor, tokenDoc);
+      if (!investigationRoll) {
+        ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
+        return;
+      }
+    }
     await generateLootForCorpse(token ?? { document: tokenDoc, actor: tokenDoc.actor }, tokenDoc, tokenDoc.actor, {
       roller: actor,
       openReview: true,
-      skipSurvivalPrompt: false
+      investigationRoll
     });
     return;
   }
@@ -375,6 +417,9 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     if (!allowAll || claimOnlyMode) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.PlayersCannotGenerate") };
     }
+    if (payload.investigationTotal == null) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.InvestigationRequired") };
+    }
     const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
     await generateLootForCorpse(
       token ?? { document: tokenDoc, actor: tokenDoc.actor },
@@ -383,7 +428,11 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
       {
         roller: actor,
         openReview: false,
-        skipSurvivalPrompt: true
+        investigationRoll: {
+          total: Number(payload.investigationTotal),
+          natural: Number(payload.naturalDie ?? 0),
+          isNatural20: Boolean(payload.isNatural20)
+        }
       }
     );
   } else {

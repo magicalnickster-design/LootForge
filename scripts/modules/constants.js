@@ -39,10 +39,15 @@ export const OPS = Object.freeze({
   REQUEST_DM_LOOT: "requestDmLoot",
   PLAYER_START_LOOT: "playerStartLoot",
   CLAIM_LOOT_SESSION: "claimLootSession",
+  REQUEST_INVESTIGATION_ROLL: "requestInvestigationRoll",
+  INVESTIGATION_ROLL_RESULT: "investigationRollResult",
   STATE_UPDATED: "stateUpdated",
   RESET_LOOT: "resetLoot",
   SET_FLAG: "setLootedFlag"
 });
+
+/** Looting always uses Investigation — never Survival or another skill. */
+export const LOOT_SKILL = "inv";
 
 /** Bundled loot-bag icon for the canvas overlay. */
 export const LOOT_BAG_ICON = `modules/${MODULE_ID}/assets/ui/loot-bag.svg`;

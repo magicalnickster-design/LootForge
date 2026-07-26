@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.2.3** (WoW-style player loot sessions) |
+| Version | **0.2.4** (Investigation-only loot rolls) |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |
@@ -15,7 +15,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 1. Wolf reaches 0 HP / dead status.
 2. GM right-clicks the wolf → **Generate Loot**.
-3. LootForge detects beast/wolf context and prompts a **Survival** roll (unless disabled in settings).
+3. LootForge detects beast/wolf context and **always** forces an **Investigation** roll from the player.
 4. **DM Loot Review** opens with LootForge-owned items (pelt, fang, meat, claw, rare alpha fang).
 5. GM can edit quantities, reroll, remove/add items, choose a character.
 6. **Confirm and Assign** sockets the assigned player clients, auto-opens their loot window, and shows a loot-bag above the corpse.
@@ -54,9 +54,8 @@ Enable the module in a dnd5e world and reload.
 ## Settings (world)
 
 - Manual generation only  
-- Require Survival roll  
-- Default Survival total  
-- Allow players to request loot  
+- Allow all players to loot  
+- Allow players to request loot from DM  
 - Prevent duplicate generation  
 - Show loot indicators  
 - Enable rare drops  

@@ -12,15 +12,17 @@ export function registerSettings() {
       default: true
     },
     {
+      // Legacy key kept so existing worlds do not error; always ignored — Investigation is mandatory.
       key: "requireSurvivalRoll",
-      name: "LOOTFORGE.Settings.RequireSurvivalRoll.Name",
-      hint: "LOOTFORGE.Settings.RequireSurvivalRoll.Hint",
+      name: "LOOTFORGE.Settings.RequireInvestigationRoll.Name",
+      hint: "LOOTFORGE.Settings.RequireInvestigationRoll.Hint",
       default: true
     },
     {
+      // Legacy key: unused fallback (Investigation is always rolled).
       key: "defaultSurvivalDC",
-      name: "LOOTFORGE.Settings.DefaultSurvivalDC.Name",
-      hint: "LOOTFORGE.Settings.DefaultSurvivalDC.Hint",
+      name: "LOOTFORGE.Settings.DefaultInvestigationTotal.Name",
+      hint: "LOOTFORGE.Settings.DefaultInvestigationTotal.Hint",
       type: Number,
       default: 10,
       range: { min: 5, max: 30, step: 1 }
@@ -68,7 +70,7 @@ export function registerSettings() {
       name: s.name,
       hint: s.hint,
       scope: "world",
-      config: true,
+      config: s.key !== "requireSurvivalRoll" && s.key !== "defaultSurvivalDC",
       type: s.type ?? Boolean,
       default: s.default,
       range: s.range,

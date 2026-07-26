@@ -25,7 +25,12 @@
       "AlreadyLooted": "{name} has already been looted.",
       "AlreadyLootedEmpty": "This corpse has already been looted.",
       "NoLooter": "No eligible player characters found. Create a character or place one on the scene.",
-      "RollCancelled": "Loot roll cancelled.",
+      "RollCancelled": "Investigation roll cancelled.",
+      "RollInvestigation": "Roll Investigation to loot the corpse.",
+      "InvestigationRequired": "An Investigation roll is required before loot can be generated.",
+      "WaitingForInvestigation": "Waiting for {name} to roll Investigation for {creature}…",
+      "InvestigationTimeout": "Investigation roll timed out.",
+      "InvestigationFallback": "Player Investigation roll unavailable — rolling locally.",
       "NoTable": "No LootForge profile found for {name}.",
       "Claimed": "Loot claimed by {name}.",
       "Assigned": "Loot assigned to {name}.",
@@ -60,7 +65,7 @@
       "Close": "Close",
       "Empty": "No usable materials were recovered.",
       "LootRequestTitle": "LootForge — Loot Request",
-      "PlayerLootRequest": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Start the loot roll?",
+      "PlayerLootRequest": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Ask them to roll Investigation and generate loot?",
       "PlayerLootReady": "<strong>{player}</strong> wants to loot <strong>{name}</strong>. Open the loot window for them?",
       "StartRoll": "Start Roll",
       "OpenForPlayer": "Open for Player"
@@ -71,7 +76,8 @@
       "Type": "Type",
       "CR": "CR",
       "Size": "Size",
-      "Survival": "Survival",
+      "Survival": "Investigation",
+      "Investigation": "Investigation",
       "Natural": "Natural",
       "AssignedTo": "Assigned to",
       "RerollAll": "Reroll All",
@@ -97,17 +103,17 @@
         "Name": "Manual generation only",
         "Hint": "Loot is only created when Generate Loot is used (recommended)."
       },
-      "RequireSurvivalRoll": {
-        "Name": "Require Survival roll",
-        "Hint": "Prompt for a Survival check before generating harvest loot."
+      "RequireInvestigationRoll": {
+        "Name": "Require Investigation roll",
+        "Hint": "Looting always forces an Investigation check from the player. This setting is kept for compatibility and cannot disable the roll."
       },
-      "DefaultSurvivalDC": {
-        "Name": "Default Survival total (no roll)",
-        "Hint": "Used when Survival rolls are disabled."
+      "DefaultInvestigationTotal": {
+        "Name": "Default Investigation total",
+        "Hint": "Unused — Investigation is always rolled by the player."
       },
       "AllowAllPlayersToLoot": {
         "Name": "Allow all players to loot",
-        "Hint": "When enabled, any player can start looting a corpse and loot auto-generates. Only one player may loot at a time; leftovers go to the corpse inventory for the next player (WoW-style). When disabled, players who loot early are told to wait and the DM gets a Start Roll prompt."
+        "Hint": "When enabled, any player can start looting a corpse. The player always rolls Investigation first, then loot auto-generates. Only one player may loot at a time; leftovers go to the corpse inventory for the next player (WoW-style). When disabled, players who loot early are told to wait and the DM gets a Start Roll prompt (which then forces the player's Investigation roll)."
       },
       "AllowPlayerRequestLoot": {
         "Name": "Allow players to request loot from DM",
