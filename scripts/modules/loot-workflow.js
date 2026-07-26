@@ -16,7 +16,8 @@ import {
   resolveAssignedOwnerUsers,
   userOwnsActor
 } from "./ownership.js";
-import { rollInvestigation } from "./roll-helper.js";
+import { rollInvestigation, rollInvestigationSilent } from "./roll-helper.js";
+import { beginLootFlow, endLootFlow } from "./session-guard.js";
 import { getSetting } from "./settings.js";
 import {
   clearCorpseState,
@@ -44,13 +45,16 @@ import { OPS } from "./constants.js";
  * @param {Token} token
  */
 export async function lootBody(token) {
+  const tokenDoc = token?.document;
+  const flowKey = tokenDoc?.uuid ?? null;
+  if (flowKey && !beginLootFlow(flowKey)) return;
+
   try {
     if (game.system.id !== "dnd5e") {
       ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.WrongSystem"));
       return;
     }
 
-    const tokenDoc = token?.document;
     const creature = token?.actor;
     if (!tokenDoc || !creature) {
       log.error("Missing token document or actor", token);
@@ -109,6 +113,8 @@ export async function lootBody(token) {
         ? `LootForge: ${err.message}`
         : "LootForge encountered an error. See the console (F12) for details."
     );
+  } finally {
+    if (flowKey) endLootFlow(flowKey);
   }
 }
 
@@ -231,8 +237,9 @@ async function openExistingLoot(tokenDoc, state) {
 /**
  * Resolve an Investigation roll for the looter — always Investigation.
  *
- * Remote player prompts are ONLY used when preferRemotePlayer is true (DM Start Roll).
- * GM-initiated generate/double-click rolls locally so we never sit on 120s timeouts.
+ * On the GM client:
+ * - Prefer a remote roll on a connected player-owner of the looter character.
+ * - Fallback is a silent formula roll (never Foundry's interactive roll UI).
  *
  * @param {Actor} roller
  * @param {TokenDocument} tokenDoc
@@ -241,7 +248,7 @@ async function openExistingLoot(tokenDoc, state) {
  * @returns {Promise<object|null>}
  */
 async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
-  preferRemotePlayer = false
+  preferRemotePlayer = true
 } = {}) {
   if (providedRoll && Number.isFinite(Number(providedRoll.total))) {
     return {
@@ -251,18 +258,26 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
     };
   }
 
-  if (preferRemotePlayer && game.user.isGM) {
+  if (!game.user.isGM) {
+    return rollInvestigation(roller);
+  }
+
+  if (preferRemotePlayer && roller && tokenDoc) {
     const owners = resolveAssignedOwnerUsers(roller, { activeOnly: true });
-    const playerOwner = owners[0] ?? null;
-    if (playerOwner && playerOwner.id !== game.user.id) {
+    // Prefer the player's primary-character user when present.
+    const byPrimary = game.users.find(
+      (u) => !u.isGM && u.active && u.character?.id === roller.id
+    );
+    const playerOwner = byPrimary ?? owners[0] ?? null;
+    if (playerOwner) {
       const remote = await requestRemoteInvestigationRoll(playerOwner, roller, tokenDoc);
       if (remote) return remote;
       ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationFallback"));
     }
   }
 
-  // Local roll (player looting themselves, or GM generating).
-  return rollInvestigation(roller);
+  // GM fallback: silent only — never pop the roll UI on the DM.
+  return rollInvestigationSilent(roller);
 }
 
 /**
@@ -275,12 +290,13 @@ async function resolveInvestigationRoll(roller, tokenDoc, providedRoll = null, {
  * @param {Actor} [options.roller]
  * @param {boolean} [options.openReview=true]
  * @param {{ total: number, natural?: number, isNatural20?: boolean }|null} [options.investigationRoll]
+ * @param {boolean} [options.preferRemotePlayer=true]
  */
 export async function generateLootForCorpse(token, tokenDoc, creature, {
   roller = null,
   openReview = true,
   investigationRoll = null,
-  preferRemotePlayer = false
+  preferRemotePlayer = true
 } = {}) {
   const context = buildCreatureContext(creature, tokenDoc);
   const profile = resolveCreatureProfile(context);
@@ -363,67 +379,75 @@ export async function handleDmLootRequest(payload) {
   const tokenDoc = await fromUuid(payload.tokenUuid);
   if (!tokenDoc) return;
 
-  const requester = game.users.get(payload.fromUserId);
-  const actor = game.actors.get(payload.actorId) ?? requester?.character;
-  const creatureName = tokenDoc.name;
-  const playerName = requester?.name ?? "A player";
-  const state = getCorpseState(tokenDoc);
+  const flowKey = tokenDoc.uuid;
+  if (!beginLootFlow(flowKey)) return;
 
-  const alreadyReady = hasRemainingLoot(tokenDoc) || isLootGenerated(tokenDoc);
+  try {
+    const requester = game.users.get(payload.fromUserId);
+    const actor = game.actors.get(payload.actorId) ?? requester?.character;
+    const creatureName = tokenDoc.name;
+    const playerName = requester?.name ?? "A player";
+    const state = getCorpseState(tokenDoc);
 
-  const content = alreadyReady
-    ? `<p>${game.i18n.format("LOOTFORGE.Dialog.PlayerLootReady", {
-      player: playerName,
-      name: creatureName
-    })}</p>`
-    : `<p>${game.i18n.format("LOOTFORGE.Dialog.PlayerLootRequest", {
-      player: playerName,
-      name: creatureName
-    })}</p>`;
+    const alreadyReady = hasRemainingLoot(tokenDoc) || isLootGenerated(tokenDoc);
 
-  const confirmed = await foundry.applications.api.DialogV2.confirm({
-    window: {
-      title: game.i18n.localize("LOOTFORGE.Dialog.LootRequestTitle")
-    },
-    content,
-    yes: {
-      label: alreadyReady
-        ? game.i18n.localize("LOOTFORGE.Dialog.OpenForPlayer")
-        : game.i18n.localize("LOOTFORGE.Dialog.StartRoll"),
-      icon: "fa-solid fa-dice-d20",
-      default: true
-    },
-    no: {
-      label: game.i18n.localize("LOOTFORGE.Dialog.Close")
-    }
-  });
+    const content = alreadyReady
+      ? `<p>${game.i18n.format("LOOTFORGE.Dialog.PlayerLootReady", {
+        player: playerName,
+        name: creatureName
+      })}</p>`
+      : `<p>${game.i18n.format("LOOTFORGE.Dialog.PlayerLootRequest", {
+        player: playerName,
+        name: creatureName
+      })}</p>`;
 
-  if (!confirmed) return;
-
-  if (!hasRemainingLoot(tokenDoc) && !state.generated) {
-    const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
-    let investigationRoll = null;
-    if (requester?.active && actor) {
-      investigationRoll = await requestRemoteInvestigationRoll(requester, actor, tokenDoc);
-      if (!investigationRoll) {
-        ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
-        return;
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: game.i18n.localize("LOOTFORGE.Dialog.LootRequestTitle")
+      },
+      content,
+      yes: {
+        label: alreadyReady
+          ? game.i18n.localize("LOOTFORGE.Dialog.OpenForPlayer")
+          : game.i18n.localize("LOOTFORGE.Dialog.StartRoll"),
+        icon: "fa-solid fa-dice-d20",
+        default: true
+      },
+      no: {
+        label: game.i18n.localize("LOOTFORGE.Dialog.Close")
       }
-    }
-    await generateLootForCorpse(token ?? { document: tokenDoc, actor: tokenDoc.actor }, tokenDoc, tokenDoc.actor, {
-      roller: actor,
-      openReview: true,
-      investigationRoll
     });
-    return;
-  }
 
-  // Loot exists — assign/open for the requesting player.
-  if (actor) {
-    const { assignLootToActor } = await import("./socket-manager.js");
-    await assignLootToActor(tokenDoc, actor, requester);
-  } else {
-    await openDmLootReview(tokenDoc);
+    if (!confirmed) return;
+
+    if (!hasRemainingLoot(tokenDoc) && !state.generated) {
+      const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
+      let investigationRoll = null;
+      if (requester?.active && actor) {
+        investigationRoll = await requestRemoteInvestigationRoll(requester, actor, tokenDoc);
+        if (!investigationRoll) {
+          ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
+          return;
+        }
+      }
+      await generateLootForCorpse(token ?? { document: tokenDoc, actor: tokenDoc.actor }, tokenDoc, tokenDoc.actor, {
+        roller: actor,
+        openReview: true,
+        investigationRoll,
+        preferRemotePlayer: false
+      });
+      return;
+    }
+
+    // Loot exists — assign/open for the requesting player.
+    if (actor) {
+      const { assignLootToActor } = await import("./socket-manager.js");
+      await assignLootToActor(tokenDoc, actor, requester);
+    } else {
+      await openDmLootReview(tokenDoc);
+    }
+  } finally {
+    endLootFlow(flowKey);
   }
 }
 
@@ -455,41 +479,49 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     if (payload.investigationTotal == null) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.InvestigationRequired") };
     }
-    const investigationRoll = {
-      total: Number(payload.investigationTotal),
-      natural: Number(payload.naturalDie ?? 0),
-      isNatural20: Boolean(payload.isNatural20)
-    };
-    const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
+    if (!beginLootFlow(tokenDoc.uuid)) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.LootInProgress") };
+    }
+    try {
+      const investigationRoll = {
+        total: Number(payload.investigationTotal),
+        natural: Number(payload.naturalDie ?? 0),
+        isNatural20: Boolean(payload.isNatural20)
+      };
+      const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
 
-    // Always open DM Review so the GM sees what was rolled/generated.
-    await generateLootForCorpse(
-      token ?? { document: tokenDoc, actor: tokenDoc.actor },
-      tokenDoc,
-      tokenDoc.actor,
-      {
-        roller: actor,
-        openReview: true,
-        investigationRoll
-      }
-    );
+      // Always open DM Review so the GM sees what was rolled/generated.
+      await generateLootForCorpse(
+        token ?? { document: tokenDoc, actor: tokenDoc.actor },
+        tokenDoc,
+        tokenDoc.actor,
+        {
+          roller: actor,
+          openReview: true,
+          investigationRoll,
+          preferRemotePlayer: false
+        }
+      );
 
-    ui.notifications.info(
-      game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
-        player: user.name,
-        name: tokenDoc.name,
-        total: investigationRoll.total
-      })
-    );
-    ChatMessage.create({
-      content: game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLootChat", {
-        player: user.name,
-        character: actor.name,
-        name: tokenDoc.name,
-        total: investigationRoll.total
-      }),
-      speaker: { alias: "LootForge" }
-    }).catch(() => undefined);
+      ui.notifications.info(
+        game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
+          player: user.name,
+          name: tokenDoc.name,
+          total: investigationRoll.total
+        })
+      );
+      ChatMessage.create({
+        content: game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLootChat", {
+          player: user.name,
+          character: actor.name,
+          name: tokenDoc.name,
+          total: investigationRoll.total
+        }),
+        speaker: { alias: "LootForge" }
+      }).catch(() => undefined);
+    } finally {
+      endLootFlow(tokenDoc.uuid);
+    }
   } else {
     await materializeCorpseInventoryLoot(tokenDoc);
   }

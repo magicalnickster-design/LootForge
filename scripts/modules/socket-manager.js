@@ -23,6 +23,12 @@ import {
   takeCorpseItem
 } from "./loot-transfer.js";
 import { refreshLootWindows } from "../applications/window-registry.js";
+import {
+  beginInvestigationDialog,
+  cancelInvestigationDialog,
+  endInvestigationDialog,
+  getActiveInvestigationRequestId
+} from "./session-guard.js";
 
 let registered = false;
 
@@ -128,6 +134,11 @@ async function handleSocketPayload(payload) {
     case OPS.REQUEST_INVESTIGATION_ROLL:
       if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
       await onRequestInvestigationRoll(payload);
+      return;
+
+    case OPS.CANCEL_INVESTIGATION_ROLL:
+      if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
+      onCancelInvestigationRoll(payload);
       return;
 
     case OPS.INVESTIGATION_ROLL_ACK:
@@ -444,17 +455,22 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
   if (!user || !actor || !tokenDoc) return Promise.resolve(null);
   if (!isUserConnected(user)) return Promise.resolve(null);
 
-  // Local user (or GM rolling for themselves): roll immediately.
+  // Local GM should never open interactive PC rolls — caller uses silent fallback.
   if (user.id === game.user.id) {
-    return import("./roll-helper.js").then(({ rollInvestigation }) => rollInvestigation(actor));
+    return Promise.resolve(null);
   }
 
-  // Cancel any prior pending request for this user (prevents stacked 120s waits).
+  // Cancel any prior pending request for this user (prevents stacked waits / dialogs).
   for (const [id, pending] of pendingInvestigationRolls) {
     if (pending.userId === user.id) {
       clearTimeout(pending.timer);
-      pending.resolve(null);
       pendingInvestigationRolls.delete(id);
+      emitLootForge({
+        op: OPS.CANCEL_INVESTIGATION_ROLL,
+        requestId: id,
+        targetUserId: user.id
+      });
+      pending.resolve(null);
     }
   }
 
@@ -465,7 +481,7 @@ export function requestRemoteInvestigationRoll(user, actor, tokenDoc) {
       log.warn("Investigation roll request timed out", { requestId, userId: user.id });
       ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.InvestigationTimeout"));
       resolve(null);
-    }, 20000);
+    }, 90000);
 
     pendingInvestigationRolls.set(requestId, {
       userId: user.id,
@@ -521,6 +537,16 @@ function isUserConnected(user) {
 /**
  * @param {object} payload
  */
+function onCancelInvestigationRoll(payload) {
+  if (cancelInvestigationDialog(payload.requestId)) {
+    log.info("Investigation roll cancelled remotely", { requestId: payload.requestId });
+    ui.notifications?.info?.(game.i18n.localize("LOOTFORGE.Notify.InvestigationSuperseded"));
+  }
+}
+
+/**
+ * @param {object} payload
+ */
 async function onRequestInvestigationRoll(payload) {
   log.info("Socket event received", {
     op: OPS.REQUEST_INVESTIGATION_ROLL,
@@ -529,15 +555,9 @@ async function onRequestInvestigationRoll(payload) {
     localUserId: game.user.id
   });
 
-  // Immediate ACK so the GM knows this client got the request.
-  emitLootForge({
-    op: OPS.INVESTIGATION_ROLL_ACK,
-    requestId: payload.requestId,
-    targetUserId: payload.fromUserId
-  });
-
-  const actor = game.actors.get(payload.actorId) ?? game.user.character;
-  if (!actor) {
+  // GMs never show the player Investigation prompt — ignore mistargeted requests.
+  if (game.user.isGM) {
+    log.info("Ignoring Investigation prompt on GM client", { requestId: payload.requestId });
     emitLootForge({
       op: OPS.INVESTIGATION_ROLL_RESULT,
       requestId: payload.requestId,
@@ -546,26 +566,7 @@ async function onRequestInvestigationRoll(payload) {
     return;
   }
 
-  const creatureName = (await fromUuid(payload.tokenUuid))?.name ?? "the corpse";
-  ui.notifications.info(
-    game.i18n.format("LOOTFORGE.Notify.RollInvestigationNamed", { name: creatureName })
-  );
-
-  // Modal confirm so the player cannot miss the request behind other windows.
-  const proceed = await foundry.applications.api.DialogV2.confirm({
-    window: { title: game.i18n.localize("LOOTFORGE.Dialog.InvestigationTitle") },
-    content: `<p>${game.i18n.format("LOOTFORGE.Dialog.InvestigationPrompt", {
-      name: creatureName
-    })}</p>`,
-    yes: {
-      label: game.i18n.localize("LOOTFORGE.Dialog.RollInvestigation"),
-      icon: "fa-solid fa-magnifying-glass",
-      default: true
-    },
-    no: { label: game.i18n.localize("LOOTFORGE.Dialog.Close") }
-  });
-
-  if (!proceed) {
+  if (!beginInvestigationDialog(payload.requestId)) {
     emitLootForge({
       op: OPS.INVESTIGATION_ROLL_RESULT,
       requestId: payload.requestId,
@@ -574,18 +575,79 @@ async function onRequestInvestigationRoll(payload) {
     return;
   }
 
-  const { rollInvestigation } = await import("./roll-helper.js");
-  const result = await rollInvestigation(actor);
+  try {
+    // Immediate ACK so the GM knows this client got the request.
+    emitLootForge({
+      op: OPS.INVESTIGATION_ROLL_ACK,
+      requestId: payload.requestId,
+      targetUserId: payload.fromUserId
+    });
 
-  emitLootForge({
-    op: OPS.INVESTIGATION_ROLL_RESULT,
-    requestId: payload.requestId,
-    actorId: actor.id,
-    cancelled: !result,
-    investigationTotal: result?.total ?? null,
-    naturalDie: result?.natural ?? null,
-    isNatural20: result?.isNatural20 ?? false
-  });
+    const actor = game.actors.get(payload.actorId) ?? game.user.character;
+    if (!actor) {
+      emitLootForge({
+        op: OPS.INVESTIGATION_ROLL_RESULT,
+        requestId: payload.requestId,
+        cancelled: true
+      });
+      return;
+    }
+
+    const creatureName = (await fromUuid(payload.tokenUuid))?.name ?? "the corpse";
+    ui.notifications.info(
+      game.i18n.format("LOOTFORGE.Notify.RollInvestigationNamed", { name: creatureName })
+    );
+
+    // Modal confirm so the player cannot miss the request behind other windows.
+    const proceed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("LOOTFORGE.Dialog.InvestigationTitle") },
+      content: `<p>${game.i18n.format("LOOTFORGE.Dialog.InvestigationPrompt", {
+        name: creatureName
+      })}</p>`,
+      yes: {
+        label: game.i18n.localize("LOOTFORGE.Dialog.RollInvestigation"),
+        icon: "fa-solid fa-magnifying-glass",
+        default: true
+      },
+      no: { label: game.i18n.localize("LOOTFORGE.Dialog.Close") }
+    });
+
+    // Cancelled/superseded while the dialog was open.
+    if (getActiveInvestigationRequestId() !== payload.requestId) {
+      log.info("Investigation dialog superseded/cancelled before roll", {
+        requestId: payload.requestId
+      });
+      return;
+    }
+
+    if (!proceed) {
+      emitLootForge({
+        op: OPS.INVESTIGATION_ROLL_RESULT,
+        requestId: payload.requestId,
+        cancelled: true
+      });
+      return;
+    }
+
+    const { rollInvestigation } = await import("./roll-helper.js");
+    const result = await rollInvestigation(actor);
+
+    if (getActiveInvestigationRequestId() !== payload.requestId) {
+      return;
+    }
+
+    emitLootForge({
+      op: OPS.INVESTIGATION_ROLL_RESULT,
+      requestId: payload.requestId,
+      actorId: actor.id,
+      cancelled: !result,
+      investigationTotal: result?.total ?? null,
+      naturalDie: result?.natural ?? null,
+      isNatural20: result?.isNatural20 ?? false
+    });
+  } finally {
+    endInvestigationDialog(payload.requestId);
+  }
 }
 
 /**

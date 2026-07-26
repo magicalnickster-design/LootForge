@@ -1,6 +1,9 @@
 /**
  * Investigation skill rolls for loot generation.
  * LootForge always uses Investigation — never Survival or another skill.
+ *
+ * Critical rule: on the GM client, never open an interactive PC roll dialog.
+ * Use silent formula rolls for GM-side fallbacks.
  */
 
 import { LOOT_SKILL } from "./constants.js";
@@ -15,35 +18,49 @@ import { log } from "./logger.js";
  */
 
 /**
- * Force an Investigation check for the looting character.
  * @param {Actor} looter
- * @returns {Promise<LootRollResult|null>}
+ * @returns {string}
  */
-export async function rollInvestigation(looter) {
-  return rollLootSkill(looter, LOOT_SKILL);
+export function buildInvestigationFormula(looter) {
+  const skill = looter?.system?.skills?.[LOOT_SKILL]
+    ?? looter?.system?.skills?.investigation;
+  const mod = Number(skill?.total ?? skill?.mod ?? 0) || 0;
+  return `1d20 + ${mod}`;
 }
 
 /**
- * Manual Investigation roll when Actor#ifrollSkill fails (dnd5e embedded update bugs).
+ * Silent Investigation roll — never opens Foundry's roll config UI.
  * @param {Actor} looter
+ * @param {{ createMessage?: boolean, flavor?: string }} [options]
  * @returns {Promise<LootRollResult|null>}
  */
-async function rollInvestigationFallback(looter) {
-  const skill = looter?.system?.skills?.inv ?? looter?.system?.skills?.investigation;
-  const mod = Number(skill?.total ?? skill?.mod ?? 0) || 0;
-  const formula = `1d20 + ${mod}`;
-  log.warn("Using Investigation formula fallback", { actorId: looter?.id, formula });
+export async function rollInvestigationSilent(looter, {
+  createMessage = true,
+  flavor = null
+} = {}) {
+  if (!looter) {
+    log.error("Missing looter actor for silent Investigation roll");
+    return null;
+  }
+
+  const formula = buildInvestigationFormula(looter);
+  log.info("Silent Investigation formula roll", { actorId: looter.id, formula });
 
   try {
     const roll = await new Roll(formula).evaluate();
-    const natural = Number(roll.dice?.[0]?.results?.[0]?.result
+    const natural = Number(
+      roll.dice?.[0]?.results?.[0]?.result
       ?? roll.terms?.find((t) => t.faces === 20)?.results?.[0]?.result
-      ?? 0);
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: looter }),
-      flavor: game.i18n?.localize?.("LOOTFORGE.Notify.RollInvestigation")
-        ?? "Investigation (LootForge)"
-    });
+      ?? 0
+    );
+    if (createMessage) {
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: looter }),
+        flavor: flavor
+          || game.i18n?.localize?.("LOOTFORGE.Notify.RollInvestigation")
+          || "Investigation (LootForge)"
+      });
+    }
     return {
       total: Number(roll.total ?? 0),
       natural: Number.isFinite(natural) ? natural : 0,
@@ -51,9 +68,18 @@ async function rollInvestigationFallback(looter) {
       roll
     };
   } catch (err) {
-    log.error("Investigation fallback roll failed", err);
+    log.error("Silent Investigation roll failed", err);
     return null;
   }
+}
+
+/**
+ * Interactive Investigation for the local player who owns the character.
+ * @param {Actor} looter
+ * @returns {Promise<LootRollResult|null>}
+ */
+export async function rollInvestigation(looter) {
+  return rollLootSkill(looter, LOOT_SKILL);
 }
 
 /**
@@ -65,6 +91,14 @@ export async function rollLootSkill(looter, skill = LOOT_SKILL) {
   if (!looter) {
     log.error("Missing looter actor for Investigation roll");
     return null;
+  }
+
+  // GM must never open interactive PC roll dialogs during loot flows.
+  if (game.user.isGM) {
+    log.info("GM Investigation → silent formula (no roll dialog)", {
+      actorId: looter.id
+    });
+    return rollInvestigationSilent(looter);
   }
 
   const skillId = LOOT_SKILL;
@@ -100,10 +134,10 @@ export async function rollLootSkill(looter, skill = LOOT_SKILL) {
       // User cancelled the roll configuration dialog.
       return null;
     } catch (err) {
-      log.warn("Actor.rollSkill failed — trying formula fallback", err);
-      return rollInvestigationFallback(looter);
+      log.warn("Actor.rollSkill failed — trying silent formula fallback", err);
+      return rollInvestigationSilent(looter);
     }
   }
 
-  return rollInvestigationFallback(looter);
+  return rollInvestigationSilent(looter);
 }

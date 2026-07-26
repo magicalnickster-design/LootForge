@@ -3,16 +3,16 @@
  *
  * Players usually cannot hover/control unowned enemy tokens, so Foundry never
  * sets canvas.tokens.hover and Token#_onClickLeft2 is permission-gated by
- * _canView. We patch those permissions for dead creatures and also hit-test
- * the pointer position on board double-click as a fallback.
+ * _canView. We patch those permissions for dead creatures.
+ *
+ * Only Token#_onClickLeft2 starts loot — no separate board dblclick listener,
+ * which previously stacked with the Token handler and opened multiple sessions.
  */
 
 import { isCreatureDead } from "../modules/creature-context.js";
 import { log } from "../modules/logger.js";
 import { lootBody } from "../modules/loot-workflow.js";
 
-let boundElement = null;
-let boundHandler = null;
 let patched = false;
 
 /** @type {Map<string, number>} tokenUuid → last loot attempt ms */
@@ -70,7 +70,6 @@ export function resolveTokenUnderPointer(event = null) {
 
   const matches = canvas.tokens.placeables.filter((token) => {
     if (!token?.document || !token.actor) return false;
-    // Prefer visible tokens; still allow hit-test if mesh exists.
     if (token.visible === false) return false;
     try {
       if (typeof token.bounds?.contains === "function") {
@@ -92,7 +91,6 @@ export function resolveTokenUnderPointer(event = null) {
     return null;
   }
 
-  // Top-most token wins.
   matches.sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0));
   return matches.at(-1) ?? null;
 }
@@ -109,7 +107,6 @@ async function tryLootDeadToken(token, event = null) {
   event?.stopPropagation?.();
   event?.stopImmediatePropagation?.();
 
-  // Board dblclick + Token#_onClickLeft2 both fire — debounce to one loot attempt.
   const uuid = token.document.uuid;
   const now = Date.now();
   const last = recentLootClicks.get(uuid) ?? 0;
@@ -127,35 +124,6 @@ async function tryLootDeadToken(token, event = null) {
 
   await lootBody(token);
   return true;
-}
-
-/**
- * @param {MouseEvent} event
- */
-async function onBoardDoubleClick(event) {
-  if (!canvas?.ready || !canvas.tokens) return;
-  const token = resolveTokenUnderPointer(event);
-  if (!token) {
-    log.debug("Double-click: no token under pointer");
-    return;
-  }
-  await tryLootDeadToken(token, event);
-}
-
-function bindBoardListener() {
-  const el = document.getElementById("board")
-    ?? canvas?.app?.canvas?.parentElement
-    ?? canvas?.app?.view?.parentElement
-    ?? null;
-  if (!el) return;
-
-  if (boundElement && boundHandler) {
-    boundElement.removeEventListener("dblclick", boundHandler, true);
-  }
-
-  boundElement = el;
-  boundHandler = onBoardDoubleClick;
-  boundElement.addEventListener("dblclick", boundHandler, true);
 }
 
 /**
@@ -225,13 +193,11 @@ export function registerTokenDoubleClickLoot() {
 
   Hooks.on("canvasReady", () => {
     patchTokenDoubleClick();
-    bindBoardListener();
     log.info("Token double-click loot ready", {
       userId: game.user.id,
       isGM: game.user.isGM
     });
   });
 
-  if (canvas?.ready) bindBoardListener();
   log.debug("Token double-click loot registered");
 }
