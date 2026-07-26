@@ -27,7 +27,6 @@
       "RollCancelled": "Investigation roll cancelled.",
       "RollInvestigation": "Rolling Investigation to loot the corpse…",
       "InvestigationAlreadyRolled": "Investigation was already rolled for this corpse — waiting for the DM.",
-      "InvestigationClaimTimeout": "Could not reserve Investigation for this corpse — try again.",
       "LootInProgress": "LootForge is already handling this corpse — wait for the current roll/session to finish.",
       "NoTable": "No LootForge profile found for {name}.",
       "LootAvailable": "Loot available: {name}",

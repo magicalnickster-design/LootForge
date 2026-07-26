@@ -26,8 +26,20 @@ import { refreshLootWindows } from "../applications/window-registry.js";
 
 let registered = false;
 
-/** @type {Map<string, { resolve: Function, timer: any }>} */
-const pendingInvestigationClaims = new Map();
+/**
+ * Primary connected GM who should handle authoritative socket ops.
+ * Falls back when Foundry's activeGM getter is null (common on some hosts).
+ * @returns {boolean}
+ */
+function isResponsibleGm() {
+  if (!game.user?.isGM) return false;
+  const activeGms = game.users.filter((u) => u.isGM && u.active);
+  const elected = game.users.activeGM
+    ?? activeGms.sort((a, b) => a.id.localeCompare(b.id))[0]
+    ?? null;
+  if (!elected) return true;
+  return elected.id === game.user.id;
+}
 
 /**
  * Register socket listeners (ready).
@@ -152,31 +164,8 @@ async function handleSocketPayload(payload) {
 
     case OPS.PLAYER_START_LOOT:
     case OPS.CLAIM_LOOT_SESSION:
-      if (!game.user.isGM) return;
-      if (game.users.activeGM?.id !== game.user.id) return;
+      if (!isResponsibleGm()) return;
       await onPlayerStartLoot(payload);
-      return;
-
-    case OPS.CLAIM_INVESTIGATION:
-      if (!game.user.isGM) return;
-      if (game.users.activeGM?.id !== game.user.id) return;
-      {
-        const { handleInvestigationClaim } = await import("./loot-workflow.js");
-        const result = await handleInvestigationClaim(payload);
-        emitLootForge({
-          op: OPS.CLAIM_INVESTIGATION_RESULT,
-          requestId: payload.requestId,
-          targetUserId: payload.fromUserId,
-          tokenUuid: payload.tokenUuid,
-          ok: Boolean(result?.ok),
-          error: result?.error ?? null
-        });
-      }
-      return;
-
-    case OPS.CLAIM_INVESTIGATION_RESULT:
-      if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
-      onInvestigationClaimResult(payload);
       return;
 
     case OPS.INVESTIGATION_READY:
@@ -188,7 +177,8 @@ async function handleSocketPayload(payload) {
           tokenUuid: payload.tokenUuid,
           total: payload.investigationTotal,
           localUserId: game.user.id,
-          activeGM: game.users.activeGM?.id ?? null
+          activeGM: game.users.activeGM?.id ?? null,
+          responsible: isResponsibleGm()
         });
         const { handleInvestigationReady } = await import("./loot-workflow.js");
         await handleInvestigationReady(payload);
@@ -198,8 +188,7 @@ async function handleSocketPayload(payload) {
     case OPS.TAKE_ITEM:
     case OPS.TAKE_ALL:
     case OPS.DONE_LOOT:
-      if (!game.user.isGM) return;
-      if (game.users.activeGM?.id !== game.user.id) return;
+      if (!isResponsibleGm()) return;
       await handleTakeRequest(payload);
       return;
 
@@ -385,67 +374,6 @@ async function openPlayerWindowFromPayload(payload) {
 }
 
 /**
- * @param {object} payload
- */
-function onInvestigationClaimResult(payload) {
-  const pending = pendingInvestigationClaims.get(payload.requestId);
-  if (!pending) return;
-  clearTimeout(pending.timer);
-  pendingInvestigationClaims.delete(payload.requestId);
-  pending.resolve({
-    ok: Boolean(payload.ok),
-    error: payload.error ?? null
-  });
-}
-
-/**
- * Player → GM: reserve the single Investigation slot before rolling.
- * @param {TokenDocument} tokenDoc
- * @param {Actor} actor
- * @returns {Promise<{ ok: boolean, error?: string|null }>}
- */
-export async function requestInvestigationClaim(tokenDoc, actor) {
-  if (game.user.isGM) {
-    const { handleInvestigationClaim } = await import("./loot-workflow.js");
-    return handleInvestigationClaim({
-      tokenUuid: tokenDoc.uuid,
-      actorId: actor.id,
-      fromUserId: game.user.id
-    });
-  }
-
-  if (!game.users.activeGM) {
-    const err = game.i18n.localize("LOOTFORGE.Notify.NeedGM");
-    return { ok: false, error: err };
-  }
-
-  const requestId = foundry.utils.randomID();
-  return new Promise((resolve) => {
-    const timer = setTimeout(() => {
-      pendingInvestigationClaims.delete(requestId);
-      resolve({
-        ok: false,
-        error: game.i18n.localize("LOOTFORGE.Notify.InvestigationClaimTimeout")
-      });
-    }, 8000);
-
-    pendingInvestigationClaims.set(requestId, { resolve, timer });
-    emitLootForge({
-      op: OPS.CLAIM_INVESTIGATION,
-      requestId,
-      tokenUuid: tokenDoc.uuid,
-      actorId: actor.id
-    });
-    log.info("Socket event emitted", {
-      op: OPS.CLAIM_INVESTIGATION,
-      tokenUuid: tokenDoc.uuid,
-      actorId: actor.id,
-      requestId
-    });
-  });
-}
-
-/**
  * Player → GM: claim / open shared loot session.
  * @param {TokenDocument} tokenDoc
  * @param {Actor} actor
@@ -474,7 +402,7 @@ export async function requestPlayerStartLoot(tokenDoc, actor, {
     }, { claimOnly });
   }
 
-  if (!game.users.activeGM) {
+  if (!game.users.activeGM && !game.users.some((u) => u.isGM && u.active)) {
     const err = game.i18n.localize("LOOTFORGE.Notify.NeedGM");
     ui.notifications.warn(err);
     return { ok: false, error: err };

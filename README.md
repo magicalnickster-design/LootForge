@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.4.3** |
+| Version | **0.4.4** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | Fully supported creature: **Wolf** |
@@ -14,7 +14,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 ## Flow (v0.4+)
 
 1. Creature is marked **dead** → white sparkles appear.
-2. A **player** **double-left-clicks** the corpse (or sparkles) → Investigation auto-rolls once (shown in chat).
+2. A **player** **double-left-clicks** the corpse → Investigation auto-rolls once (shown in chat).
 3. **DM Review** opens automatically for the GM — edit quantities, reroll, add/remove items.
 4. GM **Save & Close** or **Close** → loot is released free-for-all (no assignee).
 5. Any player double-clicks again → shared Items window; takes live-sync across clients.
@@ -27,7 +27,7 @@ The DM cannot start Investigation by double-clicking — only players initiate t
 
 Players generally cannot open the Token HUD of an unowned enemy corpse. LootForge provides:
 
-- **Double-left-click** a dead creature (or its sparkles) to loot — single/right-click do nothing
+- **Double-left-click** a dead creature to loot — sparkles are visual only; single/right-click do nothing
 - Scene control **Loot Targeted Body** (target with `T`, then click)
 - Hotkey **Alt+L** (targeted corpse, else nearest lootable corpse)
 

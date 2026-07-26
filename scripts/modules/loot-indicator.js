@@ -7,15 +7,12 @@
 import { MODULE_ID } from "./constants.js";
 import { isCreatureDead } from "./creature-context.js";
 import { log } from "./logger.js";
-import { canUserLootCorpse } from "./ownership.js";
 import { getSetting } from "./settings.js";
 import {
   getCorpseState,
   hasRemainingLoot,
-  isAwaitingDmReview,
   isCorpseLooted,
-  isLootGenerated,
-  isLootSessionLocked
+  isLootGenerated
 } from "./loot-storage.js";
 
 /** @type {Map<string, PIXI.Container>} token id → overlay container */
@@ -24,14 +21,10 @@ const overlays = new Map();
 /** @type {Map<string, Function>} token id → ticker callback */
 const tickers = new Map();
 
-/** @type {Map<string, number>} token id → last left-click ms (sparkle dblclick) */
-const sparkleClickAt = new Map();
-
 let hooksRegistered = false;
 let starTexture = null;
 
 const STAR_COUNT = 10;
-const SPARKLE_DBLCLICK_MS = 400;
 
 /**
  * Tiny white cross/star texture (canvas-generated — Pixi 7/8 safe).
@@ -86,30 +79,12 @@ export function shouldShowLootIndicator(tokenDoc) {
 }
 
 /**
- * Whether sparkles should accept pointer events for this user.
+ * Sparkles are visual-only. Looting is always Token double-left-click.
+ * Kept for API compatibility / future use.
  * @param {TokenDocument} tokenDoc
  */
 export function canInteractWithLootIndicator(tokenDoc) {
-  if (!shouldShowLootIndicator(tokenDoc)) return false;
-
-  const state = getCorpseState(tokenDoc);
-
-  // GM: only when there is loot to review / open — players start Investigation.
-  if (game.user.isGM) {
-    return isAwaitingDmReview(state)
-      || (isLootGenerated(tokenDoc) && hasRemainingLoot(tokenDoc));
-  }
-
-  if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
-    return false;
-  }
-
-  // Dead but no loot generated yet — player may start Investigation.
-  if (!isLootGenerated(tokenDoc) && !hasRemainingLoot(tokenDoc)) {
-    return true;
-  }
-
-  return canUserLootCorpse(tokenDoc, game.user);
+  return false;
 }
 
 /**
@@ -214,23 +189,11 @@ function layoutSparkles(token, container) {
     star.tint = i % 2 === 0 ? 0xffffff : 0xfff6d0;
   }
 
-  // Invisible hit target covering the token so sparkles remain clickable.
-  let hit = container.children.find((c) => c.name === "lootforgeHit");
-  if (!hit) {
-    hit = new PIXI.Graphics();
-    hit.name = "lootforgeHit";
-    hit.eventMode = "static";
-    container.addChildAt(hit, 0);
-  }
-  hit.clear?.();
-  if (typeof hit.beginFill === "function") {
-    hit.beginFill(0xffffff, 0.001);
-    hit.drawEllipse(0, 0, w * 0.55, h * 0.55);
-    hit.endFill();
-  } else if (typeof hit.ellipse === "function") {
-    hit.ellipse(0, 0, w * 0.55, h * 0.55).fill({ color: 0xffffff, alpha: 0.001 });
-  } else {
-    hit.hitArea = new PIXI.Ellipse(0, 0, w * 0.55, h * 0.55);
+  // No hit target — sparkles must not steal Token double-clicks.
+  const hit = container.children.find((c) => c.name === "lootforgeHit");
+  if (hit) {
+    container.removeChild(hit);
+    hit.destroy?.();
   }
 
   container.position.set(w / 2, h / 2);
@@ -304,10 +267,11 @@ async function upsertOverlay(token) {
 
   if (!container) {
     container = new PIXI.Container();
-    container.eventMode = "static";
-    container.cursor = "pointer";
+    container.eventMode = "none";
+    container.cursor = "default";
     container.zIndex = 1000;
     container.sortableChildren = true;
+    container.interactiveChildren = false;
 
     for (let i = 0; i < STAR_COUNT; i++) {
       const star = new PIXI.Sprite(texture);
@@ -317,30 +281,6 @@ async function upsertOverlay(token) {
       container.addChild(star);
     }
 
-    container.on("pointerdown", (event) => {
-      // Left button only — ignore right/middle clicks entirely.
-      const button = event.button ?? event.data?.button ?? 0;
-      if (button !== 0) return;
-      event.stopPropagation?.();
-      event.data?.originalEvent?.stopPropagation?.();
-    });
-    container.on("pointertap", async (event) => {
-      const button = event.button ?? event.data?.button ?? 0;
-      if (button !== 0) return;
-      event.stopPropagation?.();
-
-      // Require a double left-click (same as Token loot). Single click does nothing.
-      const id = token.id;
-      const now = Date.now();
-      const last = sparkleClickAt.get(id) ?? 0;
-      if (now - last > SPARKLE_DBLCLICK_MS) {
-        sparkleClickAt.set(id, now);
-        return;
-      }
-      sparkleClickAt.delete(id);
-      await onSparkleClicked(token);
-    });
-
     token.addChild?.(container);
     overlays.set(token.id, container);
     startSparkleAnimation(token.id, container);
@@ -348,30 +288,14 @@ async function upsertOverlay(token) {
 
   layoutSparkles(token, container);
   container.visible = true;
-  const interactive = canInteractWithLootIndicator(tokenDoc);
-  container.eventMode = interactive ? "static" : "none";
-  container.cursor = interactive ? "pointer" : "default";
-  container.alpha = interactive ? 1 : 0.65;
+  container.eventMode = "none";
+  container.interactiveChildren = false;
+  container.cursor = "default";
+  container.alpha = 1;
 
   if (!tickers.has(token.id)) {
     startSparkleAnimation(token.id, container);
   }
-}
-
-/**
- * @param {Token} token
- */
-async function onSparkleClicked(token) {
-  const tokenDoc = token.document;
-  if (!canInteractWithLootIndicator(tokenDoc)) return;
-
-  log.info("Loot sparkles double-clicked", {
-    tokenUuid: tokenDoc.uuid,
-    userId: game.user.id
-  });
-
-  const { lootBody } = await import("./loot-workflow.js");
-  await lootBody(token);
 }
 
 /**
@@ -380,7 +304,6 @@ async function onSparkleClicked(token) {
  */
 function destroyOverlay(id, container) {
   stopSparkleAnimation(id);
-  sparkleClickAt.delete(id);
   try {
     container.removeAllListeners?.();
     container.parent?.removeChild?.(container);
