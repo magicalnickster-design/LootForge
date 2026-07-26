@@ -1,0 +1,52 @@
+{
+  "_id": "LFGoblinJournal0",
+  "name": "Goblin Journal",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/goblin-journal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A greasy little booklet of scratchy Common and Goblin. Entries complain about bosses, stolen chickens, and a \"shiny cave that bites.\" No maps of real value — yet.</p>",
+      "chat": "A goblin's journal."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "goblin-journal",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "goblin",
+        "readable"
+      ],
+      "stackingKey": "goblin-journal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGoblinJournal0"
+}

@@ -10,8 +10,13 @@ import { log } from "./logger.js";
  * @typedef {object} CorpseLootItem
  * @property {string} entryId
  * @property {string} definitionId
+ * @property {"item"|"currency"|"equipment"} [kind]
  * @property {string} [itemUuid]
  * @property {object} [itemData]
+ * @property {object} [baseItemData]
+ * @property {object} [currency]
+ * @property {string} [equipmentQuality]
+ * @property {string} [sourceItemId]
  * @property {string} name
  * @property {number} quantity
  * @property {string} img

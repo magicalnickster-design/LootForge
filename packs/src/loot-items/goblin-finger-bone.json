@@ -1,0 +1,52 @@
+{
+  "_id": "LFGoblinFBone000",
+  "name": "Goblin Finger Bone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/goblin-finger-bone.svg",
+  "system": {
+    "description": {
+      "value": "<p>A small finger bone cleaned of flesh. Goblins sometimes use them as charms.</p>",
+      "chat": "A goblin finger bone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "goblin-finger-bone",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "goblin",
+        "bone"
+      ],
+      "stackingKey": "goblin-finger-bone",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGoblinFBone000"
+}

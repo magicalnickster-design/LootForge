@@ -46,7 +46,29 @@ const DOC_IDS = Object.freeze({
   "salvaged-chain-shirt": "LFSalvChain00001",
   "salvaged-scale-mail": "LFSalvScale00001",
   "salvaged-breastplate": "LFSalvBreast0001",
-  "salvaged-plate-armor": "LFSalvPlate00001"
+  "salvaged-plate-armor": "LFSalvPlate00001",
+  "goblin-ear": "LFGoblinEar00000",
+  "goblin-tooth": "LFGoblinTooth000",
+  "goblin-finger-bone": "LFGoblinFBone000",
+  "goblin-blood-vial": "LFGoblinBlood000",
+  "bent-spoon": "LFBentSpoon00000",
+  "dirty-rag": "LFDirtyRag000000",
+  "broken-pipe": "LFBrokenPipe0000",
+  "empty-bottle": "LFEmptyBottle000",
+  "dice": "LFDiceSet0000000",
+  "cracked-mug": "LFCrackedMug0000",
+  "old-boot": "LFOldBoot0000000",
+  "copper-ring": "LFCopperRing0000",
+  "bone-necklace": "LFBoneNecklace00",
+  "lucky-rabbit-foot": "LFLuckyRabbit000",
+  "small-idol": "LFSmallIdol00000",
+  "decorative-feather": "LFDecorFeather00",
+  "goblin-journal": "LFGoblinJournal0",
+  "crude-map": "LFCrudeMap000000",
+  "wanted-poster": "LFWantedPoster00",
+  "caravan-schedule": "LFCaravanSched00",
+  "bandit-orders": "LFBanditOrders00",
+  "scribbled-note": "LFScribbledNote0"
 });
 
 /**
@@ -256,6 +278,293 @@ export const LOOT_DEFINITIONS = {
       "Nearly intact plate recovered from a powerful animated construct. Heavy armor (AC 18).",
     price: { value: 1500, denomination: "gp" },
     weight: { value: 65, units: "lb" }
+  },
+
+  "goblin-ear": {
+    id: "goblin-ear",
+    documentId: DOC_IDS["goblin-ear"],
+    itemUuid: compendiumItemUuid(DOC_IDS["goblin-ear"]),
+    name: "Goblin Ear",
+    category: "monster-part",
+    rarity: "common",
+    tags: ["humanoid","goblin","trophy"],
+    img: `modules/${MODULE_ID}/assets/items/goblin-ear.svg`,
+    description: "A severed goblin ear — crude proof of a kill, sometimes collected by bounty hunters.",
+    price: { value: 2, denomination: "sp" },
+    weight: { value: 0.1, units: "lb" }
+  },
+  "goblin-tooth": {
+    id: "goblin-tooth",
+    documentId: DOC_IDS["goblin-tooth"],
+    itemUuid: compendiumItemUuid(DOC_IDS["goblin-tooth"]),
+    name: "Goblin Tooth",
+    category: "monster-part",
+    rarity: "common",
+    tags: ["humanoid","goblin","bone"],
+    img: `modules/${MODULE_ID}/assets/items/goblin-tooth.svg`,
+    description: "A yellowed goblin tooth, often drilled for necklaces or thrown into foul stew pots.",
+    price: { value: 1, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "goblin-finger-bone": {
+    id: "goblin-finger-bone",
+    documentId: DOC_IDS["goblin-finger-bone"],
+    itemUuid: compendiumItemUuid(DOC_IDS["goblin-finger-bone"]),
+    name: "Goblin Finger Bone",
+    category: "monster-part",
+    rarity: "common",
+    tags: ["humanoid","goblin","bone"],
+    img: `modules/${MODULE_ID}/assets/items/goblin-finger-bone.svg`,
+    description: "A small finger bone cleaned of flesh. Goblins sometimes use them as charms.",
+    price: { value: 5, denomination: "cp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "goblin-blood-vial": {
+    id: "goblin-blood-vial",
+    documentId: DOC_IDS["goblin-blood-vial"],
+    itemUuid: compendiumItemUuid(DOC_IDS["goblin-blood-vial"]),
+    name: "Goblin Blood Vial",
+    category: "monster-part",
+    rarity: "uncommon",
+    tags: ["humanoid","goblin","alchemy"],
+    img: `modules/${MODULE_ID}/assets/items/goblin-blood-vial.svg`,
+    description: "A stoppered vial of dark goblin blood. Alchemists and hedge witches sometimes pay for it.",
+    price: { value: 1, denomination: "gp" },
+    weight: { value: 0.2, units: "lb" }
+  },
+  "bent-spoon": {
+    id: "bent-spoon",
+    documentId: DOC_IDS["bent-spoon"],
+    itemUuid: compendiumItemUuid(DOC_IDS["bent-spoon"]),
+    name: "Bent Spoon",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/bent-spoon.svg`,
+    description: "A tin spoon bent nearly in half. Worthless, but somehow still in a goblin's pocket.",
+    price: { value: 1, denomination: "cp" },
+    weight: { value: 0.1, units: "lb" }
+  },
+  "dirty-rag": {
+    id: "dirty-rag",
+    documentId: DOC_IDS["dirty-rag"],
+    itemUuid: compendiumItemUuid(DOC_IDS["dirty-rag"]),
+    name: "Dirty Rag",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/dirty-rag.svg`,
+    description: "A filthy scrap of cloth. Best not to ask what stained it.",
+    price: { value: 0, denomination: "cp" },
+    weight: { value: 0.1, units: "lb" }
+  },
+  "broken-pipe": {
+    id: "broken-pipe",
+    documentId: DOC_IDS["broken-pipe"],
+    itemUuid: compendiumItemUuid(DOC_IDS["broken-pipe"]),
+    name: "Broken Pipe",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/broken-pipe.svg`,
+    description: "A cracked wooden smoking pipe. The bowl still smells faintly of something unpleasant.",
+    price: { value: 2, denomination: "cp" },
+    weight: { value: 0.2, units: "lb" }
+  },
+  "empty-bottle": {
+    id: "empty-bottle",
+    documentId: DOC_IDS["empty-bottle"],
+    itemUuid: compendiumItemUuid(DOC_IDS["empty-bottle"]),
+    name: "Empty Bottle",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/empty-bottle.svg`,
+    description: "A cloudy glass bottle with the cork chewed off. Empty, save for a few sticky drops.",
+    price: { value: 1, denomination: "cp" },
+    weight: { value: 0.5, units: "lb" }
+  },
+  "dice": {
+    id: "dice",
+    documentId: DOC_IDS["dice"],
+    itemUuid: compendiumItemUuid(DOC_IDS["dice"]),
+    name: "Dice",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin","game"],
+    img: `modules/${MODULE_ID}/assets/items/dice.svg`,
+    description: "A pair of uneven bone dice. One corner is chewed flat — fair play was never the point.",
+    price: { value: 2, denomination: "cp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "cracked-mug": {
+    id: "cracked-mug",
+    documentId: DOC_IDS["cracked-mug"],
+    itemUuid: compendiumItemUuid(DOC_IDS["cracked-mug"]),
+    name: "Cracked Mug",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/cracked-mug.svg`,
+    description: "A clay mug with a hairline crack. Still holds liquid, if you don't mind the leak.",
+    price: { value: 1, denomination: "cp" },
+    weight: { value: 0.5, units: "lb" }
+  },
+  "old-boot": {
+    id: "old-boot",
+    documentId: DOC_IDS["old-boot"],
+    itemUuid: compendiumItemUuid(DOC_IDS["old-boot"]),
+    name: "Old Boot",
+    category: "junk",
+    rarity: "common",
+    tags: ["junk","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/old-boot.svg`,
+    description: "A single worn boot, two sizes too large and missing its lace.",
+    price: { value: 1, denomination: "cp" },
+    weight: { value: 1, units: "lb" }
+  },
+  "copper-ring": {
+    id: "copper-ring",
+    documentId: DOC_IDS["copper-ring"],
+    itemUuid: compendiumItemUuid(DOC_IDS["copper-ring"]),
+    name: "Copper Ring",
+    category: "trinket",
+    rarity: "common",
+    tags: ["trinket","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/copper-ring.svg`,
+    description: "A thin copper band, green in places. Not magical — just shiny enough to steal.",
+    price: { value: 5, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "bone-necklace": {
+    id: "bone-necklace",
+    documentId: DOC_IDS["bone-necklace"],
+    itemUuid: compendiumItemUuid(DOC_IDS["bone-necklace"]),
+    name: "Bone Necklace",
+    category: "trinket",
+    rarity: "common",
+    tags: ["trinket","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/bone-necklace.svg`,
+    description: "Tiny bones and beads strung on sinew. A goblin keepsake, or a warning.",
+    price: { value: 3, denomination: "sp" },
+    weight: { value: 0.2, units: "lb" }
+  },
+  "lucky-rabbit-foot": {
+    id: "lucky-rabbit-foot",
+    documentId: DOC_IDS["lucky-rabbit-foot"],
+    itemUuid: compendiumItemUuid(DOC_IDS["lucky-rabbit-foot"]),
+    name: "Lucky Rabbit Foot",
+    category: "trinket",
+    rarity: "common",
+    tags: ["trinket","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/lucky-rabbit-foot.svg`,
+    description: "A dried rabbit's foot on a frayed cord. Its previous owner clearly believed in luck.",
+    price: { value: 1, denomination: "gp" },
+    weight: { value: 0.1, units: "lb" }
+  },
+  "small-idol": {
+    id: "small-idol",
+    documentId: DOC_IDS["small-idol"],
+    itemUuid: compendiumItemUuid(DOC_IDS["small-idol"]),
+    name: "Small Idol",
+    category: "trinket",
+    rarity: "uncommon",
+    tags: ["trinket","goblin","religion"],
+    img: `modules/${MODULE_ID}/assets/items/small-idol.svg`,
+    description: "A crude stone idol with oversized eyes. Someone muttered to it in the dark.",
+    price: { value: 2, denomination: "gp" },
+    weight: { value: 0.5, units: "lb" }
+  },
+  "decorative-feather": {
+    id: "decorative-feather",
+    documentId: DOC_IDS["decorative-feather"],
+    itemUuid: compendiumItemUuid(DOC_IDS["decorative-feather"]),
+    name: "Decorative Feather",
+    category: "trinket",
+    rarity: "common",
+    tags: ["trinket","goblin"],
+    img: `modules/${MODULE_ID}/assets/items/decorative-feather.svg`,
+    description: "A bright feather, carefully kept. Perhaps from a stolen hat — or a bird that got away.",
+    price: { value: 2, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "goblin-journal": {
+    id: "goblin-journal",
+    documentId: DOC_IDS["goblin-journal"],
+    itemUuid: compendiumItemUuid(DOC_IDS["goblin-journal"]),
+    name: "Goblin Journal",
+    category: "story",
+    rarity: "uncommon",
+    tags: ["story","goblin","readable"],
+    img: `modules/${MODULE_ID}/assets/items/goblin-journal.svg`,
+    description: "A greasy little booklet of scratchy Common and Goblin. Entries complain about bosses, stolen chickens, and a \"shiny cave that bites.\" No maps of real value — yet.",
+    price: { value: 5, denomination: "sp" },
+    weight: { value: 0.5, units: "lb" }
+  },
+  "crude-map": {
+    id: "crude-map",
+    documentId: DOC_IDS["crude-map"],
+    itemUuid: compendiumItemUuid(DOC_IDS["crude-map"]),
+    name: "Crude Map",
+    category: "story",
+    rarity: "uncommon",
+    tags: ["story","goblin","readable"],
+    img: `modules/${MODULE_ID}/assets/items/crude-map.svg`,
+    description: "A scrap of hide marked with charcoal. An X sits near a crooked river and three stick-figure trees. Whether the treasure exists is another matter.",
+    price: { value: 1, denomination: "gp" },
+    weight: { value: 0.1, units: "lb" }
+  },
+  "wanted-poster": {
+    id: "wanted-poster",
+    documentId: DOC_IDS["wanted-poster"],
+    itemUuid: compendiumItemUuid(DOC_IDS["wanted-poster"]),
+    name: "Wanted Poster",
+    category: "story",
+    rarity: "common",
+    tags: ["story","goblin","readable"],
+    img: `modules/${MODULE_ID}/assets/items/wanted-poster.svg`,
+    description: "A torn poster offering coin for \"the green one with the scar.\" The face is smudged beyond recognition. Someone kept it folded in a pouch.",
+    price: { value: 1, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "caravan-schedule": {
+    id: "caravan-schedule",
+    documentId: DOC_IDS["caravan-schedule"],
+    itemUuid: compendiumItemUuid(DOC_IDS["caravan-schedule"]),
+    name: "Caravan Schedule",
+    category: "story",
+    rarity: "uncommon",
+    tags: ["story","goblin","readable"],
+    img: `modules/${MODULE_ID}/assets/items/caravan-schedule.svg`,
+    description: "A damp parchment listing wagon departures along a trade road — dates, cargo notes (\"grain\", \"iron\", \"wine\"), and a scribbled goblin jot: \"wait at bend.\"",
+    price: { value: 5, denomination: "sp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "bandit-orders": {
+    id: "bandit-orders",
+    documentId: DOC_IDS["bandit-orders"],
+    itemUuid: compendiumItemUuid(DOC_IDS["bandit-orders"]),
+    name: "Bandit Orders",
+    category: "story",
+    rarity: "uncommon",
+    tags: ["story","goblin","readable"],
+    img: `modules/${MODULE_ID}/assets/items/bandit-orders.svg`,
+    description: "Rough handwriting: \"Hit the south road after dark. Leave no wagons. Bring the strongbox to the hollow.\" Signed with a fang-shaped mark.",
+    price: { value: 1, denomination: "gp" },
+    weight: { value: 0.05, units: "lb" }
+  },
+  "scribbled-note": {
+    id: "scribbled-note",
+    documentId: DOC_IDS["scribbled-note"],
+    itemUuid: compendiumItemUuid(DOC_IDS["scribbled-note"]),
+    name: "Scribbled Note",
+    category: "story",
+    rarity: "common",
+    tags: ["story","goblin","readable"],
+    img: `modules/${MODULE_ID}/assets/items/scribbled-note.svg`,
+    description: "A scrap that reads: \"Boss says dig. Dig until shiny. Don't tell the tall ones.\" The rest is claw marks.",
+    price: { value: 1, denomination: "cp" },
+    weight: { value: 0.05, units: "lb" }
   }
 };
 
@@ -391,6 +700,28 @@ export async function resolveItemDataForTransfer(entry, {
   sourceCreature = ""
 } = {}) {
   const qty = Math.max(1, Math.floor(Number(quantity ?? entry.quantity) || 1));
+
+  // Equipment / inventory clones always prefer their stored snapshot.
+  if (entry?.kind === "equipment" && entry.itemData) {
+    const duplicate = globalThis.foundry?.utils?.duplicate
+      ?? ((obj) => JSON.parse(JSON.stringify(obj)));
+    const data = duplicate(entry.itemData);
+    delete data._id;
+    data.system ??= {};
+    data.system.quantity = qty;
+    data.flags ??= {};
+    data.flags.lootforge = {
+      ...(data.flags.lootforge ?? {}),
+      kind: "equipment",
+      equipmentQuality: entry.equipmentQuality ?? data.flags.lootforge?.equipmentQuality,
+      sourceCreature: sourceCreature || data.flags.lootforge?.sourceCreature || "",
+      generatedByLootForge: true,
+      stackingKey: data.flags.lootforge?.stackingKey
+        ?? `equip-${entry.entryId || entry.definitionId}`
+    };
+    return data;
+  }
+
   const def = getLootDefinition(entry.definitionId);
   // Prefer UUID already stored on the corpse entry; otherwise the definition UUID.
   const uuid = entry.itemUuid || def?.itemUuid;

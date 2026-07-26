@@ -1,0 +1,51 @@
+{
+  "_id": "LFBrokenPipe0000",
+  "name": "Broken Pipe",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/broken-pipe.svg",
+  "system": {
+    "description": {
+      "value": "<p>A cracked wooden smoking pipe. The bowl still smells faintly of something unpleasant.</p>",
+      "chat": "A broken pipe."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "broken-pipe",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "goblin"
+      ],
+      "stackingKey": "broken-pipe",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBrokenPipe0000"
+}

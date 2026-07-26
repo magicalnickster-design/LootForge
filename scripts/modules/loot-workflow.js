@@ -603,7 +603,8 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     context,
     survivalTotal,
     naturalDie,
-    isNatural20
+    isNatural20,
+    actor: creature
   });
 
   const rollerOwners = resolveAssignedOwnerUsers(resolvedRoller, { activeOnly: true });
@@ -623,7 +624,7 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
     rollQuality: generated.rollQuality,
     profileId: generated.profileId,
     items: generated.items,
-    currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
+    currency: generated.currency ?? { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     assignedActorId: null,
     assignedUserId: null,
     activeLooterUserId: null,

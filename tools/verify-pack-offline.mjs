@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.4.8") {
-  throw new Error(`Expected module version 0.4.8, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.0") {
+  throw new Error(`Expected module version 0.5.0, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -52,10 +52,31 @@ const expectedNames = new Set([
   "Salvaged Chain Shirt",
   "Salvaged Scale Mail",
   "Salvaged Breastplate",
-  "Salvaged Plate Armor"
+  "Salvaged Plate Armor",
+  "Goblin Ear",
+  "Goblin Tooth",
+  "Goblin Finger Bone",
+  "Goblin Blood Vial",
+  "Bent Spoon",
+  "Dirty Rag",
+  "Broken Pipe",
+  "Empty Bottle",
+  "Dice",
+  "Cracked Mug",
+  "Old Boot",
+  "Copper Ring",
+  "Bone Necklace",
+  "Lucky Rabbit Foot",
+  "Small Idol",
+  "Decorative Feather",
+  "Goblin Journal",
+  "Crude Map",
+  "Wanted Poster",
+  "Caravan Schedule",
+  "Bandit Orders",
+  "Scribbled Note"
 ]);
 
-// Open a TEMPORARY copy so verification never dirties the release pack.
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
 try {
   cpSync(packDir, tempPack, { recursive: true });
@@ -100,11 +121,31 @@ try {
   rmSync(tempPack, { recursive: true, force: true });
 }
 
-// Fallback transfer helpers without Foundry.
-const { buildFallbackItemData, getLootDefinition, resolveItemDataForTransfer } = await import(
+// Minimal Foundry stubs for generator smoke tests.
+globalThis.foundry = {
+  utils: {
+    randomID: (n = 16) => `id${Math.random().toString(36).slice(2, 2 + n)}`,
+    duplicate: (obj) => JSON.parse(JSON.stringify(obj))
+  }
+};
+globalThis.game = {
+  settings: {
+    get: (_module, key) => (key === "enableRareDrops" ? true : false)
+  },
+  actors: { get: () => null }
+};
+
+const { buildFallbackItemData, getLootDefinition, resolveItemDataForTransfer, listLootDefinitions } = await import(
   "../scripts/data/loot-definitions.js"
 );
 const { resolveCreatureProfile } = await import("../scripts/data/creature-profiles.js");
+const { generateCreatureLoot, aggregateCurrencyFromItems } = await import(
+  "../scripts/modules/loot-generator.js"
+);
+const { applyEquipmentQuality, pickEquipmentQuality } = await import(
+  "../scripts/modules/equipment-quality.js"
+);
+const { classifyInventoryItem } = await import("../scripts/modules/equipment-scanner.js");
 
 const legacyEntry = {
   entryId: "legacy1",
@@ -136,7 +177,6 @@ const snapped = await resolveItemDataForTransfer(badUuidEntry, { quantity: 3 });
 if (snapped.system.quantity !== 3) throw new Error("Snapshot fallback quantity wrong");
 if (snapped._id) throw new Error("Snapshot clone must strip _id");
 
-// Profile resolution: wolf spider ≠ wolf; animated armor resolves.
 const wolf = resolveCreatureProfile({ name: "Wolf", creatureType: "beast", creatureSubtype: "" });
 const wolfSpider = resolveCreatureProfile({
   name: "Wolf Spider",
@@ -148,18 +188,174 @@ const armor = resolveCreatureProfile({
   creatureType: "construct",
   creatureSubtype: ""
 });
+const goblin = resolveCreatureProfile({
+  name: "Goblin",
+  creatureType: "humanoid",
+  creatureSubtype: "goblinoid"
+});
+const hobgoblin = resolveCreatureProfile({
+  name: "Hobgoblin",
+  creatureType: "humanoid",
+  creatureSubtype: "goblinoid"
+});
 if (wolf?.id !== "wolf") throw new Error(`Expected wolf profile, got ${wolf?.id}`);
 if (wolfSpider?.id !== "spider") throw new Error(`Expected spider profile for Wolf Spider, got ${wolfSpider?.id}`);
-if (armor?.id !== "animated-armor") {
-  throw new Error(`Expected animated-armor profile, got ${armor?.id}`);
+if (armor?.id !== "animated-armor") throw new Error(`Expected animated-armor profile, got ${armor?.id}`);
+if (goblin?.id !== "goblin") throw new Error(`Expected goblin profile, got ${goblin?.id}`);
+if (hobgoblin?.id === "goblin") throw new Error("Hobgoblin must not resolve to goblin profile");
+if (!getLootDefinition("goblin-ear") || !getLootDefinition("bandit-orders")) {
+  throw new Error("Missing goblin loot definitions");
 }
-if (!getLootDefinition("spider-silk") || !getLootDefinition("salvaged-plate-armor")) {
-  throw new Error("Missing spider/armor loot definitions");
+if (listLootDefinitions().length < 30) {
+  throw new Error("Expected expanded definition registry");
 }
+
+// Wolf legacy generation still returns only definition-based items (no currency).
+const wolfLoot = await generateCreatureLoot({
+  context: {
+    name: "Wolf",
+    creatureType: "beast",
+    creatureSubtype: "",
+    size: "med",
+    challengeRating: 0.25,
+    isWolf: true,
+    isBoss: false,
+    isNamed: false
+  },
+  survivalTotal: 15,
+  naturalDie: 10,
+  isNatural20: false,
+  actor: null
+});
+if (wolfLoot.profileId !== "wolf") throw new Error("Wolf generation used wrong profile");
+if (!wolfLoot.items.length) throw new Error("Wolf generation produced no items");
+if (wolfLoot.items.some((i) => i.kind === "currency")) {
+  throw new Error("Wolf generation should not invent currency entries");
+}
+if (wolfLoot.items.some((i) => String(i.definitionId || "").includes("goblin"))) {
+  throw new Error("Wolf generation leaked goblin definitions");
+}
+
+// Goblin multi-pool smoke test with fake inventory.
+const fakeActor = {
+  id: "gob1",
+  name: "Goblin",
+  items: {
+    contents: [
+      {
+        id: "w1",
+        name: "Scimitar",
+        type: "weapon",
+        img: "icons/svg/sword.svg",
+        system: { quantity: 1, type: { value: "martialM" }, price: { value: 25, denomination: "gp" }, description: { value: "<p>A scimitar.</p>" }, rarity: "common" },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      },
+      {
+        id: "a1",
+        name: "Leather Armor",
+        type: "equipment",
+        img: "icons/svg/armor.svg",
+        system: { quantity: 1, type: { value: "light" }, price: { value: 10, denomination: "gp" }, description: { value: "<p>Leather.</p>" }, rarity: "common" },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      },
+      {
+        id: "s1",
+        name: "Shield",
+        type: "equipment",
+        img: "icons/svg/shield.svg",
+        system: { quantity: 1, type: { value: "shield" }, price: { value: 10, denomination: "gp" }, description: { value: "<p>Shield.</p>" }, rarity: "common" },
+        flags: {},
+        toObject() {
+          return {
+            name: this.name,
+            type: this.type,
+            img: this.img,
+            system: structuredClone(this.system),
+            flags: {}
+          };
+        }
+      }
+    ]
+  }
+};
+
+if (classifyInventoryItem(fakeActor.items.contents[0]) !== "weapon") {
+  throw new Error("Scimitar should classify as weapon");
+}
+if (classifyInventoryItem(fakeActor.items.contents[1]) !== "armor") {
+  throw new Error("Leather Armor should classify as armor");
+}
+if (classifyInventoryItem(fakeActor.items.contents[2]) !== "shield") {
+  throw new Error("Shield should classify as shield");
+}
+
+const quality = pickEquipmentQuality({ broken: 1, worn: 0, standard: 0, fine: 0, masterwork: 0 });
+if (quality !== "broken") throw new Error("Weighted quality pick failed");
+const qData = applyEquipmentQuality({
+  name: "Scimitar",
+  type: "weapon",
+  system: { price: { value: 25, denomination: "gp" }, description: { value: "<p>A scimitar.</p>" }, quantity: 1 },
+  flags: {}
+}, "broken");
+if (qData.name !== "Broken Scimitar") throw new Error(`Expected Broken Scimitar, got ${qData.name}`);
+if (Number(qData.system.price.value) >= 25) throw new Error("Broken quality should reduce price");
+
+const goblinLoot = await generateCreatureLoot({
+  context: {
+    name: "Goblin",
+    creatureType: "humanoid",
+    creatureSubtype: "goblinoid",
+    size: "sm",
+    challengeRating: 0.25,
+    isWolf: false,
+    isBoss: false,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: fakeActor
+});
+if (goblinLoot.profileId !== "goblin") throw new Error("Goblin generation used wrong profile");
+if (!goblinLoot.items.length) throw new Error("Goblin generation produced no items");
+const hasPart = goblinLoot.items.some((i) => String(i.definitionId || "").startsWith("goblin-"));
+if (!hasPart) throw new Error("Goblin loot missing monster parts");
+const currencyTotal = aggregateCurrencyFromItems(goblinLoot.items);
+const currencySum = Object.values(currencyTotal).reduce((a, b) => a + b, 0);
+if (currencySum <= 0) throw new Error("Goblin loot should usually include some currency at total 18");
+const hasEquip = goblinLoot.items.some((i) => i.kind === "equipment");
+// Equipment is chance-based; with three items and high chances it should often drop, but not guaranteed.
+// Force-check that equipment entries, when present, carry itemData + quality.
+for (const entry of goblinLoot.items.filter((i) => i.kind === "equipment")) {
+  if (!entry.itemData) throw new Error("Equipment entry missing itemData snapshot");
+  if (!entry.equipmentQuality) throw new Error("Equipment entry missing quality");
+  if (!entry.baseItemData) throw new Error("Equipment entry missing baseItemData");
+}
+void hasEquip;
 
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);
 console.log(`pack label: ${packDecl.label}`);
+console.log(`definitions: ${listLootDefinitions().length}`);
+console.log(`wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}`);
 console.log("Exact shipped LevelDB files:");
 for (const name of shipped) {
   const size = statSync(path.join(packDir, name)).size;

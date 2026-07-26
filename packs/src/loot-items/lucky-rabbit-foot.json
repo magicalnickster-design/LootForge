@@ -1,0 +1,51 @@
+{
+  "_id": "LFLuckyRabbit000",
+  "name": "Lucky Rabbit Foot",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/lucky-rabbit-foot.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dried rabbit's foot on a frayed cord. Its previous owner clearly believed in luck.</p>",
+      "chat": "A lucky rabbit foot."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "lucky-rabbit-foot",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "goblin"
+      ],
+      "stackingKey": "lucky-rabbit-foot",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLuckyRabbit000"
+}

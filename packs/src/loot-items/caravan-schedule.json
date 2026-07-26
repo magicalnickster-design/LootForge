@@ -1,0 +1,52 @@
+{
+  "_id": "LFCaravanSched00",
+  "name": "Caravan Schedule",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/caravan-schedule.svg",
+  "system": {
+    "description": {
+      "value": "<p>A damp parchment listing wagon departures along a trade road — dates, cargo notes (\"grain\", \"iron\", \"wine\"), and a scribbled goblin jot: \"wait at bend.\"</p>",
+      "chat": "A caravan schedule."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "caravan-schedule",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "goblin",
+        "readable"
+      ],
+      "stackingKey": "caravan-schedule",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCaravanSched00"
+}

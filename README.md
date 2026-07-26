@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.4.8** |
+| Version | **0.5.0** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | Creatures: **Wolf**, **Spider** (incl. Wolf Spider), **Animated Armor** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin** (first humanoid multi-pool profile) |
 
 ## Flow (v0.4+)
 
@@ -29,23 +29,28 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 ## Creature loot notes
 
-- **Wolf** — wolf parts only (whole-word match; excludes “wolf spider”).
+- **Wolf** — wolf parts only (whole-word match; excludes “wolf spider”). Legacy `drops[]` profile.
 - **Spider / Wolf Spider** — spider silk, fangs, venom gland, eyes.
-- **Animated Armor** — exactly **one** salvaged armor piece; Investigation quality sets the tier (padded → chain shirt → scale mail → breastplate → plate).
+- **Animated Armor** — exactly **one** salvaged armor piece; Investigation quality sets the tier.
+- **Goblin** — multi-pool humanoid profile:
+  - Monster parts (ear, tooth, finger bone, blood vial)
+  - Pocket currency (cp / sp / rare gp; CR-scaled)
+  - Equipment cloned from the NPC’s **actual inventory**, with dynamic quality (Broken → Masterwork)
+  - Junk, trinkets, and readable story scraps
+
+## Profile architecture (v0.5+)
+
+Creature profiles live under `scripts/data/profiles/`. Register new creatures in `profiles/index.js`.
+
+- Legacy profiles use a flat `drops[]` table (wolf / spider / animated armor).
+- Multi-pool profiles use `pools` (`monsterParts`, `currency`, `equipment`, `junk`, `trinkets`, `story`, …).
+- Generation code stays generic — do not hardcode creature names in the generator.
 
 ## Player access
 
-Players generally cannot open the Token HUD of an unowned enemy corpse. LootForge provides:
-
-- **Double-left-click** a dead unowned NPC to loot — sparkles are visual only; single/right-click do nothing
+- **Double-left-click** a dead unowned NPC to loot
 - Scene control **Loot Targeted Body** (target with `T`, then click)
-- Hotkey **Alt+L** (targeted corpse, else nearest lootable corpse)
-
-### Shared looting
-
-- After DM Review, loot is **free-for-all** — multiple players may open and take
-- Open loot windows stay in sync when anyone takes an item
-- Closing leaves untaken items for others
+- Hotkey **Alt+L**
 
 ## Install
 
@@ -57,21 +62,9 @@ Copy or symlink this repo to:
 
 Enable the module in a dnd5e world and reload.
 
-## Settings (world)
-
-- Allow all players to loot  
-- Prevent duplicate generation  
-- Show loot indicators  
-- Enable rare drops  
-- Debug logging  
-
 ## Item compendium
 
-Canonical loot items live in the module pack **LootForge Items** (`lootforge.loot-items`).
-
-Item and UI icons ship under `modules/lootforge/assets/` so Foundry core path changes cannot 404 them.
-
-JSON sources: `packs/src/loot-items/` (developers only). The compiled LevelDB under `packs/loot-items/` is what Foundry loads — **no Node/npm/CLI is required for end users**.
+Canonical loot items live in **LootForge Items** (`lootforge.loot-items`).
 
 Rebuild (maintainers only):
 
@@ -81,30 +74,6 @@ npm run pack
 npm run verify:pack
 ```
 
-**Compendium is treated as read-only source data.** LootForge never writes generated loot into the pack.
-
-## Architecture
-
-```text
-packs/
-  src/loot-items/        Editable Item JSON sources
-  loot-items/            Compiled LevelDB pack
-assets/
-  items/                 Bundled item icons
-  ui/                    Loot-bag overlay icon
-scripts/
-  main.js
-  applications/          DM review + player window
-  data/                  Definition IDs ↔ UUIDs + creature profiles
-  modules/               Context, storage, generator, transfer, sockets, indicators
-  ui/                    HUD / context / scene controls
-templates/
-styles/
-lang/
-```
-
-Corpse loot is stored per **token** at `flags.lootforge.corpse` so linked actors do not share loot.
-
 ## Out of scope (for now)
 
-AI generation, crafting, vendors, biomes, broad creature coverage, subscriptions.
+AI generation, crafting, vendors, biomes, QuestForge hooks beyond readable story items, subscriptions.

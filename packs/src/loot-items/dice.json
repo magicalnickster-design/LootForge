@@ -1,0 +1,52 @@
+{
+  "_id": "LFDiceSet0000000",
+  "name": "Dice",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dice.svg",
+  "system": {
+    "description": {
+      "value": "<p>A pair of uneven bone dice. One corner is chewed flat — fair play was never the point.</p>",
+      "chat": "A pair of dice."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dice",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "goblin",
+        "game"
+      ],
+      "stackingKey": "dice",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDiceSet0000000"
+}

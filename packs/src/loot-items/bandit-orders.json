@@ -1,0 +1,52 @@
+{
+  "_id": "LFBanditOrders00",
+  "name": "Bandit Orders",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bandit-orders.svg",
+  "system": {
+    "description": {
+      "value": "<p>Rough handwriting: \"Hit the south road after dark. Leave no wagons. Bring the strongbox to the hollow.\" Signed with a fang-shaped mark.</p>",
+      "chat": "Bandit orders."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bandit-orders",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "goblin",
+        "readable"
+      ],
+      "stackingKey": "bandit-orders",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBanditOrders00"
+}

@@ -151,14 +151,16 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
         context,
         survivalTotal: state.survivalTotal ?? 10,
         naturalDie: state.naturalDie ?? 0,
-        isNatural20: state.naturalDie === 20
+        isNatural20: state.naturalDie === 20,
+        actor: app.#tokenDoc.actor
       });
 
       await setCorpseState(app.#tokenDoc, {
         ...state,
         rollQuality: generated.rollQuality,
         profileId: generated.profileId,
-        items: generated.items
+        items: generated.items,
+        currency: generated.currency ?? state.currency
       });
       await syncLootIndicator(app.#tokenDoc);
       broadcastStateUpdated(app.#tokenDoc.uuid);
@@ -174,7 +176,12 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
       const state = getCorpseState(app.#tokenDoc);
       const entry = state.items.find((i) => i.entryId === entryId);
       if (!entry) return;
-      const next = await rerollSingleEntry(state.creatureContext, state.rollQuality, entry.definitionId);
+      const next = await rerollSingleEntry(
+        state.creatureContext,
+        state.rollQuality,
+        entry.definitionId,
+        entry
+      );
       let items;
       if (!next) {
         items = state.items.filter((i) => i.entryId !== entryId);

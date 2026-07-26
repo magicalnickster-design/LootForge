@@ -1,0 +1,52 @@
+{
+  "_id": "LFGoblinBlood000",
+  "name": "Goblin Blood Vial",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/goblin-blood-vial.svg",
+  "system": {
+    "description": {
+      "value": "<p>A stoppered vial of dark goblin blood. Alchemists and hedge witches sometimes pay for it.</p>",
+      "chat": "A vial of goblin blood."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "goblin-blood-vial",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "goblin",
+        "alchemy"
+      ],
+      "stackingKey": "goblin-blood-vial",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGoblinBlood000"
+}

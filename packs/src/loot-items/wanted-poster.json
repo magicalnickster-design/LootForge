@@ -1,0 +1,52 @@
+{
+  "_id": "LFWantedPoster00",
+  "name": "Wanted Poster",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/wanted-poster.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn poster offering coin for \"the green one with the scar.\" The face is smudged beyond recognition. Someone kept it folded in a pouch.</p>",
+      "chat": "A wanted poster."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "wanted-poster",
+      "category": "story",
+      "rarity": "common",
+      "tags": [
+        "story",
+        "goblin",
+        "readable"
+      ],
+      "stackingKey": "wanted-poster",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWantedPoster00"
+}

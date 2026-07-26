@@ -1,0 +1,51 @@
+{
+  "_id": "LFDecorFeather00",
+  "name": "Decorative Feather",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/decorative-feather.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bright feather, carefully kept. Perhaps from a stolen hat — or a bird that got away.</p>",
+      "chat": "A decorative feather."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "decorative-feather",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "goblin"
+      ],
+      "stackingKey": "decorative-feather",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDecorFeather00"
+}

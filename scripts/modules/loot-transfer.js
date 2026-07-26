@@ -14,6 +14,7 @@ import {
 import { log } from "./logger.js";
 import { canUserLootCorpse, canUserReceiveLootAs, userOwnsActor } from "./ownership.js";
 import { getSetting } from "./settings.js";
+import { aggregateCurrencyFromItems } from "./loot-generator.js";
 import {
   corpseHasInventoryLoot,
   getCorpseInventoryLootItems,
@@ -238,6 +239,24 @@ export async function clearLootSession(tokenDoc) {
 }
 
 /**
+ * Grant coin piles onto an actor's dnd5e currency.
+ * @param {Actor} actor
+ * @param {object} currency
+ */
+async function grantCurrencyToActor(actor, currency) {
+  const patch = {};
+  for (const [denom, amount] of Object.entries(currency ?? {})) {
+    const add = Math.floor(Number(amount) || 0);
+    if (add <= 0) continue;
+    const current = Number(actor.system?.currency?.[denom] ?? 0);
+    patch[`system.currency.${denom}`] = current + add;
+  }
+  if (Object.keys(patch).length) {
+    await actor.update(patch);
+  }
+}
+
+/**
  * @param {Actor} actor
  * @param {import("./loot-storage.js").CorpseLootItem} entry
  * @param {string} sourceCreature
@@ -245,13 +264,22 @@ export async function clearLootSession(tokenDoc) {
  */
 async function grantEntryToActor(actor, entry, sourceCreature) {
   const normalized = normalizeLegacyEntry(entry);
+
+  if (normalized.kind === "currency" || normalized.definitionId?.startsWith?.("currency-")) {
+    await grantCurrencyToActor(actor, normalized.currency);
+    return null;
+  }
+
   const definitionId = normalized.definitionId;
 
-  const existing = findStackableItem(actor, definitionId);
-  if (existing) {
-    const nextQty = Number(existing.system?.quantity ?? 0) + Number(normalized.quantity ?? 0);
-    await existing.update({ "system.quantity": nextQty });
-    return existing;
+  // Equipment drops are unique (quality + source) — never stack.
+  if (normalized.kind !== "equipment") {
+    const existing = findStackableItem(actor, definitionId);
+    if (existing) {
+      const nextQty = Number(existing.system?.quantity ?? 0) + Number(normalized.quantity ?? 0);
+      await existing.update({ "system.quantity": nextQty });
+      return existing;
+    }
   }
 
   const data = await resolveItemDataForTransfer(normalized, {

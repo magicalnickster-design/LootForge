@@ -1,0 +1,51 @@
+{
+  "_id": "LFBentSpoon00000",
+  "name": "Bent Spoon",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bent-spoon.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tin spoon bent nearly in half. Worthless, but somehow still in a goblin's pocket.</p>",
+      "chat": "A bent spoon."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bent-spoon",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "goblin"
+      ],
+      "stackingKey": "bent-spoon",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBentSpoon00000"
+}

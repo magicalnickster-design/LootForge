@@ -1,0 +1,52 @@
+{
+  "_id": "LFCrudeMap000000",
+  "name": "Crude Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crude-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of hide marked with charcoal. An X sits near a crooked river and three stick-figure trees. Whether the treasure exists is another matter.</p>",
+      "chat": "A crude map."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crude-map",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "goblin",
+        "readable"
+      ],
+      "stackingKey": "crude-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrudeMap000000"
+}
