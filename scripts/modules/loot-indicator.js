@@ -53,12 +53,11 @@ export function shouldShowLootIndicator(tokenDoc) {
   const state = getCorpseState(tokenDoc);
   if (game.user.isGM) return true;
 
-  // Free-for-all mode, or free leftovers after a looter leaves.
+  // Free-for-all, active looter, assignee, or WoW leftovers on corpse inventory.
   if (getSetting("allowAllPlayersToLoot")) return true;
-  if (!state.assignedActorId && !isLootSessionLocked(state)) return true;
-
   if (state.activeLooterUserId === game.user.id) return true;
-  return canUserAccessAssignedLoot(state, game.user);
+  if (canUserAccessAssignedLoot(state, game.user)) return true;
+  return canUserLootCorpse(tokenDoc, game.user);
 }
 
 /**
