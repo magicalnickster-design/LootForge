@@ -17,7 +17,14 @@ import {
   resolveAssignedOwnerUsers
 } from "./ownership.js";
 import { rollInvestigation, rollInvestigationSilent } from "./roll-helper.js";
-import { beginLootFlow, endLootFlow } from "./session-guard.js";
+import {
+  beginLootFlow,
+  claimInvestigationLocal,
+  endLootFlow,
+  hasInvestigationClaim,
+  markInvestigationClaimed,
+  releaseInvestigationClaim
+} from "./session-guard.js";
 import { getSetting } from "./settings.js";
 import {
   clearCorpseState,
@@ -25,6 +32,7 @@ import {
   hasRemainingLoot,
   isAwaitingDmReview,
   isCorpseLooted,
+  isInvestigationPending,
   isLootGenerated,
   isLootSessionLocked,
   setCorpseState,
@@ -36,12 +44,16 @@ import {
 } from "./loot-transfer.js";
 import {
   emitLootForge,
+  requestInvestigationClaim,
   requestPlayerStartLoot
 } from "./socket-manager.js";
 import { MODULE_ID, OPS } from "./constants.js";
 
 /** Token UUIDs currently generating loot on the GM (race guard). */
 const generatingTokens = new Set();
+
+/** Token UUIDs with a reserved Investigation claim on the GM (race guard). */
+const investigationClaims = new Set();
 
 /**
  * Primary entry from HUD / context / scene controls / keybind / double-click.
@@ -112,6 +124,16 @@ export async function lootBody(token) {
       return;
     }
 
+    // One Investigation per corpse — block spam before any roll work.
+    if (
+      hasInvestigationClaim(tokenDoc.uuid)
+      || isInvestigationPending(state)
+      || (state.generated && !state.dmApproved)
+    ) {
+      ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"));
+      return;
+    }
+
     // Keep the flow lock until Investigation + emit finish (finally releases).
     await handlePlayerLootBeforeReady(tokenDoc, creature);
   } catch (err) {
@@ -128,6 +150,7 @@ export async function lootBody(token) {
 
 /**
  * Player double-clicks a dead creature with no loot yet → auto Investigation.
+ * Exactly one roll per corpse (local + GM claim before the roll).
  * @param {TokenDocument} tokenDoc
  * @param {Actor} creature
  */
@@ -137,42 +160,141 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
   if (!looter) return;
 
   const state = getCorpseState(tokenDoc);
-  if (state.pendingInvestigation && Number.isFinite(Number(state.pendingInvestigation.total))) {
+  if (
+    hasInvestigationClaim(tokenDoc.uuid)
+    || isInvestigationPending(state)
+    || (state.generated && !state.dmApproved)
+  ) {
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"));
+    return;
+  }
+
+  // Sync local claim first so rapid re-clicks cannot start a second roll.
+  if (!claimInvestigationLocal(tokenDoc.uuid)) {
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"));
+    return;
+  }
+
+  try {
+    const claim = await requestInvestigationClaim(tokenDoc, looter);
+    if (!claim?.ok) {
+      releaseInvestigationClaim(tokenDoc.uuid);
+      ui.notifications.info(
+        claim?.error || game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled")
+      );
+      return;
+    }
+
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
+    const investigationRoll = await rollInvestigationSilent(looter, {
+      createMessage: true,
+      flavor: game.i18n.localize("LOOTFORGE.Notify.RollInvestigation")
+    });
+    if (!investigationRoll) {
+      // Keep the claim — corpse already reserved; do not allow a second attempt.
+      ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
+      return;
+    }
+
+    emitLootForge({
+      op: OPS.INVESTIGATION_READY,
+      tokenUuid: tokenDoc.uuid,
+      actorId: looter.id,
+      investigationTotal: Number(investigationRoll.total),
+      naturalDie: Number(investigationRoll.natural ?? 0),
+      isNatural20: Boolean(investigationRoll.isNatural20)
+    });
+
+    log.info("Auto Investigation complete — notified GM", {
+      tokenUuid: tokenDoc.uuid,
+      actorId: looter.id,
+      total: investigationRoll.total,
+      moduleId: MODULE_ID
+    });
+
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
-    return;
+  } catch (err) {
+    // Unexpected failure before READY — free the slot so the player can retry.
+    releaseInvestigationClaim(tokenDoc.uuid);
+    throw err;
   }
-  if (state.generated && !state.dmApproved) {
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
-    return;
+}
+
+/**
+ * GM: reserve the single Investigation slot for a corpse before any roll.
+ * @param {object} payload
+ * @returns {Promise<{ ok: boolean, error?: string|null }>}
+ */
+export async function handleInvestigationClaim(payload) {
+  if (!game.user.isGM) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NeedGM") };
   }
 
-  ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollInvestigation"));
-  const investigationRoll = await rollInvestigationSilent(looter, {
-    createMessage: true,
-    flavor: game.i18n.localize("LOOTFORGE.Notify.RollInvestigation")
-  });
-  if (!investigationRoll) {
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
-    return;
+  const activeGms = game.users.filter((u) => u.isGM && u.active);
+  const elected = game.users.activeGM ?? activeGms[0] ?? null;
+  if (elected && elected.id !== game.user.id) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.NeedGM") };
   }
 
-  emitLootForge({
-    op: OPS.INVESTIGATION_READY,
-    tokenUuid: tokenDoc.uuid,
-    actorId: looter.id,
-    investigationTotal: Number(investigationRoll.total),
-    naturalDie: Number(investigationRoll.natural ?? 0),
-    isNatural20: Boolean(investigationRoll.isNatural20)
-  });
+  const uuid = payload.tokenUuid;
+  if (!uuid) {
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
+  }
 
-  log.info("Auto Investigation complete — notified GM", {
-    tokenUuid: tokenDoc.uuid,
-    actorId: looter.id,
-    total: investigationRoll.total,
-    moduleId: MODULE_ID
-  });
+  // Sync race guard before any await.
+  if (investigationClaims.has(uuid) || generatingTokens.has(uuid)) {
+    return {
+      ok: false,
+      error: game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled")
+    };
+  }
+  investigationClaims.add(uuid);
 
-  ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
+  try {
+    const tokenDoc = await fromUuid(uuid);
+    if (!tokenDoc) {
+      investigationClaims.delete(uuid);
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
+    }
+
+    const state = getCorpseState(tokenDoc);
+    if (
+      isInvestigationPending(state)
+      || isLootGenerated(tokenDoc)
+      || isAwaitingDmReview(state)
+    ) {
+      // Keep the claim set if already pending/generated so further claims stay blocked.
+      return {
+        ok: false,
+        error: game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled")
+      };
+    }
+
+    await updateCorpseState(tokenDoc, {
+      pendingInvestigation: {
+        claiming: true,
+        actorId: payload.actorId ?? null,
+        userId: payload.fromUserId ?? null,
+        at: Date.now()
+      },
+      pendingLooterActorId: payload.actorId ?? null,
+      pendingLooterUserId: payload.fromUserId ?? null
+    });
+
+    const { broadcastStateUpdated } = await import("./socket-manager.js");
+    broadcastStateUpdated(tokenDoc.uuid);
+
+    log.info("Investigation claim reserved", {
+      tokenUuid: uuid,
+      actorId: payload.actorId,
+      userId: payload.fromUserId
+    });
+    return { ok: true };
+  } catch (err) {
+    investigationClaims.delete(uuid);
+    log.error("Investigation claim failed", err);
+    return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferFailed") };
+  }
 }
 
 /**
@@ -192,56 +314,70 @@ export async function handleInvestigationReady(payload) {
     return;
   }
 
-  const tokenDoc = await fromUuid(payload.tokenUuid);
-  const actor = game.actors.get(payload.actorId);
-  const user = game.users.get(payload.fromUserId);
-  if (!tokenDoc || !actor) {
-    log.warn("Investigation ready missing token/actor", payload);
-    return;
-  }
-
+  const uuid = payload.tokenUuid;
   const roll = {
     total: Number(payload.investigationTotal),
     natural: Number(payload.naturalDie ?? 0),
     isNatural20: Boolean(payload.isNatural20)
   };
-  if (!Number.isFinite(roll.total)) {
-    log.warn("Investigation ready missing total", payload);
+  if (!uuid || !Number.isFinite(roll.total)) {
+    log.warn("Investigation ready missing token/total", payload);
     return;
   }
 
-  const state = getCorpseState(tokenDoc);
-  if (
-    generatingTokens.has(tokenDoc.uuid)
-    || isLootGenerated(tokenDoc)
-    || isAwaitingDmReview(state)
-  ) {
-    log.info("Ignoring duplicate Investigation ready", {
-      tokenUuid: tokenDoc.uuid,
-      generated: state.generated,
-      awaiting: isAwaitingDmReview(state)
-    });
+  // Sync lock before any await — only one READY may proceed per corpse.
+  if (generatingTokens.has(uuid)) {
+    log.info("Ignoring duplicate Investigation ready (in flight)", { tokenUuid: uuid });
     if (payload.fromUserId) {
       emitLootForge({
         op: OPS.STATE_UPDATED,
-        tokenUuid: tokenDoc.uuid,
-        error: game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"),
+        tokenUuid: uuid,
+        error: game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"),
         targetUserId: payload.fromUserId
       });
     }
     return;
   }
-
-  generatingTokens.add(tokenDoc.uuid);
-
-  log.info("Player Investigation ready — generating loot + opening DM Review", {
-    tokenUuid: tokenDoc.uuid,
-    actorId: actor.id,
-    total: roll.total,
-    player: user?.name
-  });
+  generatingTokens.add(uuid);
+  investigationClaims.add(uuid);
 
   try {
+    const tokenDoc = await fromUuid(uuid);
+    const actor = game.actors.get(payload.actorId);
+    const user = game.users.get(payload.fromUserId);
+    if (!tokenDoc || !actor) {
+      log.warn("Investigation ready missing token/actor", payload);
+      return;
+    }
+
+    const state = getCorpseState(tokenDoc);
+    const pending = state.pendingInvestigation;
+    const alreadyHasTotal = pending && Number.isFinite(Number(pending.total));
+    if (isLootGenerated(tokenDoc) || isAwaitingDmReview(state) || alreadyHasTotal) {
+      log.info("Ignoring duplicate Investigation ready", {
+        tokenUuid: tokenDoc.uuid,
+        generated: state.generated,
+        awaiting: isAwaitingDmReview(state),
+        alreadyHasTotal
+      });
+      if (payload.fromUserId) {
+        emitLootForge({
+          op: OPS.STATE_UPDATED,
+          tokenUuid: tokenDoc.uuid,
+          error: game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"),
+          targetUserId: payload.fromUserId
+        });
+      }
+      return;
+    }
+
+    log.info("Player Investigation ready — generating loot + opening DM Review", {
+      tokenUuid: tokenDoc.uuid,
+      actorId: actor.id,
+      total: roll.total,
+      player: user?.name
+    });
+
     await updateCorpseState(tokenDoc, {
       pendingInvestigation: {
         ...roll,
@@ -279,7 +415,7 @@ export async function handleInvestigationReady(payload) {
       })
     );
   } finally {
-    generatingTokens.delete(tokenDoc.uuid);
+    generatingTokens.delete(uuid);
   }
 }
 
@@ -571,7 +707,11 @@ export async function resetCorpseLoot(tokenDoc) {
     );
     return;
   }
+  const uuid = tokenDoc.uuid;
   await clearCorpseState(tokenDoc);
+  releaseInvestigationClaim(uuid);
+  investigationClaims.delete(uuid);
+  generatingTokens.delete(uuid);
   const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
   await syncLootedCorpseVisibility(tokenDoc);
   await syncLootIndicator(tokenDoc);

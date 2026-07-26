@@ -9,8 +9,13 @@ import {
   canUserModifyToken,
   getCorpseState,
   hasRemainingLoot,
+  isInvestigationPending,
   updateCorpseState
 } from "./loot-storage.js";
+import {
+  markInvestigationClaimed,
+  releaseInvestigationClaim
+} from "./session-guard.js";
 import {
   canTakeLoot,
   depositRemainingToCorpse,
@@ -20,6 +25,9 @@ import {
 import { refreshLootWindows } from "../applications/window-registry.js";
 
 let registered = false;
+
+/** @type {Map<string, { resolve: Function, timer: any }>} */
+const pendingInvestigationClaims = new Map();
 
 /**
  * Register socket listeners (ready).
@@ -43,6 +51,15 @@ export function registerSocketManager() {
       && !foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`)) {
       return;
     }
+
+    // Keep local one-roll guards in sync with authoritative corpse flags.
+    const state = getCorpseState(tokenDoc);
+    if (isInvestigationPending(state) || state.generated || state.pendingReview) {
+      markInvestigationClaimed(tokenDoc.uuid);
+    } else if (!state.generated && !state.pendingInvestigation) {
+      releaseInvestigationClaim(tokenDoc.uuid);
+    }
+
     refreshLootWindows(tokenDoc.uuid);
     void refreshIndicatorsSafe(tokenDoc.uuid);
   });
@@ -138,6 +155,28 @@ async function handleSocketPayload(payload) {
       if (!game.user.isGM) return;
       if (game.users.activeGM?.id !== game.user.id) return;
       await onPlayerStartLoot(payload);
+      return;
+
+    case OPS.CLAIM_INVESTIGATION:
+      if (!game.user.isGM) return;
+      if (game.users.activeGM?.id !== game.user.id) return;
+      {
+        const { handleInvestigationClaim } = await import("./loot-workflow.js");
+        const result = await handleInvestigationClaim(payload);
+        emitLootForge({
+          op: OPS.CLAIM_INVESTIGATION_RESULT,
+          requestId: payload.requestId,
+          targetUserId: payload.fromUserId,
+          tokenUuid: payload.tokenUuid,
+          ok: Boolean(result?.ok),
+          error: result?.error ?? null
+        });
+      }
+      return;
+
+    case OPS.CLAIM_INVESTIGATION_RESULT:
+      if (payload.targetUserId && payload.targetUserId !== game.user.id) return;
+      onInvestigationClaimResult(payload);
       return;
 
     case OPS.INVESTIGATION_READY:
@@ -343,6 +382,67 @@ async function openPlayerWindowFromPayload(payload) {
   const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
   await openPlayerLootWindow(tokenDoc);
   await refreshIndicatorsSafe(tokenDoc.uuid);
+}
+
+/**
+ * @param {object} payload
+ */
+function onInvestigationClaimResult(payload) {
+  const pending = pendingInvestigationClaims.get(payload.requestId);
+  if (!pending) return;
+  clearTimeout(pending.timer);
+  pendingInvestigationClaims.delete(payload.requestId);
+  pending.resolve({
+    ok: Boolean(payload.ok),
+    error: payload.error ?? null
+  });
+}
+
+/**
+ * Player → GM: reserve the single Investigation slot before rolling.
+ * @param {TokenDocument} tokenDoc
+ * @param {Actor} actor
+ * @returns {Promise<{ ok: boolean, error?: string|null }>}
+ */
+export async function requestInvestigationClaim(tokenDoc, actor) {
+  if (game.user.isGM) {
+    const { handleInvestigationClaim } = await import("./loot-workflow.js");
+    return handleInvestigationClaim({
+      tokenUuid: tokenDoc.uuid,
+      actorId: actor.id,
+      fromUserId: game.user.id
+    });
+  }
+
+  if (!game.users.activeGM) {
+    const err = game.i18n.localize("LOOTFORGE.Notify.NeedGM");
+    return { ok: false, error: err };
+  }
+
+  const requestId = foundry.utils.randomID();
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      pendingInvestigationClaims.delete(requestId);
+      resolve({
+        ok: false,
+        error: game.i18n.localize("LOOTFORGE.Notify.InvestigationClaimTimeout")
+      });
+    }, 8000);
+
+    pendingInvestigationClaims.set(requestId, { resolve, timer });
+    emitLootForge({
+      op: OPS.CLAIM_INVESTIGATION,
+      requestId,
+      tokenUuid: tokenDoc.uuid,
+      actorId: actor.id
+    });
+    log.info("Socket event emitted", {
+      op: OPS.CLAIM_INVESTIGATION,
+      tokenUuid: tokenDoc.uuid,
+      actorId: actor.id,
+      requestId
+    });
+  });
 }
 
 /**

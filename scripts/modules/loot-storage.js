@@ -77,6 +77,18 @@ export function emptyCorpseState() {
 }
 
 /**
+ * True once any player has claimed / rolled Investigation for this corpse.
+ * @param {CorpseLootState|object} state
+ * @returns {boolean}
+ */
+export function isInvestigationPending(state) {
+  if (!state?.pendingInvestigation || typeof state.pendingInvestigation !== "object") {
+    return false;
+  }
+  return true;
+}
+
+/**
  * @param {TokenDocument} tokenDoc
  * @returns {CorpseLootState}
  */
