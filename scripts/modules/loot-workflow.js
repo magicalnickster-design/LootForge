@@ -50,6 +50,22 @@ import { MODULE_ID, OPS } from "./constants.js";
 /** Token UUIDs currently generating loot on the GM (race guard). */
 const generatingTokens = new Set();
 
+/** Dedupe socket + chat handoffs for the same Investigation. */
+const processedInvestigationKeys = new Set();
+
+/**
+ * @param {object} payload
+ * @returns {string}
+ */
+function investigationReadyKey(payload) {
+  return [
+    payload.tokenUuid,
+    payload.actorId,
+    payload.investigationTotal,
+    payload.fromUserId ?? ""
+  ].join(":");
+}
+
 /**
  * Primary entry from HUD / context / scene controls / keybind / double-click.
  * Players initiate Investigation; DM cannot start that step.
@@ -188,20 +204,43 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
       return;
     }
 
-    emitLootForge({
+    const readyPayload = {
       op: OPS.INVESTIGATION_READY,
       tokenUuid: tokenDoc.uuid,
       actorId: looter.id,
       investigationTotal: Number(investigationRoll.total),
       naturalDie: Number(investigationRoll.natural ?? 0),
       isNatural20: Boolean(investigationRoll.isNatural20)
+    };
+
+    // Fast path: module socket.
+    emitLootForge(readyPayload);
+
+    // Reliable path: whispered chat flag — Foundry always delivers this to GMs.
+    // Sockets alone were dropping when activeGM was null.
+    const gmIds = game.users.filter((u) => u.isGM).map((u) => u.id);
+    await ChatMessage.create({
+      speaker: { alias: "LootForge" },
+      whisper: gmIds.length ? gmIds : undefined,
+      content: game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
+        player: game.user.name,
+        name: tokenDoc.name,
+        total: investigationRoll.total
+      }),
+      flags: {
+        [MODULE_ID]: {
+          ...readyPayload,
+          fromUserId: game.user.id
+        }
+      }
     });
 
-    log.info("Auto Investigation complete — notified GM", {
+    log.info("Auto Investigation complete — notified GM (socket + chat)", {
       tokenUuid: tokenDoc.uuid,
       actorId: looter.id,
       total: investigationRoll.total,
-      moduleId: MODULE_ID
+      moduleId: MODULE_ID,
+      gmIds
     });
 
     ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.WaitingForGM"));
@@ -209,6 +248,29 @@ async function handlePlayerLootBeforeReady(tokenDoc, creature) {
     releaseInvestigationClaim(tokenDoc.uuid);
     throw err;
   }
+}
+
+/**
+ * Register GM-side chat handoff (backup when module sockets fail).
+ */
+export function registerInvestigationReadyHook() {
+  Hooks.on("createChatMessage", async (message) => {
+    if (!game.user.isGM) return;
+    const flag = message.flags?.[MODULE_ID];
+    if (!flag || flag.op !== OPS.INVESTIGATION_READY) return;
+
+    log.info("Investigation ready via chat message", {
+      messageId: message.id,
+      tokenUuid: flag.tokenUuid,
+      total: flag.investigationTotal,
+      fromUserId: flag.fromUserId ?? message.author?.id
+    });
+
+    await handleInvestigationReady({
+      ...flag,
+      fromUserId: flag.fromUserId ?? message.author?.id ?? message.user
+    });
+  });
 }
 
 /**
@@ -221,8 +283,8 @@ export async function handleInvestigationReady(payload) {
   const activeGms = game.users.filter((u) => u.isGM && u.active);
   const elected = game.users.activeGM
     ?? activeGms.sort((a, b) => a.id.localeCompare(b.id))[0]
-    ?? null;
-  if (elected && elected.id !== game.user.id) {
+    ?? game.user;
+  if (elected.id !== game.user.id) {
     log.info("Non-elected GM ignoring Investigation ready", {
       electedId: elected.id,
       localUserId: game.user.id
@@ -241,27 +303,32 @@ export async function handleInvestigationReady(payload) {
     return;
   }
 
-  // Sync lock before any await — only one READY may proceed per corpse.
-  if (generatingTokens.has(uuid)) {
-    log.info("Ignoring duplicate Investigation ready (in flight)", { tokenUuid: uuid });
-    if (payload.fromUserId) {
-      emitLootForge({
-        op: OPS.STATE_UPDATED,
-        tokenUuid: uuid,
-        error: game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"),
-        targetUserId: payload.fromUserId
-      });
-    }
+  const dedupeKey = investigationReadyKey({ ...payload, fromUserId: payload.fromUserId });
+  if (processedInvestigationKeys.has(dedupeKey) || generatingTokens.has(uuid)) {
+    log.info("Ignoring duplicate Investigation ready", { dedupeKey, tokenUuid: uuid });
     return;
   }
+  processedInvestigationKeys.add(dedupeKey);
+  setTimeout(() => processedInvestigationKeys.delete(dedupeKey), 60000);
   generatingTokens.add(uuid);
 
   try {
     const tokenDoc = await fromUuid(uuid);
     const actor = game.actors.get(payload.actorId);
     const user = game.users.get(payload.fromUserId);
-    if (!tokenDoc || !actor) {
-      log.warn("Investigation ready missing token/actor", payload);
+    if (!tokenDoc) {
+      log.error("Investigation ready: token not found", uuid);
+      ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
+      return;
+    }
+    if (!actor) {
+      log.error("Investigation ready: actor not found", payload.actorId);
+      ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.NoLooter"));
+      return;
+    }
+    if (!tokenDoc.actor) {
+      log.error("Investigation ready: token has no actor", uuid);
+      ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
       return;
     }
 
@@ -269,18 +336,20 @@ export async function handleInvestigationReady(payload) {
     const pending = state.pendingInvestigation;
     const alreadyHasTotal = pending && Number.isFinite(Number(pending.total));
     if (isLootGenerated(tokenDoc) || isAwaitingDmReview(state) || alreadyHasTotal) {
-      log.info("Ignoring duplicate Investigation ready", {
-        tokenUuid: tokenDoc.uuid,
-        generated: state.generated,
-        awaiting: isAwaitingDmReview(state),
-        alreadyHasTotal
-      });
-      if (payload.fromUserId) {
-        emitLootForge({
-          op: OPS.STATE_UPDATED,
-          tokenUuid: tokenDoc.uuid,
-          error: game.i18n.localize("LOOTFORGE.Notify.InvestigationAlreadyRolled"),
-          targetUserId: payload.fromUserId
+      // Already generated — still surface the review window for the GM.
+      if (isAwaitingDmReview(state) || (state.generated && !state.dmApproved)) {
+        log.info("Loot already awaiting review — reopening DM Review", tokenDoc.uuid);
+        await openDmLootReview(tokenDoc);
+        ui.notifications.info(
+          game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
+            player: user?.name ?? actor.name,
+            name: tokenDoc.name,
+            total: state.survivalTotal ?? roll.total
+          })
+        );
+      } else {
+        log.info("Ignoring Investigation ready — loot already released/generated", {
+          tokenUuid: tokenDoc.uuid
         });
       }
       return;
@@ -319,8 +388,12 @@ export async function handleInvestigationReady(payload) {
 
     if (!generated) {
       ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
+      releaseInvestigationClaim(tokenDoc.uuid);
       return;
     }
+
+    // Belt-and-suspenders: open review even if generateLootForCorpse skipped it.
+    await openDmLootReview(tokenDoc);
 
     ui.notifications.info(
       game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
@@ -328,6 +401,11 @@ export async function handleInvestigationReady(payload) {
         name: tokenDoc.name,
         total: roll.total
       })
+    );
+  } catch (err) {
+    log.error("handleInvestigationReady failed", err);
+    ui.notifications.error(
+      err?.message ? `LootForge: ${err.message}` : game.i18n.localize("LOOTFORGE.Notify.TransferFailed")
     );
   } finally {
     generatingTokens.delete(uuid);

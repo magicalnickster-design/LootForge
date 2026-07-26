@@ -7,6 +7,7 @@
 import { MODULE_ID } from "./modules/constants.js";
 import { log } from "./modules/logger.js";
 import { registerLootIndicatorHooks } from "./modules/loot-indicator.js";
+import { registerInvestigationReadyHook } from "./modules/loot-workflow.js";
 import { registerSettings } from "./modules/settings.js";
 import { registerSocketManager } from "./modules/socket-manager.js";
 import { registerSceneControls } from "./ui/scene-controls.js";
@@ -40,6 +41,11 @@ Hooks.once("ready", () => {
   registerTokenContext();
   registerTokenDoubleClickLoot();
 
+  // Chat-message backup so GM always receives Investigation → DM Review.
+  import("./modules/loot-workflow.js").then(({ registerInvestigationReadyHook }) => {
+    registerInvestigationReadyHook();
+  });
+
   // Public API for macros / other modules.
   game.modules.get(MODULE_ID).api = {
     lootBody: async (token) => {
@@ -56,5 +62,5 @@ Hooks.once("ready", () => {
     }
   };
 
-  log.info(`Ready v0.4.4 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.4.5 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

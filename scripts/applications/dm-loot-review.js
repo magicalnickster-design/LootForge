@@ -297,11 +297,14 @@ export async function openDmLootReview(tokenDoc, options = {}) {
   // Single instance per token.
   for (const app of foundry.applications.instances.values()) {
     if (app instanceof DmLootReview && app.tokenDoc?.uuid === tokenDoc.uuid) {
-      app.render({ force: true });
+      await app.render({ force: true });
+      app.bringToFront?.();
       return app;
     }
   }
   const app = new DmLootReview(tokenDoc, options);
   await app.render({ force: true });
+  app.bringToFront?.();
+  log.info("Opened DM Loot Review", { tokenUuid: tokenDoc.uuid });
   return app;
 }

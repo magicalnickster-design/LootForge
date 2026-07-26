@@ -77,15 +77,20 @@ export function emptyCorpseState() {
 }
 
 /**
- * True once any player has claimed / rolled Investigation for this corpse.
+ * True once Investigation has a roll total, or a fresh in-flight claim.
+ * Stale claim-only locks from older versions expire after 20s.
  * @param {CorpseLootState|object} state
  * @returns {boolean}
  */
 export function isInvestigationPending(state) {
-  if (!state?.pendingInvestigation || typeof state.pendingInvestigation !== "object") {
-    return false;
+  const pending = state?.pendingInvestigation;
+  if (!pending || typeof pending !== "object") return false;
+  if (Number.isFinite(Number(pending.total))) return true;
+  if (pending.claiming) {
+    const age = Date.now() - Number(pending.at || 0);
+    return Number.isFinite(age) && age >= 0 && age < 20000;
   }
-  return true;
+  return false;
 }
 
 /**
