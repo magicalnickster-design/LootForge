@@ -106,6 +106,23 @@ export async function postGenerateLootChat(tokenDoc, actor, user, roll, { force 
     log.info("Skipping duplicate Generate Loot chat card", { key });
     return null;
   }
+
+  // Also skip if this card was already posted by the other client (player whisper vs GM socket).
+  if (!force) {
+    const already = game.messages?.contents?.slice?.(-30)?.some?.((m) => {
+      const f = m.flags?.[MODULE_ID];
+      return f?.card === "generate"
+        && f?.tokenUuid === tokenDoc.uuid
+        && Number(f?.investigationTotal) === Number(roll.total)
+        && f?.actorId === actor.id;
+    });
+    if (already) {
+      log.info("Generate Loot chat card already in log — skipping", { key });
+      postedGenerateKeys.add(key);
+      return null;
+    }
+  }
+
   postedGenerateKeys.add(key);
   setTimeout(() => postedGenerateKeys.delete(key), 15000);
 
@@ -193,11 +210,12 @@ export async function postGenerateLootChat(tokenDoc, actor, user, roll, { force 
 export async function handleInvestigationReady(payload) {
   if (!game.user.isGM) return;
 
-  // Only one GM client should write flags + post (prefer active GM).
-  const activeId = game.users.activeGM?.id;
-  if (activeId && activeId !== game.user.id) {
-    log.info("Non-active GM ignoring Investigation ready", {
-      activeId,
+  // Elect a single GM writer (active GM, else first active GM user).
+  const activeGms = game.users.filter((u) => u.isGM && u.active);
+  const elected = game.users.activeGM ?? activeGms[0] ?? null;
+  if (elected && elected.id !== game.user.id) {
+    log.info("Non-elected GM ignoring Investigation ready", {
+      electedId: elected.id,
       localUserId: game.user.id
     });
     return;

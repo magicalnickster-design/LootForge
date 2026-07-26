@@ -170,8 +170,15 @@ async function handleSocketPayload(payload) {
 
     case OPS.INVESTIGATION_READY:
       if (!game.user.isGM) return;
-      if (game.users.activeGM?.id !== game.user.id) return;
       {
+        log.info("Socket event received", {
+          op: OPS.INVESTIGATION_READY,
+          fromUserId: payload.fromUserId,
+          tokenUuid: payload.tokenUuid,
+          total: payload.investigationTotal,
+          localUserId: game.user.id,
+          activeGM: game.users.activeGM?.id ?? null
+        });
         const { handleInvestigationReady } = await import("./loot-chat.js");
         await handleInvestigationReady(payload);
       }
