@@ -47,6 +47,9 @@
       "WaitingForGM": "Loot generated. Waiting for the GM to review and assign it.",
       "WaitingForDM": "Waiting for the DM to start looting {name}.",
       "GeneratingLoot": "Generating loot…",
+      "SendingToDM": "Investigation submitted — the DM is reviewing the loot…",
+      "PlayerGeneratedLoot": "{player} rolled Investigation {total} on {name}. DM Review opened.",
+      "PlayerGeneratedLootChat": "<p><strong>LootForge:</strong> <em>{player}</em> ({character}) rolled Investigation <strong>{total}</strong> while looting <strong>{name}</strong>. DM Review is open.</p>",
       "LootBusy": "{name} is already looting this corpse.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
       "NoTakePermission": "You do not have permission to take this loot.",
@@ -118,7 +121,7 @@
       },
       "AllowAllPlayersToLoot": {
         "Name": "Allow all players to loot",
-        "Hint": "When enabled, any player can start looting a corpse. The player always rolls Investigation first, then loot auto-generates. Only one player may loot at a time; leftovers go to the corpse inventory for the next player (WoW-style). When disabled, players who loot early are told to wait and the DM gets a Start Roll prompt (which then forces the player's Investigation roll)."
+        "Hint": "When enabled, any player can start looting: they roll Investigation, loot is generated, the DM Review window opens for the GM, and the player loot window opens for the looter. Only one player may loot at a time; leftovers go to the corpse inventory. When disabled, players who loot early are told to wait and the DM gets a Start Roll prompt."
       },
       "AllowPlayerRequestLoot": {
         "Name": "Allow players to request loot from DM",

@@ -130,7 +130,7 @@ async function handlePlayerLootBeforeReady(token, tokenDoc, creature) {
       ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.RollCancelled"));
       return;
     }
-    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.GeneratingLoot"));
+    ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.SendingToDM"));
     const result = await requestPlayerStartLoot(tokenDoc, looter, { investigationRoll });
     if (!result.ok && result.error) {
       ui.notifications.warn(result.error);
@@ -443,21 +443,41 @@ export async function handlePlayerStartLoot(payload, { claimOnly = false } = {})
     if (payload.investigationTotal == null) {
       return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.InvestigationRequired") };
     }
+    const investigationRoll = {
+      total: Number(payload.investigationTotal),
+      natural: Number(payload.naturalDie ?? 0),
+      isNatural20: Boolean(payload.isNatural20)
+    };
     const token = tokenDoc.object ?? canvas.tokens?.get(tokenDoc.id);
+
+    // Always open DM Review so the GM sees what was rolled/generated.
     await generateLootForCorpse(
       token ?? { document: tokenDoc, actor: tokenDoc.actor },
       tokenDoc,
       tokenDoc.actor,
       {
         roller: actor,
-        openReview: false,
-        investigationRoll: {
-          total: Number(payload.investigationTotal),
-          natural: Number(payload.naturalDie ?? 0),
-          isNatural20: Boolean(payload.isNatural20)
-        }
+        openReview: true,
+        investigationRoll
       }
     );
+
+    ui.notifications.info(
+      game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLoot", {
+        player: user.name,
+        name: tokenDoc.name,
+        total: investigationRoll.total
+      })
+    );
+    ChatMessage.create({
+      content: game.i18n.format("LOOTFORGE.Notify.PlayerGeneratedLootChat", {
+        player: user.name,
+        character: actor.name,
+        name: tokenDoc.name,
+        total: investigationRoll.total
+      }),
+      speaker: { alias: "LootForge" }
+    }).catch(() => undefined);
   } else {
     await materializeCorpseInventoryLoot(tokenDoc);
   }
