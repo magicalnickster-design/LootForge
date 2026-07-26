@@ -1,0 +1,91 @@
+<section class="lootforge-dm-body">
+  <header class="lootforge-creature-header">
+    <img class="lootforge-portrait" src="{{creature.image}}" alt="{{creature.name}}" />
+    <div class="lootforge-creature-meta">
+      <h2>{{creature.name}}</h2>
+      <p>
+        <span>{{localize "LOOTFORGE.DM.Type"}}: {{creature.creatureType}}</span>
+        <span>{{localize "LOOTFORGE.DM.CR"}}: {{creature.cr}}</span>
+        <span>{{localize "LOOTFORGE.DM.Size"}}: {{creature.size}}</span>
+      </p>
+      <p>
+        <span>{{localize "LOOTFORGE.DM.Survival"}}: {{survivalTotal}}</span>
+        <span>{{localize "LOOTFORGE.DM.Natural"}}: {{naturalDie}}</span>
+        <span class="quality quality-{{rollQualityKey}}">{{rollQuality}}</span>
+      </p>
+      {{#if assignedName}}
+      <p class="lootforge-assigned">{{localize "LOOTFORGE.DM.AssignedTo"}}: <strong>{{assignedName}}</strong></p>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="lootforge-toolbar">
+    <button type="button" data-action="rerollAll" {{#if busy}}disabled{{/if}}>
+      <i class="fa-solid fa-dice"></i> {{localize "LOOTFORGE.DM.RerollAll"}}
+    </button>
+    <button type="button" data-action="resetLoot" {{#if busy}}disabled{{/if}}>
+      <i class="fa-solid fa-rotate-left"></i> {{localize "LOOTFORGE.HUD.ResetLoot"}}
+    </button>
+  </div>
+
+  <div class="lootforge-item-list">
+    {{#unless hasItems}}
+    <p class="lootforge-empty">{{localize "LOOTFORGE.Dialog.Empty"}}</p>
+    {{/unless}}
+    {{#each items}}
+    <article class="lootforge-item-row rarity-{{rarity}}">
+      <img src="{{img}}" alt="" />
+      <div class="lootforge-item-main">
+        <div class="lootforge-item-title">
+          <strong>{{name}}</strong>
+          <span class="rarity-label">{{rarity}}</span>
+        </div>
+        <div class="lootforge-item-sub">{{valueText}}</div>
+      </div>
+      <div class="lootforge-qty">
+        <button type="button" data-action="decQty" data-entry-id="{{entryId}}" {{#if ../busy}}disabled{{/if}}>-</button>
+        <span>{{quantity}}</span>
+        <button type="button" data-action="incQty" data-entry-id="{{entryId}}" {{#if ../busy}}disabled{{/if}}>+</button>
+      </div>
+      <div class="lootforge-item-actions">
+        <button type="button" data-action="rerollItem" data-entry-id="{{entryId}}" title="{{localize "LOOTFORGE.DM.RerollItem"}}" {{#if ../busy}}disabled{{/if}}>
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+        <button type="button" data-action="removeItem" data-entry-id="{{entryId}}" title="{{localize "LOOTFORGE.DM.RemoveItem"}}" {{#if ../busy}}disabled{{/if}}>
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </article>
+    {{/each}}
+  </div>
+
+  <div class="lootforge-add-row form-group">
+    <label>{{localize "LOOTFORGE.DM.AddItem"}}</label>
+    <div class="lootforge-add-controls">
+      <select name="addDefinitionId">
+        {{#each definitions}}
+        <option value="{{id}}">{{name}}</option>
+        {{/each}}
+      </select>
+      <button type="button" data-action="addItem" {{#if busy}}disabled{{/if}}>
+        <i class="fa-solid fa-plus"></i> {{localize "LOOTFORGE.DM.Add"}}
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group lootforge-assign-row">
+    <label for="lootforge-dm-looter">{{localize "LOOTFORGE.Dialog.ChooseLooter"}}</label>
+    <select id="lootforge-dm-looter" name="looterId">
+      {{#each candidates}}
+      <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+
+  <footer class="lootforge-footer">
+    <button type="button" data-action="cancel">{{localize "LOOTFORGE.Dialog.Close"}}</button>
+    <button type="button" class="default" data-action="assign" {{#if busy}}disabled{{/if}} {{#unless hasItems}}disabled{{/unless}}>
+      <i class="fa-solid fa-user-check"></i> {{localize "LOOTFORGE.DM.ConfirmAssign"}}
+    </button>
+  </footer>
+</section>

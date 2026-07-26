@@ -1,4 +1,4 @@
-/* LootForge — prototype styles (keep light; follow Foundry theme tokens where possible) */
+/* LootForge — Wolf MVP styles */
 
 .control-icon.lootforge-loot-body {
   color: var(--color-text-primary, #eee);
@@ -8,88 +8,173 @@
   opacity: 0.45;
 }
 
-.control-icon.lootforge-loot-body:hover {
+.control-icon.lootforge-loot-body.has-loot {
   color: #c4a35a;
 }
 
-.lootforge-dialog .window-content {
+.control-icon.lootforge-loot-body:hover {
+  color: #e0c27a;
+}
+
+.lootforge .window-content {
   padding: 0.75rem;
 }
 
-.lootforge-loot-dialog__header h3 {
-  margin: 0 0 0.15rem;
-  font-size: 1.15rem;
+.lootforge-creature-header {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  align-items: flex-start;
 }
 
-.lootforge-loot-dialog__meta {
-  margin: 0 0 0.75rem;
-  opacity: 0.8;
+.lootforge-portrait {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: 1px solid var(--color-border-light-tertiary, #555);
+  border-radius: 4px;
+  flex: 0 0 auto;
+}
+
+.lootforge-creature-meta h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+.lootforge-creature-meta p {
+  margin: 0.15rem 0;
+  opacity: 0.9;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   font-size: 0.9rem;
 }
 
-.lootforge-loot-dialog__stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.lootforge-toolbar {
+  display: flex;
   gap: 0.5rem;
-  margin: 0 0 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-.lootforge-loot-dialog__stats div {
-  background: color-mix(in srgb, var(--color-cool-4, #222) 35%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-cool-3, #444) 60%, transparent);
-  border-radius: 4px;
+.lootforge-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.lootforge-item-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
   padding: 0.4rem 0.5rem;
-  text-align: center;
+  border: 1px solid color-mix(in srgb, var(--color-cool-3, #444) 55%, transparent);
+  border-left-width: 3px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-cool-4, #222) 30%, transparent);
 }
 
-.lootforge-loot-dialog__stats dt {
-  margin: 0;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.lootforge-player-loot .lootforge-item-row {
+  grid-template-columns: 40px 1fr auto;
+}
+
+.lootforge-item-row img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border: none;
+}
+
+.lootforge-item-title {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.lootforge-item-sub {
   opacity: 0.75;
+  font-size: 0.85rem;
 }
 
-.lootforge-loot-dialog__stats dd {
-  margin: 0.15rem 0 0;
-  font-size: 1.1rem;
-  font-weight: 700;
+.lootforge-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.lootforge-loot-dialog__bonus {
-  margin: 0 0 0.75rem;
-  color: #c4a35a;
-  font-weight: 600;
-}
-
-.lootforge-loot-dialog__items h4 {
-  margin: 0 0 0.4rem;
-}
-
-.lootforge-loot-dialog__items ul {
-  list-style: none;
-  margin: 0;
+.lootforge-qty button {
+  width: 1.6rem;
+  min-width: 1.6rem;
   padding: 0;
 }
 
-.lootforge-loot-dialog__items li {
+.lootforge-item-actions {
   display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-cool-3, #444) 50%, transparent);
+  gap: 0.2rem;
 }
 
-.lootforge-loot-dialog__items li.is-bonus .item-name::after {
-  content: " ★";
-  color: #c4a35a;
+.lootforge-add-row,
+.lootforge-assign-row {
+  margin-bottom: 0.75rem;
 }
 
-.lootforge-loot-dialog__empty {
-  opacity: 0.75;
+.lootforge-add-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lootforge-add-controls select,
+.lootforge-assign-row select {
+  flex: 1;
+}
+
+.lootforge-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.lootforge-empty {
+  opacity: 0.8;
   font-style: italic;
 }
 
-.lootforge-chat ul {
-  margin: 0.25rem 0 0.5rem 1.1rem;
+.rarity-label {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* Rarity accents */
+.rarity-common { border-left-color: #b0b0b0; }
+.rarity-uncommon { border-left-color: #1eff00; }
+.rarity-rare { border-left-color: #0070dd; }
+.rarity-epic { border-left-color: #a335ee; }
+.rarity-legendary { border-left-color: #ff8000; }
+.rarity-mythic { border-left-color: #e6cc80; }
+
+.rarity-uncommon .rarity-label { color: #1eff00; }
+.rarity-rare .rarity-label { color: #4ea3ff; }
+.rarity-epic .rarity-label { color: #c06bff; }
+.rarity-legendary .rarity-label { color: #ff9a3c; }
+.rarity-mythic .rarity-label { color: #e6cc80; }
+
+.quality {
+  font-weight: 700;
+}
+
+.quality-poor { color: #a0a0a0; }
+.quality-standard { color: #cfcfcf; }
+.quality-good { color: #1eff00; }
+.quality-excellent { color: #4ea3ff; }
+.quality-exceptional { color: #ff9a3c; }
+
+.lootforge-assigned {
+  color: #c4a35a;
 }

@@ -1,0 +1,80 @@
+import { MODULE_ID } from "./constants.js";
+
+/**
+ * Register world settings for the Wolf MVP.
+ */
+export function registerSettings() {
+  const settings = [
+    {
+      key: "manualGenerationOnly",
+      name: "LOOTFORGE.Settings.ManualGenerationOnly.Name",
+      hint: "LOOTFORGE.Settings.ManualGenerationOnly.Hint",
+      default: true
+    },
+    {
+      key: "requireSurvivalRoll",
+      name: "LOOTFORGE.Settings.RequireSurvivalRoll.Name",
+      hint: "LOOTFORGE.Settings.RequireSurvivalRoll.Hint",
+      default: true
+    },
+    {
+      key: "defaultSurvivalDC",
+      name: "LOOTFORGE.Settings.DefaultSurvivalDC.Name",
+      hint: "LOOTFORGE.Settings.DefaultSurvivalDC.Hint",
+      type: Number,
+      default: 10,
+      range: { min: 5, max: 30, step: 1 }
+    },
+    {
+      key: "allowPlayerRequestLoot",
+      name: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Name",
+      hint: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Hint",
+      default: false
+    },
+    {
+      key: "preventDuplicateGeneration",
+      name: "LOOTFORGE.Settings.PreventDuplicateGeneration.Name",
+      hint: "LOOTFORGE.Settings.PreventDuplicateGeneration.Hint",
+      default: true
+    },
+    {
+      key: "showLootIndicators",
+      name: "LOOTFORGE.Settings.ShowLootIndicators.Name",
+      hint: "LOOTFORGE.Settings.ShowLootIndicators.Hint",
+      default: true
+    },
+    {
+      key: "enableRareDrops",
+      name: "LOOTFORGE.Settings.EnableRareDrops.Name",
+      hint: "LOOTFORGE.Settings.EnableRareDrops.Hint",
+      default: true
+    },
+    {
+      key: "debugLogging",
+      name: "LOOTFORGE.Settings.DebugLogging.Name",
+      hint: "LOOTFORGE.Settings.DebugLogging.Hint",
+      default: false
+    }
+  ];
+
+  for (const s of settings) {
+    game.settings.register(MODULE_ID, s.key, {
+      name: s.name,
+      hint: s.hint,
+      scope: "world",
+      config: true,
+      type: s.type ?? Boolean,
+      default: s.default,
+      range: s.range,
+      requiresReload: false
+    });
+  }
+}
+
+/**
+ * @param {string} key
+ * @returns {*}
+ */
+export function getSetting(key) {
+  return game.settings.get(MODULE_ID, key);
+}

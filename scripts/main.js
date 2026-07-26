@@ -1,42 +1,56 @@
 /**
  * LootForge — module entry point.
  *
- * Prototype scope: D&D 5e wolf harvesting via Token HUD / target tool / context menu.
+ * Initialization, hooks, controls, and public API registration only.
  */
 
-import { registerLootFlagQuery, registerLootFlagSocket } from "./services/loot-flags.js";
+import { MODULE_ID } from "./modules/constants.js";
+import { log } from "./modules/logger.js";
+import { registerSettings } from "./modules/settings.js";
+import { registerSocketManager } from "./modules/socket-manager.js";
 import { registerSceneControls } from "./ui/scene-controls.js";
 import { registerLootKeybinding, registerTokenContext } from "./ui/token-context.js";
 import { registerTokenHud } from "./ui/token-hud.js";
 
-const MODULE_ID = "lootforge";
-
 Hooks.once("init", async () => {
-  console.log("LootForge | Initializing");
+  log.info("Initializing");
 
-  // Query handlers + keybindings must be registered during init.
-  registerLootFlagQuery();
+  registerSettings();
   registerLootKeybinding();
+  registerSceneControls();
 
   await foundry.applications.handlebars.loadTemplates([
-    `modules/${MODULE_ID}/templates/loot-dialog.hbs`
+    `modules/${MODULE_ID}/templates/dm-loot-review.hbs`,
+    `modules/${MODULE_ID}/templates/player-loot-window.hbs`
   ]);
-
-  // Scene controls are collected during init/setup; register early.
-  registerSceneControls();
 });
 
 Hooks.once("ready", () => {
   if (game.system.id !== "dnd5e") {
-    console.warn(
-      `LootForge | Active system is "${game.system.id}". Only dnd5e is supported in this prototype.`
-    );
+    log.warn(`Active system is "${game.system.id}". Only dnd5e is supported.`);
     ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.WrongSystem"));
     return;
   }
 
-  registerLootFlagSocket();
+  registerSocketManager();
   registerTokenHud();
   registerTokenContext();
-  console.log(`LootForge | Ready (dnd5e ${game.system.version}, Foundry ${game.version})`);
+
+  // Public API for macros / other modules.
+  game.modules.get(MODULE_ID).api = {
+    lootBody: async (token) => {
+      const { lootBody } = await import("./modules/loot-workflow.js");
+      return lootBody(token);
+    },
+    openDmReview: async (tokenDoc) => {
+      const { openDmLootReview } = await import("./applications/dm-loot-review.js");
+      return openDmLootReview(tokenDoc);
+    },
+    openPlayerWindow: async (tokenDoc) => {
+      const { openPlayerLootWindow } = await import("./applications/player-loot-window.js");
+      return openPlayerLootWindow(tokenDoc);
+    }
+  };
+
+  log.info(`Ready (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

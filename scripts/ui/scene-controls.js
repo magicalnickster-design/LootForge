@@ -1,21 +1,12 @@
 /**
- * Scene control tool — Loot Body for the currently targeted or selected defeated token.
- *
- * This is the most reliable player path: target the corpse, then click the sack tool
- * on the Token controls (left toolbar).
- *
- * Foundry v13: getSceneControlButtons receives a Record keyed by control name.
+ * Token toolbar sack tool — target/select a corpse, then click.
  */
 
-import { lootBody } from "../services/loot-workflow.js";
+import { lootBody } from "../modules/loot-workflow.js";
 import { resolveLootTargetToken } from "./token-context.js";
 
-/**
- * Register the token toolbar tool.
- */
 export function registerSceneControls() {
   Hooks.on("getSceneControlButtons", (controls) => {
-    // v13 object map; fall back if an older array shape is ever encountered.
     const tokenControl = controls.tokens ?? controls.token;
     if (!tokenControl?.tools) {
       console.warn("LootForge | Token scene controls not found; scene tool skipped.");
@@ -24,7 +15,7 @@ export function registerSceneControls() {
 
     tokenControl.tools.lootforgeLootBody = {
       name: "lootforgeLootBody",
-      title: "LOOTFORGE.HUD.LootBody",
+      title: "LOOTFORGE.HUD.GenerateLoot",
       icon: "fa-solid fa-sack",
       button: true,
       visible: true,

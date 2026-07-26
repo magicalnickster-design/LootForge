@@ -3,64 +3,112 @@
     "Title": "LootForge",
     "HUD": {
       "LootBody": "Loot Body",
-      "ResetLoot": "Reset Loot Flag (GM)"
+      "GenerateLoot": "Generate Loot",
+      "ViewLoot": "View Loot",
+      "Looted": "Looted",
+      "ResetLoot": "Reset Loot"
     },
     "Keybinding": {
-      "LootTargetHint": "Loot the currently targeted or selected defeated creature."
+      "LootTargetHint": "Generate or view loot on the targeted/selected defeated creature."
+    },
+    "Quality": {
+      "poor": "Poor",
+      "standard": "Standard",
+      "good": "Good",
+      "excellent": "Excellent",
+      "exceptional": "Exceptional"
     },
     "Notify": {
       "WrongSystem": "LootForge currently supports the D&D 5e system only.",
       "NotDefeated": "{name} must be defeated before it can be looted.",
       "AlreadyLooted": "{name} has already been looted.",
-      "NoLooter": "No player character available to loot. Create/import a character, place it on the scene, or assign one to your user.",
+      "AlreadyLootedEmpty": "This corpse has already been looted.",
+      "NoLooter": "No eligible player characters found. Create a character or place one on the scene.",
       "RollCancelled": "Loot roll cancelled.",
-      "NoTable": "No prototype loot table found for {name}.",
-      "LootGenerated": "Loot harvested from {name}.",
+      "NoTable": "No LootForge profile found for {name}.",
       "Claimed": "Loot claimed by {name}.",
-      "PostedToChat": "No assigned character available. Loot was posted to chat.",
-      "FlagReset": "Loot flag reset for {name}.",
-      "PermissionDenied": "You do not have permission to loot {name}.",
-      "NeedGM": "An active GM must be connected for LootForge to mark bodies as looted.",
-      "SelectOrTarget": "Target or select exactly one defeated creature, then use Loot Body (sack icon / Alt+L / right-click)."
+      "Assigned": "Loot assigned to {name}.",
+      "PostedToChat": "Loot was posted to chat.",
+      "FlagReset": "Loot reset for {name}.",
+      "PermissionDenied": "You do not have permission to modify loot on {name}.",
+      "NeedGM": "An active GM must be connected for LootForge to update corpse loot.",
+      "SelectOrTarget": "Target or select exactly one defeated creature, then use LootForge (sack / Alt+L / right-click).",
+      "PlayersCannotGenerate": "Only the GM can generate loot (unless player requests are enabled in settings).",
+      "WaitingForGM": "Loot generated. Waiting for the GM to review and assign it.",
+      "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",
+      "NoTakePermission": "You do not have permission to take this loot.",
+      "ItemGone": "That item is no longer available on the corpse.",
+      "TransferFailed": "Loot could not be transferred to the selected character.",
+      "TransferBusy": "A loot transfer is already in progress.",
+      "TransferPending": "Loot request sent to the GM…",
+      "CharacterMissing": "The selected character no longer exists.",
+      "NoItemsToAssign": "There is no loot to assign.",
+      "CorpseEmpty": "The corpse has been fully looted."
     },
     "Dialog": {
       "Title": "Loot — {name}",
-      "Creature": "Creature",
-      "Skill": "Skill",
-      "RollTotal": "Roll Total",
-      "NaturalDie": "Natural Die",
-      "Tier": "Loot Tier",
-      "Items": "Items",
-      "Quantity": "Qty",
-      "BonusItem": "Natural 20 bonus applied",
-      "Claim": "Claim Loot",
-      "Close": "Close",
-      "Empty": "No usable materials were recovered.",
       "ChooseLooterTitle": "Who is looting?",
       "ChooseLooter": "Character",
-      "ChooseLooterHint": "Choose which character makes the skill roll and receives the loot."
+      "ChooseLooterHint": "Choose which character makes the skill roll and/or receives the loot.",
+      "Close": "Close",
+      "Empty": "No usable materials were recovered."
     },
-    "Chat": {
-      "LootHeader": "LootForge — {name}",
-      "ClaimHint": "Drag items to a character sheet, or ask the GM to distribute them.",
-      "Tier": "Tier: {tier}",
-      "Roll": "Roll: {total} ({skill})"
+    "DM": {
+      "Title": "LootForge — DM Review",
+      "TitleNamed": "LootForge — {name}",
+      "Type": "Type",
+      "CR": "CR",
+      "Size": "Size",
+      "Survival": "Survival",
+      "Natural": "Natural",
+      "AssignedTo": "Assigned to",
+      "RerollAll": "Reroll All",
+      "RerollItem": "Reroll item",
+      "RemoveItem": "Remove item",
+      "AddItem": "Add LootForge item",
+      "Add": "Add",
+      "ConfirmAssign": "Confirm and Assign"
     },
-    "Tier": {
-      "poor": "Poor",
-      "common": "Common",
-      "good": "Good",
-      "rare": "Rare",
-      "best": "Best",
-      "legendary": "Legendary"
+    "Player": {
+      "Title": "Loot",
+      "TitleNamed": "Loot — {name}",
+      "LootFor": "Loot for",
+      "TakeItem": "Take",
+      "TakeAll": "Take All"
     },
-    "Interaction": {
-      "search": "Search",
-      "harvest": "Harvest"
-    },
-    "Skill": {
-      "inv": "Investigation",
-      "sur": "Survival"
+    "Settings": {
+      "ManualGenerationOnly": {
+        "Name": "Manual generation only",
+        "Hint": "Loot is only created when Generate Loot is used (recommended)."
+      },
+      "RequireSurvivalRoll": {
+        "Name": "Require Survival roll",
+        "Hint": "Prompt for a Survival check before generating harvest loot."
+      },
+      "DefaultSurvivalDC": {
+        "Name": "Default Survival total (no roll)",
+        "Hint": "Used when Survival rolls are disabled."
+      },
+      "AllowPlayerRequestLoot": {
+        "Name": "Allow players to request loot",
+        "Hint": "If enabled, players may trigger generation (GM still assigns)."
+      },
+      "PreventDuplicateGeneration": {
+        "Name": "Prevent duplicate generation",
+        "Hint": "Block regenerating loot on a corpse that already has generated loot."
+      },
+      "ShowLootIndicators": {
+        "Name": "Show loot indicators",
+        "Hint": "Mark tokens that have unclaimed generated loot."
+      },
+      "EnableRareDrops": {
+        "Name": "Enable rare drops",
+        "Hint": "Allow uncommon rewards such as Alpha Wolf Fang."
+      },
+      "DebugLogging": {
+        "Name": "Debug logging",
+        "Hint": "Print detailed LootForge logs to the console."
+      }
     }
   }
 }

@@ -1,0 +1,42 @@
+<section class="lootforge-player-body">
+  <header class="lootforge-creature-header">
+    <img class="lootforge-portrait" src="{{creature.image}}" alt="{{creature.name}}" />
+    <div class="lootforge-creature-meta">
+      <h2>{{creature.name}}</h2>
+      {{#if assignedName}}
+      <p>{{localize "LOOTFORGE.Player.LootFor"}} <strong>{{assignedName}}</strong></p>
+      {{/if}}
+    </div>
+  </header>
+
+  {{#if empty}}
+  <p class="lootforge-empty">{{localize "LOOTFORGE.Notify.CorpseEmpty"}}</p>
+  {{else}}
+  <div class="lootforge-item-list">
+    {{#each items}}
+    <article class="lootforge-item-row {{rarityClass}}" data-tooltip="{{description}}">
+      <img src="{{img}}" alt="" />
+      <div class="lootforge-item-main">
+        <div class="lootforge-item-title">
+          <strong>{{name}}</strong>
+          <span class="rarity-label">{{rarity}}</span>
+        </div>
+        <div class="lootforge-item-sub">× {{quantity}} · {{valueText}}</div>
+      </div>
+      <button type="button" class="lootforge-take" data-action="takeItem" data-entry-id="{{entryId}}" {{#if ../busy}}disabled{{/if}}>
+        {{localize "LOOTFORGE.Player.TakeItem"}}
+      </button>
+    </article>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  <footer class="lootforge-footer">
+    <button type="button" data-action="closeWindow">{{localize "LOOTFORGE.Dialog.Close"}}</button>
+    {{#unless empty}}
+    <button type="button" class="default" data-action="takeAll" {{#if busy}}disabled{{/if}}>
+      <i class="fa-solid fa-hand-holding"></i> {{localize "LOOTFORGE.Player.TakeAll"}}
+    </button>
+    {{/unless}}
+  </footer>
+</section>

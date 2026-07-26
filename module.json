@@ -2,10 +2,10 @@
   "id": "lootforge",
   "title": "LootForge",
   "description": "Interactive looting and harvesting for defeated creatures. Built for Gambits Forge.",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "compatibility": {
     "minimum": "13",
-    "verified": "13"
+    "verified": "14"
   },
   "authors": [
     {
