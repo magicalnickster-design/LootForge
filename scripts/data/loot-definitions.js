@@ -255,11 +255,14 @@ export async function resolveItemDataForTransfer(entry, {
 } = {}) {
   const qty = Math.max(1, Math.floor(Number(quantity ?? entry.quantity) || 1));
   const def = getLootDefinition(entry.definitionId);
+  // Prefer UUID already stored on the corpse entry; otherwise the definition UUID.
   const uuid = entry.itemUuid || def?.itemUuid;
 
-  if (uuid && typeof fromUuid === "function") {
+  // 1) Canonical path: clone from the module Item compendium (read-only source).
+  //    Never update/create inside the pack — only clone create-data for the actor.
+  if (uuid && typeof globalThis.fromUuid === "function") {
     try {
-      const doc = await fromUuid(uuid);
+      const doc = await globalThis.fromUuid(uuid);
       if (doc) {
         return cloneItemDataFromDocument(doc, {
           quantity: qty,
@@ -272,16 +275,27 @@ export async function resolveItemDataForTransfer(entry, {
     }
   }
 
+  // 2) Stored snapshot from generation time (or v0.2.1+ corpse entries).
   if (entry.itemData) {
-    const data = foundry.utils.duplicate(entry.itemData);
+    const duplicate = globalThis.foundry?.utils?.duplicate
+      ?? ((obj) => JSON.parse(JSON.stringify(obj)));
+    const data = duplicate(entry.itemData);
     delete data._id;
     data.system ??= {};
     data.system.quantity = qty;
-    foundry.utils.setProperty(data, "flags.lootforge.sourceCreature", sourceCreature);
-    foundry.utils.setProperty(data, "flags.lootforge.generatedByLootForge", true);
+    data.flags ??= {};
+    data.flags.lootforge = {
+      ...(data.flags.lootforge ?? {}),
+      sourceCreature: sourceCreature || data.flags.lootforge?.sourceCreature || "",
+      generatedByLootForge: true,
+      stackingKey: data.flags.lootforge?.stackingKey
+        ?? def?.id
+        ?? entry.definitionId
+    };
     return data;
   }
 
+  // 3) Legacy v0.2.0 corpse entries / corrupted UUID: definition fallback snapshot.
   if (!def) throw new Error(`Unknown LootForge definition: ${entry.definitionId}`);
   return buildFallbackItemData(def, { quantity: qty, sourceCreature });
 }

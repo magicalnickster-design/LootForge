@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "pack:loot-items": "node tools/pack-loot-items.mjs",
-    "pack": "npm run pack:loot-items"
+    "pack": "npm run pack:loot-items",
+    "verify:pack": "node tools/verify-pack-offline.mjs"
   },
   "repository": {
     "type": "git",

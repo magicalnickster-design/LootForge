@@ -28,16 +28,19 @@ function releaseLock(lockKey) {
 }
 
 /**
+ * Stack using flags.lootforge.stackingKey (preferred), then definitionId.
  * @param {Actor} actor
  * @param {string} definitionId
  * @returns {Item|null}
  */
 function findStackableItem(actor, definitionId) {
+  const stackingKey = getLootDefinition(definitionId)?.id ?? definitionId;
   return actor.items.find((item) => {
-    const flag = item.getFlag?.("lootforge", "definitionId")
-      ?? item.flags?.lootforge?.definitionId
-      ?? item.flags?.lootforge?.stackingKey;
-    return flag === definitionId;
+    const key = item.getFlag?.("lootforge", "stackingKey")
+      ?? item.flags?.lootforge?.stackingKey
+      ?? item.getFlag?.("lootforge", "definitionId")
+      ?? item.flags?.lootforge?.definitionId;
+    return key === stackingKey || key === definitionId;
   }) ?? null;
 }
 

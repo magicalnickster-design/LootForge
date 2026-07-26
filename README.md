@@ -63,14 +63,38 @@ Canonical wolf items live in the module pack **LootForge Items** (`lootforge.loo
 | Wolf Claw | `LFWolfClaw000001` | `Compendium.lootforge.loot-items.Item.LFWolfClaw000001` |
 | Alpha Wolf Fang | `LFAlphaFang00001` | `Compendium.lootforge.loot-items.Item.LFAlphaFang00001` |
 
-JSON sources: `packs/src/loot-items/`. Rebuild LevelDB with:
+JSON sources: `packs/src/loot-items/` (developers only). The compiled LevelDB under `packs/loot-items/` is what Foundry loads — **no Node/npm/CLI is required for end users**.
+
+Rebuild (maintainers only):
 
 ```bash
 npm install
 npm run pack
+npm run verify:pack
 ```
 
-Generation rules stay in `scripts/data/creature-profiles.js`. Transfer clones from the pack via `fromUuid` (snapshot fallback).
+**Compendium is treated as read-only source data.** LootForge never writes generated loot into the pack. Flow:
+
+`creature-profiles` → pack Item (clone) → token corpse flags → player embedded Item
+
+Generation rules stay in `scripts/data/creature-profiles.js`.
+
+### Release ZIP — required pack files
+
+These compiled LevelDB files **must** ship (runtime; no Node required):
+
+```text
+packs/loot-items/000004.log
+packs/loot-items/000005.ldb
+packs/loot-items/CURRENT
+packs/loot-items/LOCK
+packs/loot-items/LOG
+packs/loot-items/MANIFEST-000002
+```
+
+Also required: `module.json` pack entry for `loot-items`.
+
+Optional for source/dev releases only: `packs/src/loot-items/*.json`, `tools/`, `package.json`.
 
 ## Architecture
 
