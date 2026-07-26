@@ -1,17 +1,19 @@
 /**
- * WoW-style loot sparkles around corpses with remaining loot.
- * Small white pixel stars twinkle around the body; cleared when empty.
+ * WoW-style loot sparkles around dead creatures.
+ * Starts when a creature is marked dead / HP reaches 0; clears when fully looted.
  * Fully looted corpses are hidden from the canvas (GM-authoritative).
  */
 
 import { MODULE_ID } from "./constants.js";
 import { isCreatureDead } from "./creature-context.js";
 import { log } from "./logger.js";
-import { canUserAccessAssignedLoot, canUserLootCorpse } from "./ownership.js";
+import { canUserLootCorpse } from "./ownership.js";
 import { getSetting } from "./settings.js";
 import {
   getCorpseState,
   hasRemainingLoot,
+  isCorpseLooted,
+  isLootGenerated,
   isLootSessionLocked
 } from "./loot-storage.js";
 
@@ -65,21 +67,17 @@ function getStarTexture() {
 
 /**
  * Whether this client should render loot sparkles on the token.
- * Only dead corpses with remaining loot — never living player characters.
+ * Shown as soon as the creature is dead; hidden after it is fully looted.
  * @param {TokenDocument} tokenDoc
  */
 export function shouldShowLootIndicator(tokenDoc) {
   if (!tokenDoc || !getSetting("showLootIndicators")) return false;
   if (!isCreatureDead(tokenDoc, tokenDoc.actor)) return false;
-  if (!hasRemainingLoot(tokenDoc)) return false;
-
+  // Fully emptied corpses lose sparkles (and are hidden separately).
+  if (isCorpseLooted(tokenDoc) && !hasRemainingLoot(tokenDoc)) return false;
   const state = getCorpseState(tokenDoc);
-  if (game.user.isGM) return true;
-
-  if (getSetting("allowAllPlayersToLoot")) return true;
-  if (state.activeLooterUserId === game.user.id) return true;
-  if (canUserAccessAssignedLoot(state, game.user)) return true;
-  return canUserLootCorpse(tokenDoc, game.user);
+  if (state.looted && !hasRemainingLoot(tokenDoc)) return false;
+  return true;
 }
 
 /**
@@ -89,10 +87,17 @@ export function shouldShowLootIndicator(tokenDoc) {
 export function canInteractWithLootIndicator(tokenDoc) {
   if (!shouldShowLootIndicator(tokenDoc)) return false;
   if (game.user.isGM) return true;
+
   const state = getCorpseState(tokenDoc);
   if (isLootSessionLocked(state) && state.activeLooterUserId !== game.user.id) {
     return false;
   }
+
+  // Dead but no loot generated yet — player may start Investigation via chat.
+  if (!isLootGenerated(tokenDoc) && !hasRemainingLoot(tokenDoc)) {
+    return getSetting("allowAllPlayersToLoot") || getSetting("allowPlayerRequestLoot");
+  }
+
   return canUserLootCorpse(tokenDoc, game.user);
 }
 
@@ -375,6 +380,18 @@ function destroyOverlay(id, container) {
 }
 
 /**
+ * Refresh sparkles for every token linked to an actor (death / HP changes).
+ * @param {Actor} actor
+ */
+async function refreshIndicatorsForActor(actor) {
+  if (!actor || !canvas?.ready || !canvas.tokens) return;
+  const tokens = canvas.tokens.placeables.filter((t) => t.actor?.id === actor.id);
+  for (const token of tokens) {
+    await upsertOverlay(token);
+  }
+}
+
+/**
  * Register canvas/token hooks for indicator refresh.
  */
 export function registerLootIndicatorHooks() {
@@ -398,6 +415,36 @@ export function registerLootIndicatorHooks() {
     const id = token?.id ?? tokenDoc.id;
     const container = overlays.get(id);
     if (container) destroyOverlay(id, container);
+  });
+
+  // Death is often applied via actor HP / status effects, not token flags.
+  Hooks.on("updateActor", async (actor, changes) => {
+    const hp = changes?.system?.attributes?.hp;
+    if (hp === undefined && !changes?.system?.attributes) return;
+    await refreshIndicatorsForActor(actor);
+  });
+
+  Hooks.on("createActiveEffect", async (effect) => {
+    const label = String(effect.name ?? effect.id ?? "");
+    const statuses = effect.statuses;
+    const isDead = effect.id === "dead"
+      || (typeof statuses?.has === "function" && statuses.has("dead"))
+      || (Array.isArray(statuses) && statuses.includes("dead"))
+      || /dead|defeated/i.test(label);
+    if (!isDead) return;
+    const actor = effect.parent?.documentName === "Actor"
+      ? effect.parent
+      : effect.parent?.actor ?? null;
+    if (actor) await refreshIndicatorsForActor(actor);
+  });
+
+  Hooks.on("deleteActiveEffect", async (effect) => {
+    const label = String(effect.name ?? effect.id ?? "");
+    if (!/dead|defeated/i.test(label) && effect.id !== "dead") return;
+    const actor = effect.parent?.documentName === "Actor"
+      ? effect.parent
+      : effect.parent?.actor ?? null;
+    if (actor) await refreshIndicatorsForActor(actor);
   });
 
   Hooks.on("ready", async () => {

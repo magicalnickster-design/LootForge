@@ -155,7 +155,7 @@
       },
       "ShowLootIndicators": {
         "Name": "Show loot indicators",
-        "Hint": "Show WoW-style white sparkles around corpses with unclaimed loot. Sparkles vanish and the corpse is hidden when fully looted."
+        "Hint": "Show WoW-style white sparkles around creatures as soon as they are marked dead. Sparkles vanish and the corpse is hidden when fully looted."
       },
       "EnableRareDrops": {
         "Name": "Enable rare drops",
