@@ -1,0 +1,52 @@
+{
+  "_id": "LFHoardGemChip00",
+  "name": "Hoard Gem Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hoard-gem-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chipped ruby fragment from a dragon's bedding. Not jewelry-grade — but still worth a purse of silver.</p>",
+      "chat": "A chip from a hoard gem."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 10,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hoard-gem-chip",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "dragon",
+        "gem"
+      ],
+      "stackingKey": "hoard-gem-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHoardGemChip00"
+}

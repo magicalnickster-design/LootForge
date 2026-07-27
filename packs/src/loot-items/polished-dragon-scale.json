@@ -1,0 +1,52 @@
+{
+  "_id": "LFPolishScale000",
+  "name": "Polished Dragon Scale",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/polished-dragon-scale.svg",
+  "system": {
+    "description": {
+      "value": "<p>A single scale buffed to a mirror sheen and drilled for a cord. Nobles wear them as bold jewelry.</p>",
+      "chat": "A polished dragon scale."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "polished-dragon-scale",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "dragon",
+        "scale"
+      ],
+      "stackingKey": "polished-dragon-scale",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPolishScale000"
+}

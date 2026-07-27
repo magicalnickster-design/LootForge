@@ -1,0 +1,52 @@
+{
+  "_id": "LFDragonFang0000",
+  "name": "Dragon Fang",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dragon-fang.svg",
+  "system": {
+    "description": {
+      "value": "<p>A curved ivory fang longer than a dagger. Hunters mount them; alchemists grind the tips.</p>",
+      "chat": "A dragon fang."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dragon-fang",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "dragon",
+        "fang",
+        "trophy"
+      ],
+      "stackingKey": "dragon-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDragonFang0000"
+}

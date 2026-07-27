@@ -1,0 +1,52 @@
+{
+  "_id": "LFTerritoryClaim",
+  "name": "Territorial Claim",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/territorial-claim.svg",
+  "system": {
+    "description": {
+      "value": "<p>A decree burned into a bronze plate: \"These peaks are mine. Cross the ridge and your bones join the cairn.\"</p>",
+      "chat": "A territorial claim plate."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "territorial-claim",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "dragon",
+        "readable"
+      ],
+      "stackingKey": "territorial-claim",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTerritoryClaim"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFDragonHorn0000",
+  "name": "Dragon Horn",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dragon-horn.svg",
+  "system": {
+    "description": {
+      "value": "<p>A spiraled horn broken clean from a dragon's crest. Status symbol, ritual focus, or war-horn blank.</p>",
+      "chat": "A dragon horn."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dragon-horn",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "dragon",
+        "horn",
+        "trophy"
+      ],
+      "stackingKey": "dragon-horn",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDragonHorn0000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFScorchedMap000",
+  "name": "Scorched Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/scorched-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A half-burned map of local valleys. One lair is circled in claw-ink; three villages are crossed out.</p>",
+      "chat": "A scorched territorial map."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "scorched-map",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "dragon",
+        "readable"
+      ],
+      "stackingKey": "scorched-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFScorchedMap000"
+}

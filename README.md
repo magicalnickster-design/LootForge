@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.6** |
+| Version | **0.5.7** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Orc**, **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Orc**, **Dragon**, **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -46,6 +46,12 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Pocket currency (a bit richer than goblins; CR-scaled)
   - Equipment from the NPC’s **actual inventory** (greataxe, javelins, hide armor, etc.) with quality
   - Orc-themed junk / trinkets / war-order story scraps
+- **Dragon** — multi-pool profile (excludes dragonborn / half-dragon):
+  - Monster parts (scale, fang, claw, blood, hide, horn, rare heart)
+  - Hoard currency (gp/pp heavy; CR-scaled)
+  - Equipment from the NPC’s **actual inventory** (hoard gear on the sheet)
+  - Lair junk / scale trinkets / territorial story scraps
+  - **Age scaling:** wyrmlings & young dragons drop **less**; adults & ancients drop **more** (`lootScale`)
 - **Chest / Container** — seeded into the Actors tab on load:
   - **Chest** — wooden chest token art
   - **Container** — blank/invisible token (place over map scenery)
@@ -58,6 +64,7 @@ Creature profiles live under `scripts/data/profiles/`. Register new creatures in
 
 - Legacy profiles use a flat `drops[]` table (wolf / animated armor).
 - Multi-pool profiles use `pools` (`monsterParts`, `currency`, `equipment`, `junk`, `trinkets`, `story`, …).
+- Optional `lootScale` on a profile multiplies quantities by name tokens (e.g. wyrmling/young/adult/ancient) or size.
 - Generation code stays generic — do not hardcode creature names in the generator.
 
 ## Player access

@@ -1,0 +1,52 @@
+{
+  "_id": "LFScorchedBone00",
+  "name": "Scorched Bone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/scorched-bone.svg",
+  "system": {
+    "description": {
+      "value": "<p>A blackened bone from some long-digested meal. Still smells faintly of smoke.</p>",
+      "chat": "A scorched bone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "scorched-bone",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "dragon",
+        "bone"
+      ],
+      "stackingKey": "scorched-bone",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFScorchedBone00"
+}

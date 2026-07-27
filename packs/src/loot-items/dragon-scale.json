@@ -1,0 +1,52 @@
+{
+  "_id": "LFDragonScale000",
+  "name": "Dragon Scale",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dragon-scale.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tough, iridescent scale shed or pried from a dragon. Armorers pay well for matched sets.</p>",
+      "chat": "A dragon scale."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dragon-scale",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "dragon",
+        "scale",
+        "crafting"
+      ],
+      "stackingKey": "dragon-scale",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDragonScale000"
+}

@@ -117,14 +117,57 @@ function chanceSucceeds(chance) {
   return randomUniform() < chance;
 }
 
-function applyContextQuantityBonus(qty, context, { allowBonus = true } = {}) {
+function applyContextQuantityBonus(qty, context, { allowBonus = true, useSizeBonus = true } = {}) {
   if (!allowBonus) return Math.max(0, qty);
   let result = qty;
-  if (context?.size === "lg" || context?.size === "huge") result += 1;
+  if (useSizeBonus && (context?.size === "lg" || context?.size === "huge" || context?.size === "grg")) {
+    result += 1;
+  }
+  if (context?.size === "grg") result += 1;
   if (context?.isBoss || context?.isNamed) {
     if (chanceSucceeds(0.5)) result += 1;
   }
   return Math.max(0, result);
+}
+
+/**
+ * Profile-driven quantity multiplier (e.g. wyrmling vs ancient dragon).
+ * Kept generic — profiles declare `lootScale`; the generator does not hardcode creatures.
+ * @param {object|null} profile
+ * @param {object|null} context
+ * @returns {number}
+ */
+export function resolveLootScale(profile, context) {
+  const cfg = profile?.lootScale;
+  if (!cfg) return 1;
+
+  const name = String(context?.name ?? "").toLowerCase();
+  const tokens = cfg.nameTokens ?? {};
+  const ordered = Object.entries(tokens).sort((a, b) => b[0].length - a[0].length);
+  for (const [token, scale] of ordered) {
+    if (!token) continue;
+    const re = new RegExp(`\\b${token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    if (re.test(name)) return Math.max(0, Number(scale) || 0);
+  }
+
+  const size = String(context?.size ?? "").toLowerCase();
+  if (size && cfg.bySize?.[size] != null) return Math.max(0, Number(cfg.bySize[size]) || 0);
+
+  return Math.max(0, Number(cfg.default ?? 1) || 1);
+}
+
+/**
+ * @param {number} qty
+ * @param {number} scale
+ * @returns {number}
+ */
+function scaleQuantity(qty, scale) {
+  if (!Number.isFinite(scale) || scale === 1) return Math.max(0, qty);
+  if (qty <= 0 || scale <= 0) return 0;
+  const scaled = qty * scale;
+  const base = Math.floor(scaled);
+  const frac = scaled - base;
+  return Math.max(0, base + (chanceSucceeds(frac) ? 1 : 0));
 }
 
 function emptyCurrency() {
@@ -260,7 +303,9 @@ async function runDefinitionsPool(drops, {
   context,
   rollQuality,
   isNatural20,
-  enableRare
+  enableRare,
+  lootScale = 1,
+  useSizeBonus = true
 }) {
   /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
@@ -277,7 +322,8 @@ async function runDefinitionsPool(drops, {
     if (!chanceSucceeds(chance)) continue;
 
     let qty = randomInt(range[0], range[1]);
-    qty = applyContextQuantityBonus(qty, context);
+    qty = applyContextQuantityBonus(qty, context, { useSizeBonus });
+    qty = scaleQuantity(qty, lootScale);
     if (isNatural20 && qty > 0) qty += 1;
 
     const entry = await buildLootEntry(definitionId, qty);
@@ -296,7 +342,7 @@ async function runDefinitionsPool(drops, {
  * @param {object} pool
  * @param {object} options
  */
-function runCurrencyPool(pool, { context, rollQuality }) {
+function runCurrencyPool(pool, { context, rollQuality, lootScale = 1 }) {
   /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   const currency = emptyCurrency();
@@ -312,7 +358,8 @@ function runCurrencyPool(pool, { context, rollQuality }) {
     const maxBonus = Math.floor(cr * scale);
     const min = Math.max(0, Number(rule.min) || 0);
     const max = Math.max(min, (Number(rule.max) || 0) + maxBonus);
-    const amount = randomInt(min, max);
+    let amount = randomInt(min, max);
+    amount = scaleQuantity(amount, lootScale);
     if (amount <= 0) continue;
 
     currency[denom] = amount;
@@ -330,7 +377,8 @@ function runCurrencyPool(pool, { context, rollQuality }) {
 async function runEquipmentPool(pool, {
   actor,
   context,
-  rollQuality
+  rollQuality,
+  lootScale = 1
 }) {
   /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
@@ -341,7 +389,8 @@ async function runEquipmentPool(pool, {
 
   // Shuffle so maxDrops is not biased by sheet order.
   const shuffled = [...scanned].sort(() => (chanceSucceeds(0.5) ? -1 : 1));
-  const maxDrops = Math.max(0, Number(pool.maxDrops ?? 99));
+  const baseMax = Math.max(0, Number(pool.maxDrops ?? 99));
+  const maxDrops = Math.max(0, Math.round(baseMax * (lootScale || 1)));
   const chances = pool.chances ?? {};
   const qualityWeights = pool.qualityWeightsByRollQuality?.[rollQuality]
     ?? pool.qualityWeightsByRollQuality?.standard
@@ -409,7 +458,7 @@ function EQUIPMENT_QUALITY_BLURB(quality) {
  * @param {object} pool
  * @param {object} options
  */
-async function runPoolPick(pool, { rollQuality, enableRare }) {
+async function runPoolPick(pool, { rollQuality, enableRare, lootScale = 1 }) {
   /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   if (pool.rare && !enableRare) return items;
@@ -418,7 +467,8 @@ async function runPoolPick(pool, { rollQuality, enableRare }) {
   if (!chanceSucceeds(chance)) return items;
 
   const range = pool.countByQuality?.[rollQuality] ?? [0, 1];
-  const count = randomInt(range[0], range[1]);
+  let count = randomInt(range[0], range[1]);
+  count = scaleQuantity(count, lootScale);
   if (count <= 0) return items;
 
   const poolIds = [...(pool.definitionIds ?? [])].filter((id) => getLootDefinition(id));
@@ -499,7 +549,7 @@ export async function buildSystemItemEntry(doc, quantity = 1) {
  * @param {object} pool
  * @param {object} options
  */
-async function runSystemItemPool(pool, { rollQuality, enableRare }) {
+async function runSystemItemPool(pool, { rollQuality, enableRare, lootScale = 1 }) {
   /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   if (pool.rare && !enableRare) return items;
@@ -509,6 +559,7 @@ async function runSystemItemPool(pool, { rollQuality, enableRare }) {
 
   const range = pool.countByQuality?.[rollQuality] ?? [0, 1];
   let count = randomInt(range[0], range[1]);
+  count = scaleQuantity(count, lootScale);
   if (count <= 0) return items;
 
   const catalog = await getSystemItemCatalog({
@@ -569,6 +620,8 @@ async function generateFromPools(profile, {
   const items = [];
   let currency = emptyCurrency();
   const pools = profile.pools ?? {};
+  const lootScale = resolveLootScale(profile, context);
+  const useSizeBonus = !profile.lootScale;
 
   // Stable pool order for handcrafted feel.
   const order = [
@@ -591,32 +644,34 @@ async function generateFromPools(profile, {
         context,
         rollQuality,
         isNatural20,
-        enableRare
+        enableRare,
+        lootScale,
+        useSizeBonus
       });
       items.push(...partItems);
       continue;
     }
 
     if (pool.type === "currency") {
-      const result = runCurrencyPool(pool, { context, rollQuality });
+      const result = runCurrencyPool(pool, { context, rollQuality, lootScale });
       items.push(...result.items);
       currency = result.currency;
       continue;
     }
 
     if (pool.type === "systemItems") {
-      items.push(...await runSystemItemPool(pool, { rollQuality, enableRare }));
+      items.push(...await runSystemItemPool(pool, { rollQuality, enableRare, lootScale }));
       continue;
     }
 
     if (pool.type === "equipment") {
-      const eq = await runEquipmentPool(pool, { actor, context, rollQuality });
+      const eq = await runEquipmentPool(pool, { actor, context, rollQuality, lootScale });
       items.push(...eq);
       continue;
     }
 
     if (pool.type === "poolPick") {
-      const picked = await runPoolPick(pool, { rollQuality, enableRare });
+      const picked = await runPoolPick(pool, { rollQuality, enableRare, lootScale });
       items.push(...picked);
     }
   }
@@ -625,15 +680,17 @@ async function generateFromPools(profile, {
   for (const [key, pool] of Object.entries(pools)) {
     if (order.includes(key)) continue;
     if (pool?.type === "poolPick") {
-      items.push(...await runPoolPick(pool, { rollQuality, enableRare }));
+      items.push(...await runPoolPick(pool, { rollQuality, enableRare, lootScale }));
     } else if (pool?.type === "systemItems") {
-      items.push(...await runSystemItemPool(pool, { rollQuality, enableRare }));
+      items.push(...await runSystemItemPool(pool, { rollQuality, enableRare, lootScale }));
     } else if (pool?.type === "definitions") {
       items.push(...await runDefinitionsPool(pool.drops ?? [], {
         context,
         rollQuality,
         isNatural20,
-        enableRare
+        enableRare,
+        lootScale,
+        useSizeBonus
       }));
     }
   }

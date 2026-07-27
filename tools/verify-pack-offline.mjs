@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.6") {
-  throw new Error(`Expected module version 0.5.6, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.7") {
+  throw new Error(`Expected module version 0.5.7, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -99,7 +99,25 @@ const expectedNames = new Set([
   "Fang Charm",
   "Cocooned Journal",
   "Prey Keepsake",
-  "Webbing Scrawl"
+  "Webbing Scrawl",
+  "Dragon Scale",
+  "Dragon Fang",
+  "Dragon Claw",
+  "Dragon Blood Vial",
+  "Dragon Hide",
+  "Dragon Horn",
+  "Dragon Heart",
+  "Scorched Bone",
+  "Cracked Scale Shard",
+  "Sulfur Lump",
+  "Ash Clump",
+  "Polished Dragon Scale",
+  "Dragon Tooth Pendant",
+  "Hoard Gem Chip",
+  "Hoard Ledger",
+  "Territorial Claim",
+  "Rival Challenge",
+  "Scorched Map"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -164,7 +182,7 @@ const { buildFallbackItemData, getLootDefinition, resolveItemDataForTransfer, li
   "../scripts/data/loot-definitions.js"
 );
 const { resolveCreatureProfile } = await import("../scripts/data/creature-profiles.js");
-const { generateCreatureLoot, aggregateCurrencyFromItems } = await import(
+const { generateCreatureLoot, aggregateCurrencyFromItems, resolveLootScale } = await import(
   "../scripts/modules/loot-generator.js"
 );
 const { applyEquipmentQuality, pickEquipmentQuality } = await import(
@@ -243,6 +261,21 @@ const halfOrc = resolveCreatureProfile({
   creatureType: "humanoid",
   creatureSubtype: "human"
 });
+const dragon = resolveCreatureProfile({
+  name: "Adult Red Dragon",
+  creatureType: "dragon",
+  creatureSubtype: ""
+});
+const wyrmling = resolveCreatureProfile({
+  name: "Red Dragon Wyrmling",
+  creatureType: "dragon",
+  creatureSubtype: ""
+});
+const dragonborn = resolveCreatureProfile({
+  name: "Dragonborn Guard",
+  creatureType: "humanoid",
+  creatureSubtype: "dragonborn"
+});
 const chest = resolveCreatureProfile({
   name: "Chest",
   creatureType: "construct",
@@ -258,6 +291,9 @@ if (hobgoblin?.id === "goblin") throw new Error("Hobgoblin must not resolve to g
 if (orc?.id !== "orc") throw new Error(`Expected orc profile, got ${orc?.id}`);
 if (orog?.id !== "orc") throw new Error(`Expected orc profile for Orog, got ${orog?.id}`);
 if (halfOrc?.id === "orc") throw new Error("Half-orc must not resolve to orc profile");
+if (dragon?.id !== "dragon") throw new Error(`Expected dragon profile, got ${dragon?.id}`);
+if (wyrmling?.id !== "dragon") throw new Error(`Expected dragon profile for wyrmling, got ${wyrmling?.id}`);
+if (dragonborn?.id === "dragon") throw new Error("Dragonborn must not resolve to dragon profile");
 if (chest?.id !== "container") throw new Error(`Expected container profile for Chest, got ${chest?.id}`);
 if (chest?.pools?.systemGear?.type !== "systemItems") {
   throw new Error("Container profile missing systemGear pool for official dnd5e items");
@@ -287,8 +323,24 @@ if (!getLootDefinition("orc-tusk") || !getLootDefinition("orc-war-orders") || !g
 if (!getLootDefinition("spider-chitin") || !getLootDefinition("spinneret") || !getLootDefinition("cocooned-journal")) {
   throw new Error("Missing spider loot definitions");
 }
-if (listLootDefinitions().length < 55) {
+if (!getLootDefinition("dragon-scale") || !getLootDefinition("dragon-heart") || !getLootDefinition("hoard-ledger")) {
+  throw new Error("Missing dragon loot definitions");
+}
+if (listLootDefinitions().length < 70) {
   throw new Error("Expected expanded definition registry");
+}
+
+if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
+  throw new Error("Wyrmling lootScale should be 0.45");
+}
+if (resolveLootScale(dragon, { name: "Young Red Dragon", size: "lg" }) !== 0.75) {
+  throw new Error("Young dragon lootScale should be 0.75");
+}
+if (resolveLootScale(dragon, { name: "Adult Red Dragon", size: "huge" }) !== 1.35) {
+  throw new Error("Adult dragon lootScale should be 1.35");
+}
+if (resolveLootScale(dragon, { name: "Ancient Red Dragon", size: "grg" }) !== 1.85) {
+  throw new Error("Ancient dragon lootScale should be 1.85");
 }
 
 // Wolf legacy generation still returns only definition-based items (no currency).
@@ -642,12 +694,103 @@ for (const entry of spiderLoot.items.filter((i) => i.kind === "equipment")) {
   if (!entry.baseItemData) throw new Error("Spider equipment entry missing baseItemData");
 }
 
+const sumPartQty = (loot) => loot.items
+  .filter((i) => String(i.definitionId || "").startsWith("dragon-"))
+  .reduce((n, i) => n + Number(i.quantity || 0), 0);
+
+async function sampleDragonParts(name, size, cr, isBoss, runs = 8) {
+  let total = 0;
+  for (let i = 0; i < runs; i += 1) {
+    const loot = await generateCreatureLoot({
+      context: {
+        name,
+        creatureType: "dragon",
+        creatureSubtype: "",
+        size,
+        challengeRating: cr,
+        isWolf: false,
+        isBoss,
+        isNamed: false
+      },
+      survivalTotal: 18,
+      naturalDie: 12,
+      isNatural20: false,
+      actor: null
+    });
+    if (loot.profileId !== "dragon") throw new Error(`${name} used wrong profile`);
+    total += sumPartQty(loot);
+  }
+  return total / runs;
+}
+
+const wyrmAvg = await sampleDragonParts("Red Dragon Wyrmling", "med", 4, false);
+const ancientAvg = await sampleDragonParts("Ancient Red Dragon", "grg", 24, true);
+if (!(ancientAvg > wyrmAvg * 1.5)) {
+  throw new Error(
+    `Ancient dragons should average far more parts than wyrmlings (ancient=${ancientAvg}, wyrmling=${wyrmAvg})`
+  );
+}
+
+const ancientLoot = await generateCreatureLoot({
+  context: {
+    name: "Ancient Red Dragon",
+    creatureType: "dragon",
+    creatureSubtype: "",
+    size: "grg",
+    challengeRating: 24,
+    isWolf: false,
+    isBoss: true,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: {
+    id: "dr1",
+    name: "Ancient Red Dragon",
+    items: {
+      contents: [
+        {
+          id: "w1",
+          name: "Flame Tongue",
+          type: "weapon",
+          img: "icons/svg/sword.svg",
+          system: {
+            quantity: 1,
+            type: { value: "martialM" },
+            price: { value: 5000, denomination: "gp" },
+            description: { value: "<p>A flame tongue.</p>" },
+            rarity: "rare"
+          },
+          flags: {},
+          toObject() {
+            return {
+              name: this.name,
+              type: this.type,
+              img: this.img,
+              system: structuredClone(this.system),
+              flags: {}
+            };
+          }
+        }
+      ]
+    }
+  }
+});
+if (ancientLoot.profileId !== "dragon") throw new Error("Ancient dragon used wrong profile");
+if (!ancientLoot.items.length) throw new Error("Ancient dragon generation produced no items");
+const hasDragonPart = ancientLoot.items.some((i) => String(i.definitionId || "").startsWith("dragon-"));
+if (!hasDragonPart) throw new Error("Dragon loot missing monster parts");
+const ancientCurrency = aggregateCurrencyFromItems(ancientLoot.items);
+const ancientCurrencySum = Object.values(ancientCurrency).reduce((a, b) => a + b, 0);
+if (ancientCurrencySum <= 0) throw new Error("Ancient dragon should usually include hoard currency");
+
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);
 console.log(`pack label: ${packDecl.label}`);
 console.log(`definitions: ${listLootDefinitions().length}`);
 console.log(
-  `wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}; orc items: ${orcLoot.items.length}; spider items: ${spiderLoot.items.length}`
+  `wolf items: ${wolfLoot.items.length}; goblin items: ${goblinLoot.items.length}; orc items: ${orcLoot.items.length}; spider items: ${spiderLoot.items.length}; wyrmling avg parts: ${wyrmAvg.toFixed(1)}; ancient avg parts: ${ancientAvg.toFixed(1)}`
 );
 console.log("Exact shipped LevelDB files:");
 for (const name of shipped) {

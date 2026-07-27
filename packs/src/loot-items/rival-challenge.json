@@ -1,0 +1,52 @@
+{
+  "_id": "LFRivalChallenge",
+  "name": "Rival Challenge",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/rival-challenge.svg",
+  "system": {
+    "description": {
+      "value": "<p>A strip of another dragon's scale, etched: \"Meet me above the glacier at the next blood moon — or cede the valley.\"</p>",
+      "chat": "A rival dragon's challenge."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "rival-challenge",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "story",
+        "dragon",
+        "readable"
+      ],
+      "stackingKey": "rival-challenge",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRivalChallenge"
+}

@@ -178,10 +178,16 @@ function looksNamed(name, creatureType) {
     "orc",
     "orc war chief",
     "orog",
+    "dragon turtle",
+    "faerie dragon",
+    "pseudodragon",
     "chest",
     "container"
   ]);
   if (stock.has(trimmed.toLowerCase())) return false;
+  // Stock dragon age forms: "Adult Red Dragon", "Young White Dragon", "Ancient Gold Dragon"
+  if (/^(wyrmling|young|adult|ancient)\s+\w+\s+dragon$/i.test(trimmed)) return false;
+  if (/^(wyrmling|young|adult|ancient)\s+dragon$/i.test(trimmed)) return false;
   return true;
 }
 

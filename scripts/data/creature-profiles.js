@@ -34,6 +34,8 @@ export { CREATURE_PROFILES, PROFILE_ORDER, resolveCreatureProfile } from "./prof
  * @property {string[]} [matchSubtypes]
  * @property {number} [maxCR]
  * @property {string} [nat20BonusDefinitionId]
- * @property {ProfileDrop[]} [drops]   Legacy single-pool profiles (wolf, spider, …)
- * @property {object} [pools]          Multi-pool profiles (goblin, …)
+ * @property {ProfileDrop[]} [drops]   Legacy single-pool profiles (wolf, …)
+ * @property {object} [pools]          Multi-pool profiles (goblin, orc, spider, dragon, …)
+ * @property {{ nameTokens?: Record<string, number>, bySize?: Record<string, number>, default?: number }} [lootScale]
+ *   Optional quantity multiplier (wyrmling vs ancient, size tiers, etc.).
  */

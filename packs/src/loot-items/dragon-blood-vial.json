@@ -1,0 +1,52 @@
+{
+  "_id": "LFDragonBlood000",
+  "name": "Dragon Blood Vial",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dragon-blood-vial.svg",
+  "system": {
+    "description": {
+      "value": "<p>A sealed vial of thick, shimmering dragon blood. Still warm to the touch. Alchemists and ritualists bid fiercely for it.</p>",
+      "chat": "A vial of dragon blood."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dragon-blood-vial",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "dragon",
+        "alchemy",
+        "blood"
+      ],
+      "stackingKey": "dragon-blood-vial",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDragonBlood000"
+}

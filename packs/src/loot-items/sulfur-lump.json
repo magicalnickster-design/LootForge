@@ -1,0 +1,52 @@
+{
+  "_id": "LFSulfurLump0000",
+  "name": "Sulfur Lump",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/sulfur-lump.svg",
+  "system": {
+    "description": {
+      "value": "<p>A crumbly yellow lump that reeks of rotten eggs. Useful in cheap explosives — or for clearing a room.</p>",
+      "chat": "A lump of sulfur."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "sulfur-lump",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "dragon",
+        "alchemy"
+      ],
+      "stackingKey": "sulfur-lump",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSulfurLump0000"
+}
