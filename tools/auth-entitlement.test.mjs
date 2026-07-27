@@ -50,6 +50,7 @@ test("auth client requests lootforge entitlement path", async () => {
       status: 200,
       text: async () => JSON.stringify({
         allowed: true,
+        entitled: true,
         subscriptionStatus: "active",
         plan: "tier2",
         expiresAt: "2099-01-01T00:00:00.000Z"
@@ -57,13 +58,49 @@ test("auth client requests lootforge entitlement path", async () => {
     };
   };
   try {
-    const { getEntitlement, getAuthBaseUrl } = await import("../scripts/auth/auth-client.js");
-    // getAuthBaseUrl is in constants; call getEntitlement directly
+    const { getEntitlement } = await import("../scripts/auth/auth-client.js");
     const result = await getEntitlement("token-1");
     assert.equal(result.ok, true);
     assert.match(calls[0].url, /\/api\/entitlements\/lootforge$/);
     assert.equal(calls[0].init.headers.Authorization, "Bearer token-1");
     assert.equal(result.payload.plan, "tier2");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("auth client falls back to /api/subscription when lootforge entitlement is missing", async () => {
+  const calls = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init = {}) => {
+    calls.push(String(url));
+    if (String(url).endsWith("/api/entitlements/lootforge")) {
+      return { ok: false, status: 404, text: async () => "Cannot GET" };
+    }
+    if (String(url).endsWith("/api/subscription")) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          status: "active",
+          plan: { slug: "adventurer", name: "Adventurer" },
+          currentPeriodEnd: "2099-01-01T00:00:00.000Z",
+          generationsRemaining: 0,
+          generationsTotal: 50
+        })
+      };
+    }
+    return { ok: false, status: 500, text: async () => "{}" };
+  };
+  try {
+    const { getEntitlement } = await import("../scripts/auth/auth-client.js");
+    const result = await getEntitlement("token-2");
+    assert.equal(result.ok, true);
+    assert.equal(result.payload.allowed, true);
+    assert.equal(result.payload.product, "lootforge");
+    assert.equal(result.payload.tier, 1);
+    assert.equal(result.payload.plan, "adventurer");
+    assert.ok(calls.some((u) => u.endsWith("/api/subscription")));
   } finally {
     globalThis.fetch = originalFetch;
   }

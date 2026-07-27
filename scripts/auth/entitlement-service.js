@@ -81,12 +81,14 @@ export function stateMessage(state = currentState) {
 }
 
 function tierRank(plan) {
+  if (typeof plan === "number" && Number.isFinite(plan)) return Math.max(0, Math.floor(plan));
   const key = String(plan ?? "").trim().toLowerCase();
   if (!key) return 0;
   if (Object.prototype.hasOwnProperty.call(TIER_RANK, key)) return TIER_RANK[key];
+  if (/^\d+$/.test(key)) return Math.max(0, Number(key));
   if (/tier\s*3|founder|owner/.test(key)) return 3;
-  if (/tier\s*2/.test(key)) return 2;
-  if (/tier\s*1|subscriber|paid|active/.test(key)) return 1;
+  if (/tier\s*2|dungeon/.test(key)) return 2;
+  if (/tier\s*1|subscriber|paid|active|adventurer/.test(key)) return 1;
   return 0;
 }
 
@@ -119,11 +121,13 @@ function normalizeEntitlement(normalized = {}, sourcePayload = {}) {
   const plan = String(
     normalized?.subscription?.plan
     ?? sourcePayload?.plan
+    ?? sourcePayload?.tierName
     ?? sourcePayload?.tier
     ?? "none"
   );
   const active = Boolean(normalized?.subscription?.active)
-    || String(sourcePayload?.subscriptionStatus ?? "").toLowerCase() === "active";
+    || String(sourcePayload?.subscriptionStatus ?? "").toLowerCase() === "active"
+    || sourcePayload?.entitled === true;
   const expiresAt = String(
     normalized?.entitlement?.expiresAt
     ?? sourcePayload?.expiresAt
@@ -131,8 +135,13 @@ function normalizeEntitlement(normalized = {}, sourcePayload = {}) {
     ?? normalized?.subscription?.currentPeriodEnd
     ?? ""
   );
-  const allowedFlag = normalized?.entitlement?.allowed === true || sourcePayload?.allowed === true;
-  const allowed = allowedFlag && meetsTierRequirement(plan, active || allowedFlag);
+  const allowedFlag = normalized?.entitlement?.allowed === true
+    || sourcePayload?.allowed === true
+    || sourcePayload?.entitled === true;
+  const allowed = allowedFlag && meetsTierRequirement(
+    sourcePayload?.tier ?? plan,
+    active || allowedFlag
+  );
   return {
     productId: PRODUCT_ID,
     linked: Boolean(normalized?.authenticated ?? SessionStore.getAccessToken()),

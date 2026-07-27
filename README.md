@@ -7,7 +7,7 @@ Built for **Gambits Forge**.
 
 | | |
 | --- | --- |
-| Version | 0.6.0 |
+| Version | 0.6.1 |
 | Foundry | 13–14 (verified 14) |
 | System | dnd5e 4.0+ (verified 5.3.3) |
 

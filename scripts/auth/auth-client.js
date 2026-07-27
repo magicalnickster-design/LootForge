@@ -146,10 +146,153 @@ export async function logout(refreshToken) {
 }
 
 export async function getEntitlement(accessToken) {
-  return jsonRequest(`/api/entitlements/${PRODUCT_ID}`, {
+  const direct = await jsonRequest(`/api/entitlements/${PRODUCT_ID}`, {
     method: "GET",
     accessToken
   });
+  if (direct.ok) return direct;
+
+  // Production account API historically returned 404 for lootforge while
+  // /api/subscription already encodes plan access. Keep SceneForgeAI's
+  // product endpoint preferred; fall back only for missing lootforge route.
+  if (Number(direct.status) === 404) {
+    const fromSubscription = await getEntitlementFromSubscription(accessToken);
+    if (fromSubscription.ok || Number(fromSubscription.status) !== 404) {
+      return fromSubscription;
+    }
+  }
+  return direct;
+}
+
+async function getEntitlementFromSubscription(accessToken) {
+  const subResult = await jsonRequest("/api/subscription", {
+    method: "GET",
+    accessToken
+  });
+  if (!subResult.ok) {
+    return {
+      ...subResult,
+      errorCode: subResult.errorCode || (subResult.status === 401 ? "SESSION_EXPIRED" : subResult.errorCode)
+    };
+  }
+
+  const subscription = subResult.payload ?? {};
+  const checkedAt = new Date();
+  const mapped = mapSubscriptionToLootforgeEntitlement(subscription, checkedAt);
+  return {
+    ok: mapped.allowed === true,
+    status: mapped.allowed === true ? 200 : 403,
+    payload: mapped,
+    message: mapped.allowed === true ? "" : String(mapped.reason || "entitlement denied"),
+    errorCode: mapped.allowed === true
+      ? ""
+      : String(mapped.reason || "ENTITLEMENT_DENIED").toUpperCase(),
+    endpoint: `${getAuthBaseUrl()}/api/subscription`
+  };
+}
+
+function mapSubscriptionToLootforgeEntitlement(subscription = {}, checkedAt = new Date()) {
+  const status = String(subscription?.status ?? subscription?.subscriptionStatus ?? "")
+    .trim()
+    .toLowerCase() || (subscription?.active === true ? "active" : "inactive");
+
+  const planKey = String(
+    subscription?.plan?.slug
+    ?? subscription?.plan?.id
+    ?? subscription?.planSlug
+    ?? subscription?.plan
+    ?? subscription?.tier
+    ?? ""
+  )
+    .trim()
+    .toLowerCase()
+    .replace(/^plan_/, "")
+    .replace(/\s+/g, "-");
+
+  const tierMap = {
+    adventurer: { tier: 1, tierName: "Adventurer", plan: "adventurer" },
+    "dungeon-master": { tier: 2, tierName: "Dungeon Master", plan: "dungeon-master" },
+    dungeonmaster: { tier: 2, tierName: "Dungeon Master", plan: "dungeon-master" },
+    founder: { tier: 3, tierName: "Founder", plan: "founder" },
+    tier1: { tier: 1, tierName: "Adventurer", plan: "adventurer" },
+    tier2: { tier: 2, tierName: "Dungeon Master", plan: "dungeon-master" },
+    tier3: { tier: 3, tierName: "Founder", plan: "founder" }
+  };
+
+  let tierInfo = tierMap[planKey];
+  if (!tierInfo) {
+    const name = String(subscription?.plan?.name ?? "").toLowerCase();
+    if (name.includes("founder")) tierInfo = tierMap.founder;
+    else if (name.includes("dungeon")) tierInfo = tierMap["dungeon-master"];
+    else if (name.includes("adventurer")) tierInfo = tierMap.adventurer;
+    else tierInfo = { tier: 0, tierName: "Free", plan: "free" };
+  }
+
+  const checkedIso = checkedAt.toISOString();
+  const maxMs = checkedAt.getTime() + 30 * 24 * 60 * 60 * 1000;
+  const periodEndMs = Date.parse(String(subscription?.currentPeriodEnd ?? subscription?.expiresAt ?? ""));
+  const expiresAt = new Date(
+    Number.isFinite(periodEndMs) ? Math.min(periodEndMs, maxMs) : maxMs
+  ).toISOString();
+
+  if (status === "suspended") {
+    return {
+      product: PRODUCT_ID,
+      allowed: false,
+      entitled: false,
+      reason: "account_suspended",
+      subscriptionStatus: "suspended",
+      checkedAt: checkedIso
+    };
+  }
+  if (status === "expired" || (Number.isFinite(periodEndMs) && periodEndMs <= checkedAt.getTime() && status !== "active")) {
+    return {
+      product: PRODUCT_ID,
+      allowed: false,
+      entitled: false,
+      reason: "subscription_expired",
+      subscriptionStatus: "expired",
+      checkedAt: checkedIso
+    };
+  }
+  if (status !== "active" && status !== "trialing") {
+    return {
+      product: PRODUCT_ID,
+      allowed: false,
+      entitled: false,
+      reason: "subscription_required",
+      subscriptionStatus: status || "inactive",
+      plan: tierInfo.plan,
+      tier: tierInfo.tier,
+      tierName: tierInfo.tierName,
+      checkedAt: checkedIso
+    };
+  }
+  if (tierInfo.tier < 1) {
+    return {
+      product: PRODUCT_ID,
+      allowed: false,
+      entitled: false,
+      reason: "tier_too_low",
+      subscriptionStatus: status,
+      plan: tierInfo.plan,
+      tier: tierInfo.tier,
+      tierName: tierInfo.tierName,
+      checkedAt: checkedIso
+    };
+  }
+
+  return {
+    product: PRODUCT_ID,
+    allowed: true,
+    entitled: true,
+    plan: tierInfo.plan,
+    tier: tierInfo.tier,
+    tierName: tierInfo.tierName,
+    subscriptionStatus: "active",
+    expiresAt,
+    checkedAt: checkedIso
+  };
 }
 
 export function stateFromError(result) {
