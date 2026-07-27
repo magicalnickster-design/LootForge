@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.14** |
+| Version | **0.5.15** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Aberration** — multi-pool profile for mind flayers, beholders, aboleths, and kin:
+  - Parts (ichor, tentacles, illithid/beholder/aboleth trophies, rare central eye lens / elder brain matter)
+  - Lair/colony currency and **sheet equipment** (thrall gear) when present
+  - Slime/chitin junk, psionic crystals, colony orders & stolen memory fragments
+  - **Name scaling:** Intellect Devourer/Mouther drop less; Beholder/Death Tyrant/Aboleth drop more (`lootScale`)
 - **Elemental** — multi-pool profile for fire/water/earth/air elementals and myrmidons:
   - Parts (elemental essence, ember cores / brine pearls / living stone / wind whorls, myrmidon plate shards)
   - Sparse coin; **sheet equipment** common on myrmidons

@@ -1,0 +1,52 @@
+{
+  "_id": "LFPsionicCryst00",
+  "name": "Psionic Crystal Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/psionic-crystal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A crystal chip that buzzes against your thoughts. Mind flayers use larger ones as foci.</p>",
+      "chat": "A psionic crystal chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 20,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "psionic-crystal",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "aberration",
+        "trinket",
+        "psionic"
+      ],
+      "stackingKey": "psionic-crystal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPsionicCryst00"
+}

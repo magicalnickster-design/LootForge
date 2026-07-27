@@ -1,0 +1,53 @@
+{
+  "_id": "LFMemoryFrag0000",
+  "name": "Stolen Memory Fragment",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/memory-fragment.svg",
+  "system": {
+    "description": {
+      "value": "<p>A page that writes itself with someone else's memories. Several entries end mid-scream.</p>",
+      "chat": "A stolen memory fragment."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "memory-fragment",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "aberration",
+        "aboleth",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "memory-fragment",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMemoryFrag0000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFChuulPincer000",
+  "name": "Chuul Pincer",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/chuul-pincer.svg",
+  "system": {
+    "description": {
+      "value": "<p>A heavy chitin pincer from a chuul. Still strong enough to crush a helm.</p>",
+      "chat": "A chuul pincer."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "chuul-pincer",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "aberration",
+        "chuul",
+        "trophy"
+      ],
+      "stackingKey": "chuul-pincer",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFChuulPincer000"
+}

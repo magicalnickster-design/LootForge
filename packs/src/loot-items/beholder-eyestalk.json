@@ -1,0 +1,53 @@
+{
+  "_id": "LFBeholderEye000",
+  "name": "Beholder Eyestalk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/beholder-eyestalk.svg",
+  "system": {
+    "description": {
+      "value": "<p>A severed eyestalk, lid still blinking. Alchemists extract the lens for rare reagents.</p>",
+      "chat": "A beholder eyestalk."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "beholder-eyestalk",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "aberration",
+        "beholder",
+        "trophy",
+        "alchemy"
+      ],
+      "stackingKey": "beholder-eyestalk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBeholderEye000"
+}

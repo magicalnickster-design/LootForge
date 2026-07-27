@@ -5,6 +5,7 @@
  * Do not put creature-specific branching in the loot generator.
  */
 
+import { aberrationProfile } from "./aberration.js";
 import { animatedArmorProfile } from "./animated-armor.js";
 import { bugbearProfile } from "./bugbear.js";
 import { containerProfile } from "./container.js";
@@ -42,6 +43,7 @@ export const PROFILE_ORDER = [
   "halfling",
   "human",
   "orc",
+  "aberration",
   "elemental",
   "giant",
   "monstrosity",
@@ -67,6 +69,7 @@ export const CREATURE_PROFILES = {
   halfling: halflingProfile,
   human: humanProfile,
   orc: orcProfile,
+  aberration: aberrationProfile,
   elemental: elementalProfile,
   giant: giantProfile,
   monstrosity: monstrosityProfile,

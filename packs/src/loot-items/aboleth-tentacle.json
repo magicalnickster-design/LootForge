@@ -1,0 +1,52 @@
+{
+  "_id": "LFAbolethTent000",
+  "name": "Aboleth Tentacle Tip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/aboleth-tentacle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A massive tentacle tip, ridged and slick. Memories cling to it like barnacles.</p>",
+      "chat": "An aboleth tentacle tip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 45,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "aboleth-tentacle",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "aberration",
+        "aboleth",
+        "trophy"
+      ],
+      "stackingKey": "aboleth-tentacle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAbolethTent000"
+}

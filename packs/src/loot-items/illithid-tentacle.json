@@ -1,0 +1,52 @@
+{
+  "_id": "LFIllithidTent00",
+  "name": "Illithid Tentacle",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/illithid-tentacle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A mind flayer face-tentacle, suckers still wet. Psions and taxidermists both want it.</p>",
+      "chat": "An illithid tentacle."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "illithid-tentacle",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "aberration",
+        "mind-flayer",
+        "trophy"
+      ],
+      "stackingKey": "illithid-tentacle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFIllithidTent00"
+}

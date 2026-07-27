@@ -1,0 +1,53 @@
+{
+  "_id": "LFCentralEyeLns0",
+  "name": "Central Eye Lens",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/central-eye-lens.svg",
+  "system": {
+    "description": {
+      "value": "<p>The milky lens of a beholder's central eye. Antimagic residue clings to it for days.</p>",
+      "chat": "A central eye lens."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 150,
+      "denomination": "gp"
+    },
+    "rarity": "very rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "central-eye-lens",
+      "category": "monster-part",
+      "rarity": "very rare",
+      "tags": [
+        "aberration",
+        "beholder",
+        "alchemy",
+        "rare"
+      ],
+      "stackingKey": "central-eye-lens",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCentralEyeLns0"
+}

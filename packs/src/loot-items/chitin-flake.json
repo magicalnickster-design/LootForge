@@ -1,0 +1,51 @@
+{
+  "_id": "LFChitinFlake000",
+  "name": "Chitin Flake",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/chitin-flake.svg",
+  "system": {
+    "description": {
+      "value": "<p>A flake of purple-green chitin. Not valuable — just proof something crawled here.</p>",
+      "chat": "A chitin flake."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "chitin-flake",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "aberration",
+        "junk"
+      ],
+      "stackingKey": "chitin-flake",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFChitinFlake000"
+}

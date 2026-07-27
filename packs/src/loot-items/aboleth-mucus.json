@@ -1,0 +1,52 @@
+{
+  "_id": "LFAbolethMucus00",
+  "name": "Aboleth Mucus",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/aboleth-mucus.svg",
+  "system": {
+    "description": {
+      "value": "<p>Thick mucus that transforms flesh on contact. Seal tightly. Wash never.</p>",
+      "chat": "A jar of aboleth mucus."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 35,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "aboleth-mucus",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "aberration",
+        "aboleth",
+        "alchemy"
+      ],
+      "stackingKey": "aboleth-mucus",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAbolethMucus00"
+}

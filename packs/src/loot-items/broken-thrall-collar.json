@@ -1,0 +1,52 @@
+{
+  "_id": "LFThrallCollar00",
+  "name": "Broken Thrall Collar",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/broken-thrall-collar.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bent collar from a thrall. The lock is fused shut from the inside.</p>",
+      "chat": "A broken thrall collar."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "broken-thrall-collar",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "aberration",
+        "junk",
+        "mind-flayer"
+      ],
+      "stackingKey": "broken-thrall-collar",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFThrallCollar00"
+}

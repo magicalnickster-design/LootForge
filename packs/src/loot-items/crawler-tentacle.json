@@ -1,0 +1,53 @@
+{
+  "_id": "LFCrawlerTent000",
+  "name": "Carrion Crawler Tentacle",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crawler-tentacle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A paralyzing tentacle, sticky with toxin. Alchemists distill the venom carefully.</p>",
+      "chat": "A carrion crawler tentacle."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crawler-tentacle",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "aberration",
+        "carrion-crawler",
+        "alchemy",
+        "poison"
+      ],
+      "stackingKey": "crawler-tentacle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrawlerTent000"
+}

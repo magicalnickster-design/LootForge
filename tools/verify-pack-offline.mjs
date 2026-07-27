@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.14") {
-  throw new Error(`Expected module version 0.5.14, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.15") {
+  throw new Error(`Expected module version 0.5.15, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -304,7 +304,28 @@ const expectedNames = new Set([
   "Spent Breeze Pouch",
   "Summoning Circle Scrap",
   "Elemental Binding Note",
-  "Planar Rift Map"
+  "Planar Rift Map",
+  "Aberration Ichor",
+  "Tentacle Scrap",
+  "Illithid Tentacle",
+  "Elder Brain Matter",
+  "Intellect Devourer Brain",
+  "Beholder Eyestalk",
+  "Central Eye Lens",
+  "Death Tyrant Tooth",
+  "Aboleth Mucus",
+  "Aboleth Tentacle Tip",
+  "Carrion Crawler Tentacle",
+  "Chuul Pincer",
+  "Gibbering Flesh",
+  "Psionic Crystal Chip",
+  "Aberrant Eye Amulet",
+  "Slime Residue",
+  "Chitin Flake",
+  "Broken Thrall Collar",
+  "Colony Orders",
+  "Underdark Chart",
+  "Stolen Memory Fragment"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -519,7 +540,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 250) {
+if (listLootDefinitions().length < 270) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -1155,7 +1176,7 @@ const impLoot = await generateCreatureLoot({
   survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
 });
 if (impLoot.profileId !== "fiend") throw new Error("Imp generation used wrong profile");
-if (!impLoot.items.some((i) => ["fiend-ichor","fiend-horn","brimstone-chunk","imp-wing"].includes(String(i.definitionId || "")))) {
+if (!impLoot.items.some((i) => /fiend|brimstone|imp-wing|hellhound|quasit|barbed|devil-chain|bone-spur|pit-fiend|balor/.test(String(i.definitionId || "")))) {
   throw new Error("Imp loot missing fiend parts");
 }
 
@@ -1467,6 +1488,70 @@ const elAvg = elSum / 40;
 const myrAvg = myrSum / 40;
 if (myrAvg <= elAvg * 1.15) {
   throw new Error(`Myrmidon should average more scaled parts than base elemental (myrmidon=${myrAvg}, elemental=${elAvg})`);
+}
+
+
+
+const mindFlayer = resolveCreatureProfile({ name: "Mind Flayer", creatureType: "aberration", creatureSubtype: "", size: "med" });
+const intellect = resolveCreatureProfile({ name: "Intellect Devourer", creatureType: "aberration", creatureSubtype: "", size: "tiny" });
+const beholder = resolveCreatureProfile({ name: "Beholder", creatureType: "aberration", creatureSubtype: "", size: "lg" });
+const deathTyrant = resolveCreatureProfile({ name: "Death Tyrant", creatureType: "undead", creatureSubtype: "", size: "lg" });
+const aboleth = resolveCreatureProfile({ name: "Aboleth", creatureType: "aberration", creatureSubtype: "", size: "lg" });
+const crawler = resolveCreatureProfile({ name: "Carrion Crawler", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
+const chuul = resolveCreatureProfile({ name: "Chuul", creatureType: "aberration", creatureSubtype: "", size: "lg" });
+const mouther = resolveCreatureProfile({ name: "Gibbering Mouther", creatureType: "aberration", creatureSubtype: "", size: "med" });
+if (mindFlayer?.id !== "aberration") throw new Error(`Expected aberration for Mind Flayer, got ${mindFlayer?.id}`);
+if (intellect?.id !== "aberration") throw new Error(`Expected aberration for Intellect Devourer, got ${intellect?.id}`);
+if (beholder?.id !== "aberration") throw new Error(`Expected aberration for Beholder, got ${beholder?.id}`);
+if (deathTyrant?.id !== "aberration") throw new Error(`Expected aberration for Death Tyrant, got ${deathTyrant?.id}`);
+if (aboleth?.id !== "aberration") throw new Error(`Expected aberration for Aboleth, got ${aboleth?.id}`);
+if (crawler?.id !== "aberration") throw new Error(`Expected aberration for Carrion Crawler, got ${crawler?.id}`);
+if (chuul?.id !== "aberration") throw new Error(`Expected aberration for Chuul, got ${chuul?.id}`);
+if (mouther?.id !== "aberration") throw new Error(`Expected aberration for Gibbering Mouther, got ${mouther?.id}`);
+
+if (resolveLootScale(mindFlayer, { name: "Intellect Devourer", size: "tiny" }) !== 0.55) throw new Error("Intellect Devourer lootScale should be 0.55");
+if (resolveLootScale(mindFlayer, { name: "Gibbering Mouther", size: "med" }) !== 0.6) throw new Error("Gibbering Mouther lootScale should be 0.6");
+if (resolveLootScale(mindFlayer, { name: "Carrion Crawler", size: "lg" }) !== 0.65) throw new Error("Carrion Crawler lootScale should be 0.65");
+if (resolveLootScale(mindFlayer, { name: "Chuul", size: "lg" }) !== 0.9) throw new Error("Chuul lootScale should be 0.9");
+if (resolveLootScale(mindFlayer, { name: "Mind Flayer", size: "med" }) !== 1.15) throw new Error("Mind Flayer lootScale should be 1.15");
+if (resolveLootScale(mindFlayer, { name: "Aboleth", size: "lg" }) !== 1.45) throw new Error("Aboleth lootScale should be 1.45");
+if (resolveLootScale(mindFlayer, { name: "Beholder", size: "lg" }) !== 1.55) throw new Error("Beholder lootScale should be 1.55");
+if (resolveLootScale(mindFlayer, { name: "Death Tyrant", size: "lg" }) !== 1.65) throw new Error("Death Tyrant lootScale should be 1.65");
+
+const mfLoot = await generateCreatureLoot({
+  context: { name: "Mind Flayer", creatureType: "aberration", creatureSubtype: "", size: "med", challengeRating: 7, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (mfLoot.profileId !== "aberration") throw new Error("Mind Flayer generation used wrong profile");
+if (!mfLoot.items.some((i) => /aberration|tentacle|illithid|elder-brain|intellect|beholder|central-eye|death-tyrant|aboleth|crawler|chuul|gibbering/.test(String(i.definitionId || "")))) {
+  throw new Error("Mind Flayer loot missing aberration parts");
+}
+
+const beholderLoot = await generateCreatureLoot({
+  context: { name: "Beholder", creatureType: "aberration", creatureSubtype: "", size: "lg", challengeRating: 13, isWolf: false, isBoss: true, isNamed: false },
+  survivalTotal: 22, naturalDie: 18, isNatural20: false, actor: null
+});
+if (beholderLoot.profileId !== "aberration") throw new Error("Beholder generation used wrong profile");
+
+let lowSum = 0;
+let highSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Intellect Devourer", creatureType: "aberration", creatureSubtype: "", size: "tiny", challengeRating: 2, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Beholder", creatureType: "aberration", creatureSubtype: "", size: "lg", challengeRating: 13, isWolf: false, isBoss: true, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /aberration|tentacle|illithid|elder-brain|intellect|beholder|central-eye|death-tyrant|aboleth|crawler|chuul|gibbering/;
+  lowSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  highSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const lowAvg = lowSum / 40;
+const highAvg = highSum / 40;
+if (highAvg <= lowAvg * 1.3) {
+  throw new Error(`Beholder should average more scaled parts than Intellect Devourer (beholder=${highAvg}, devourer=${lowAvg})`);
 }
 
 
