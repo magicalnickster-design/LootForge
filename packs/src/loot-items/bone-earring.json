@@ -1,0 +1,51 @@
+{
+  "_id": "LFBoneEarring000",
+  "name": "Bone Earring",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bone-earring.svg",
+  "system": {
+    "description": {
+      "value": "<p>A carved knucklebone earring on a rusty ring. Bugbear fashion — or a trophy from something smaller.</p>",
+      "chat": "A bone earring."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bone-earring",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "bugbear"
+      ],
+      "stackingKey": "bone-earring",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBoneEarring000"
+}

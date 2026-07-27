@@ -1,0 +1,53 @@
+{
+  "_id": "LFUnfinishedWill",
+  "name": "Unfinished Will",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/unfinished-will.svg",
+  "system": {
+    "description": {
+      "value": "<p>A water-stained will ending mid-sentence: \"To my daughter Elra, I leave the farm and —\" The ink trails into a bloody smear.</p>",
+      "chat": "An unfinished will."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "unfinished-will",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "undead",
+        "zombie",
+        "readable"
+      ],
+      "stackingKey": "unfinished-will",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFUnfinishedWill"
+}

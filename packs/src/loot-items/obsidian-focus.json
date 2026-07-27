@@ -1,0 +1,52 @@
+{
+  "_id": "LFObsidianFocus0",
+  "name": "Obsidian Focus",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/obsidian-focus.svg",
+  "system": {
+    "description": {
+      "value": "<p>A polished disc of obsidian used to channel necromancy. Still faintly hungry.</p>",
+      "chat": "An obsidian spell focus."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 100,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "obsidian-focus",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "trinket",
+        "lich",
+        "arcane"
+      ],
+      "stackingKey": "obsidian-focus",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFObsidianFocus0"
+}

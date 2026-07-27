@@ -1,0 +1,52 @@
+{
+  "_id": "LFRustedMailLnk0",
+  "name": "Rusted Mail Link",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/rusted-mail-link.svg",
+  "system": {
+    "description": {
+      "value": "<p>A single rusted ring from ancient mail. The skeleton that wore it marched long after the army died.</p>",
+      "chat": "A rusted mail link."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "rusted-mail-link",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "undead",
+        "skeleton"
+      ],
+      "stackingKey": "rusted-mail-link",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRustedMailLnk0"
+}

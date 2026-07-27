@@ -1,0 +1,52 @@
+{
+  "_id": "LFSkeletonFingr0",
+  "name": "Skeleton Finger",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/skeleton-finger.svg",
+  "system": {
+    "description": {
+      "value": "<p>Three jointed finger bones still wired with dried sinew. Points accusingly when set on a table.</p>",
+      "chat": "A skeleton finger."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "skeleton-finger",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "undead",
+        "skeleton",
+        "bone"
+      ],
+      "stackingKey": "skeleton-finger",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSkeletonFingr0"
+}

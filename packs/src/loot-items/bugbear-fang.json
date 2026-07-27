@@ -1,0 +1,52 @@
+{
+  "_id": "LFBugbearFang000",
+  "name": "Bugbear Fang",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bugbear-fang.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thick yellow fang from a bugbear's jaw. Heavy enough to use as a crude awl.</p>",
+      "chat": "A bugbear fang."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bugbear-fang",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "bugbear",
+        "fang"
+      ],
+      "stackingKey": "bugbear-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBugbearFang000"
+}

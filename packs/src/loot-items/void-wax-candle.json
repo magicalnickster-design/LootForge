@@ -1,0 +1,51 @@
+{
+  "_id": "LFVoidWaxCandl00",
+  "name": "Void-Wax Candle",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/void-wax-candle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A black candle that burns without heat and casts shadows the wrong way. Ritual remnant.</p>",
+      "chat": "A void-wax candle."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "void-wax-candle",
+      "category": "junk",
+      "rarity": "uncommon",
+      "tags": [
+        "junk",
+        "lich"
+      ],
+      "stackingKey": "void-wax-candle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFVoidWaxCandl00"
+}

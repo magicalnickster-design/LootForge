@@ -1,0 +1,52 @@
+{
+  "_id": "LFMummyHeart0000",
+  "name": "Mummy Heart",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/mummy-heart.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shriveled heart wrapped in gold thread. The priests meant to remove it — this one stayed.</p>",
+      "chat": "A mummy's heart."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 40,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "mummy-heart",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "undead",
+        "mummy",
+        "rare"
+      ],
+      "stackingKey": "mummy-heart",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMummyHeart0000"
+}

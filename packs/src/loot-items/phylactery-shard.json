@@ -1,0 +1,53 @@
+{
+  "_id": "LFPhylactShard00",
+  "name": "Phylactery Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/phylactery-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fragment of a lich's phylactery — cold metal etched with binding runes. Extremely dangerous and extremely valuable.</p>",
+      "chat": "A phylactery shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 500,
+      "denomination": "gp"
+    },
+    "rarity": "very rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "phylactery-shard",
+      "category": "monster-part",
+      "rarity": "veryRare",
+      "tags": [
+        "undead",
+        "lich",
+        "rare",
+        "phylactery"
+      ],
+      "stackingKey": "phylactery-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPhylactShard00"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFLichDust000000",
+  "name": "Lich Dust",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/lich-dust.svg",
+  "system": {
+    "description": {
+      "value": "<p>Silvery-grey dust that falls from a lich's bones. It drinks light. Worth a fortune to the right buyer.</p>",
+      "chat": "A vial of lich dust."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "lich-dust",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "undead",
+        "lich",
+        "alchemy"
+      ],
+      "stackingKey": "lich-dust",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLichDust000000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFZombieHand0000",
+  "name": "Zombie Hand",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/zombie-hand.svg",
+  "system": {
+    "description": {
+      "value": "<p>A severed zombie hand, fingers still twitching on occasion. Necromancers collect them; sane folk don't.</p>",
+      "chat": "A twitching zombie hand."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "zombie-hand",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "undead",
+        "zombie",
+        "trophy"
+      ],
+      "stackingKey": "zombie-hand",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFZombieHand0000"
+}

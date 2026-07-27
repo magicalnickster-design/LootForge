@@ -1,0 +1,52 @@
+{
+  "_id": "LFBrokenHolySym0",
+  "name": "Broken Holy Symbol",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/broken-holy-symbol.svg",
+  "system": {
+    "description": {
+      "value": "<p>A snapped silver holy symbol, blackened as if burned from within. Faith failed here — or was hunted.</p>",
+      "chat": "A broken holy symbol."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "broken-holy-symbol",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "undead",
+        "religion"
+      ],
+      "stackingKey": "broken-holy-symbol",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBrokenHolySym0"
+}

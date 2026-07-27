@@ -1,0 +1,52 @@
+{
+  "_id": "LFPolishKnuckle0",
+  "name": "Polished Knuckle",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/polished-knuckle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A knucklebone worn smooth as a worry stone. Someone — or something — handled it for years.</p>",
+      "chat": "A polished knucklebone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "polished-knuckle",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "undead",
+        "skeleton"
+      ],
+      "stackingKey": "polished-knuckle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPolishKnuckle0"
+}

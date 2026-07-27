@@ -1,0 +1,52 @@
+{
+  "_id": "LFBurialShroud00",
+  "name": "Burial Shroud Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/burial-shroud-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn strip of burial linen, stiff with age and something worse.</p>",
+      "chat": "A scrap of burial shroud."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "burial-shroud-scrap",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "undead",
+        "zombie"
+      ],
+      "stackingKey": "burial-shroud-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBurialShroud00"
+}

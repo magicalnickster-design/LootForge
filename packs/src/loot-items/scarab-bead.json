@@ -1,0 +1,51 @@
+{
+  "_id": "LFScarabBead0000",
+  "name": "Scarab Bead",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/scarab-bead.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tiny turquoise scarab bead from mummy wrappings. Luck charm — or a curse with nice enamel.</p>",
+      "chat": "A scarab bead."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "scarab-bead",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "mummy"
+      ],
+      "stackingKey": "scarab-bead",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFScarabBead0000"
+}

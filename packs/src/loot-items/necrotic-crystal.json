@@ -1,0 +1,52 @@
+{
+  "_id": "LFNecroCrystal00",
+  "name": "Necrotic Crystal",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/necrotic-crystal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A sharp black crystal grown in necrotic energy. It pulses like a slow heartbeat.</p>",
+      "chat": "A necrotic crystal."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 75,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "necrotic-crystal",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "undead",
+        "lich",
+        "crystal"
+      ],
+      "stackingKey": "necrotic-crystal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFNecroCrystal00"
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "LFRottenFlesh000",
+  "name": "Rotten Flesh",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/rotten-flesh.svg",
+  "system": {
+    "description": {
+      "value": "<p>A slab of putrid zombie flesh. Alchemists sometimes want it. Everyone else should burn it.</p>",
+      "chat": "A slab of rotten flesh."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "rotten-flesh",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "undead",
+        "zombie"
+      ],
+      "stackingKey": "rotten-flesh",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRottenFlesh000"
+}

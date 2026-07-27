@@ -1,0 +1,53 @@
+{
+  "_id": "LFLichdomFormul0",
+  "name": "Lichdom Formula",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/lichdom-formula.svg",
+  "system": {
+    "description": {
+      "value": "<p>A sealed folio titled only \"Ascension.\" Opening it feels like being watched. Completing it would be a campaign — or a catastrophe.</p>",
+      "chat": "A formula for lichdom."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1000,
+      "denomination": "gp"
+    },
+    "rarity": "very rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "lichdom-formula",
+      "category": "story",
+      "rarity": "veryRare",
+      "tags": [
+        "story",
+        "lich",
+        "readable",
+        "rare"
+      ],
+      "stackingKey": "lichdom-formula",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLichdomFormul0"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFSoulGemChip000",
+  "name": "Soul Gem Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/soul-gem-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chip from a soul gem. Something moves behind the facets when you aren't looking directly.</p>",
+      "chat": "A soul gem chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 150,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "soul-gem-chip",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "trinket",
+        "lich",
+        "gem"
+      ],
+      "stackingKey": "soul-gem-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSoulGemChip000"
+}

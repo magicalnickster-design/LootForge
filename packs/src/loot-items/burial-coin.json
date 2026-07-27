@@ -1,0 +1,51 @@
+{
+  "_id": "LFBurialCoin0000",
+  "name": "Burial Coin",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/burial-coin.svg",
+  "system": {
+    "description": {
+      "value": "<p>A copper piece placed on a corpse's tongue. The dead owed Charon; this one never paid.</p>",
+      "chat": "A burial coin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "burial-coin",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "undead"
+      ],
+      "stackingKey": "burial-coin",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBurialCoin0000"
+}

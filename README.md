@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.7** |
+| Version | **0.5.8** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Orc**, **Dragon**, **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -46,6 +46,15 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Pocket currency (a bit richer than goblins; CR-scaled)
   - Equipment from the NPC’s **actual inventory** (greataxe, javelins, hide armor, etc.) with quality
   - Orc-themed junk / trinkets / war-order story scraps
+- **Bugbear** — multi-pool goblinoid profile:
+  - Parts (ear, fang, hide scrap, rare heart), coin, sheet gear, raid orders / tally
+- **Zombie / Skeleton / Mummy** — undead multi-pool profiles with type-specific parts, burial junk, and sheet gear when present
+- **Lich** — high-tier undead profile:
+  - Rare parts (lich dust, necrotic crystal, soul ash, phylactery shard)
+  - Much richer gp/pp hoard currency
+  - Better equipment odds & quality from the sheet
+  - High-value foci / soul-gem chips / phylactery notes / lichdom formula
+  - Demilich scales down; archlich scales up
 - **Dragon** — multi-pool profile (excludes dragonborn / half-dragon):
   - Monster parts (scale, fang, claw, blood, hide, horn, rare heart)
   - Hoard currency (gp/pp heavy; CR-scaled)

@@ -1,0 +1,52 @@
+{
+  "_id": "LFBugbearOrders0",
+  "name": "Bugbear Orders",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bugbear-orders.svg",
+  "system": {
+    "description": {
+      "value": "<p>Crude Common: \"Hit the farmstead at dusk. Take the strong. Break the rest. Meet at the crooked oak.\"</p>",
+      "chat": "Bugbear war orders."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bugbear-orders",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "bugbear",
+        "readable"
+      ],
+      "stackingKey": "bugbear-orders",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBugbearOrders0"
+}

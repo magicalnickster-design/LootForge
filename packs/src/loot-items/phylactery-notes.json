@@ -1,0 +1,52 @@
+{
+  "_id": "LFPhylactNotes00",
+  "name": "Phylactery Notes",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/phylactery-notes.svg",
+  "system": {
+    "description": {
+      "value": "<p>Ciphered notes on phylactery construction. One margin: \"Hide it where even I would not look. The mirror lake. Third stone.\"</p>",
+      "chat": "Notes on a phylactery."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "phylactery-notes",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "story",
+        "lich",
+        "readable"
+      ],
+      "stackingKey": "phylactery-notes",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPhylactNotes00"
+}

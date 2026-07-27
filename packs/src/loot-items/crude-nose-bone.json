@@ -1,0 +1,51 @@
+{
+  "_id": "LFCrudeNoseBone0",
+  "name": "Crude Nose Bone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crude-nose-bone.svg",
+  "system": {
+    "description": {
+      "value": "<p>A sharpened bone piercing still crusted with dried blood. Status mark among some goblinoid warbands.</p>",
+      "chat": "A crude nose bone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crude-nose-bone",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "bugbear"
+      ],
+      "stackingKey": "crude-nose-bone",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrudeNoseBone0"
+}

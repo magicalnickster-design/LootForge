@@ -1,0 +1,51 @@
+{
+  "_id": "LFMummyBandage00",
+  "name": "Mummy Bandage",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/mummy-bandage.svg",
+  "system": {
+    "description": {
+      "value": "<p>Resin-stiff linen unwound from a mummy. Smells of myrrh, dust, and old curses.</p>",
+      "chat": "A mummy bandage."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "mummy-bandage",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "undead",
+        "mummy"
+      ],
+      "stackingKey": "mummy-bandage",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMummyBandage00"
+}

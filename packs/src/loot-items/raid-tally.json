@@ -1,0 +1,52 @@
+{
+  "_id": "LFRaidTally00000",
+  "name": "Raid Tally",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/raid-tally.svg",
+  "system": {
+    "description": {
+      "value": "<p>Notches on a stick: twelve farms, three caravans, one \"loud shiny man.\" Someone is keeping score.</p>",
+      "chat": "A raid tally stick."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "raid-tally",
+      "category": "story",
+      "rarity": "common",
+      "tags": [
+        "story",
+        "bugbear",
+        "readable"
+      ],
+      "stackingKey": "raid-tally",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRaidTally00000"
+}

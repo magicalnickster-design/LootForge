@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.7") {
-  throw new Error(`Expected module version 0.5.7, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.8") {
+  throw new Error(`Expected module version 0.5.8, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -117,7 +117,50 @@ const expectedNames = new Set([
   "Hoard Ledger",
   "Territorial Claim",
   "Rival Challenge",
-  "Scorched Map"
+  "Scorched Map",
+  "Bugbear Ear",
+  "Bugbear Fang",
+  "Bugbear Hide Scrap",
+  "Bugbear Heart",
+  "Mangy Fur Tuft",
+  "Greasy Strap",
+  "Bone Earring",
+  "Crude Nose Bone",
+  "Bugbear Orders",
+  "Raid Tally",
+  "Ectoplasm Vial",
+  "Grave Dirt",
+  "Burial Coin",
+  "Broken Holy Symbol",
+  "Rotten Flesh",
+  "Zombie Tooth",
+  "Zombie Hand",
+  "Burial Shroud Scrap",
+  "Coffin Nail",
+  "Unfinished Will",
+  "Bone Shard",
+  "Yellowed Rib",
+  "Skeleton Finger",
+  "Rusted Mail Link",
+  "Polished Knuckle",
+  "Ancient Epitaph",
+  "Mummy Bandage",
+  "Withered Flesh",
+  "Canopic Dust",
+  "Mummy Heart",
+  "Scarab Bead",
+  "Hieroglyph Scrap",
+  "Curse Tablet",
+  "Lich Dust",
+  "Necrotic Crystal",
+  "Soul Ash",
+  "Phylactery Shard",
+  "Void-Wax Candle",
+  "Obsidian Focus",
+  "Soul Gem Chip",
+  "Phylactery Notes",
+  "Spell Research Page",
+  "Lichdom Formula",
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -326,7 +369,10 @@ if (!getLootDefinition("spider-chitin") || !getLootDefinition("spinneret") || !g
 if (!getLootDefinition("dragon-scale") || !getLootDefinition("dragon-heart") || !getLootDefinition("hoard-ledger")) {
   throw new Error("Missing dragon loot definitions");
 }
-if (listLootDefinitions().length < 70) {
+if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !getLootDefinition("phylactery-shard") || !getLootDefinition("lichdom-formula")) {
+  throw new Error("Missing bugbear/undead loot definitions");
+}
+if (listLootDefinitions().length < 110) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -784,6 +830,86 @@ if (!hasDragonPart) throw new Error("Dragon loot missing monster parts");
 const ancientCurrency = aggregateCurrencyFromItems(ancientLoot.items);
 const ancientCurrencySum = Object.values(ancientCurrency).reduce((a, b) => a + b, 0);
 if (ancientCurrencySum <= 0) throw new Error("Ancient dragon should usually include hoard currency");
+
+
+const bugbear = resolveCreatureProfile({ name: "Bugbear", creatureType: "humanoid", creatureSubtype: "goblinoid" });
+const zombie = resolveCreatureProfile({ name: "Zombie", creatureType: "undead", creatureSubtype: "" });
+const skeleton = resolveCreatureProfile({ name: "Skeleton", creatureType: "undead", creatureSubtype: "" });
+const mummy = resolveCreatureProfile({ name: "Mummy", creatureType: "undead", creatureSubtype: "" });
+const mummyLord = resolveCreatureProfile({ name: "Mummy Lord", creatureType: "undead", creatureSubtype: "" });
+const lich = resolveCreatureProfile({ name: "Lich", creatureType: "undead", creatureSubtype: "" });
+const demilich = resolveCreatureProfile({ name: "Demilich", creatureType: "undead", creatureSubtype: "" });
+if (bugbear?.id !== "bugbear") throw new Error(`Expected bugbear profile, got ${bugbear?.id}`);
+if (zombie?.id !== "zombie") throw new Error(`Expected zombie profile, got ${zombie?.id}`);
+if (skeleton?.id !== "skeleton") throw new Error(`Expected skeleton profile, got ${skeleton?.id}`);
+if (mummy?.id !== "mummy") throw new Error(`Expected mummy profile, got ${mummy?.id}`);
+if (mummyLord?.id !== "mummy") throw new Error(`Expected mummy profile for Mummy Lord, got ${mummyLord?.id}`);
+if (lich?.id !== "lich") throw new Error(`Expected lich profile, got ${lich?.id}`);
+if (demilich?.id !== "lich") throw new Error(`Expected lich profile for Demilich, got ${demilich?.id}`);
+if (resolveLootScale(lich, { name: "Demilich", size: "tiny" }) !== 0.65) {
+  throw new Error("Demilich lootScale should be 0.65");
+}
+if (resolveLootScale(lich, { name: "Archlich", size: "med" }) !== 1.35) {
+  throw new Error("Archlich lootScale should be 1.35");
+}
+
+const bugbearLoot = await generateCreatureLoot({
+  context: { name: "Bugbear", creatureType: "humanoid", creatureSubtype: "goblinoid", size: "med", challengeRating: 1, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (bugbearLoot.profileId !== "bugbear") throw new Error("Bugbear generation used wrong profile");
+if (!bugbearLoot.items.some((i) => String(i.definitionId || "").startsWith("bugbear-"))) {
+  throw new Error("Bugbear loot missing bugbear parts");
+}
+
+const zombieLoot = await generateCreatureLoot({
+  context: { name: "Zombie", creatureType: "undead", creatureSubtype: "", size: "med", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
+});
+if (zombieLoot.profileId !== "zombie") throw new Error("Zombie generation used wrong profile");
+if (!zombieLoot.items.some((i) => ["rotten-flesh","zombie-tooth","zombie-hand","grave-dirt"].includes(String(i.definitionId || "")))) {
+  throw new Error("Zombie loot missing parts");
+}
+
+const skeletonLoot = await generateCreatureLoot({
+  context: { name: "Skeleton", creatureType: "undead", creatureSubtype: "", size: "med", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
+});
+if (skeletonLoot.profileId !== "skeleton") throw new Error("Skeleton generation used wrong profile");
+
+const mummyLoot = await generateCreatureLoot({
+  context: { name: "Mummy", creatureType: "undead", creatureSubtype: "", size: "med", challengeRating: 3, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (mummyLoot.profileId !== "mummy") throw new Error("Mummy generation used wrong profile");
+
+const lichLoot = await generateCreatureLoot({
+  context: { name: "Lich", creatureType: "undead", creatureSubtype: "", size: "med", challengeRating: 21, isWolf: false, isBoss: true, isNamed: false },
+  survivalTotal: 20, naturalDie: 15, isNatural20: false,
+  actor: {
+    id: "lich1", name: "Lich",
+    items: { contents: [{
+      id: "st1", name: "Staff of Power", type: "weapon", img: "icons/svg/sword.svg",
+      system: { quantity: 1, type: { value: "simpleM" }, price: { value: 10000, denomination: "gp" }, description: { value: "<p>Staff.</p>" }, rarity: "very rare" },
+      flags: {},
+      toObject() { return { name: this.name, type: this.type, img: this.img, system: structuredClone(this.system), flags: {} }; }
+    }] }
+  }
+});
+if (lichLoot.profileId !== "lich") throw new Error("Lich generation used wrong profile");
+if (!lichLoot.items.some((i) => ["lich-dust","necrotic-crystal","soul-ash","phylactery-shard","ectoplasm-vial"].includes(String(i.definitionId || "")))) {
+  throw new Error("Lich loot missing high-tier parts");
+}
+const lichCurrency = aggregateCurrencyFromItems(lichLoot.items);
+const lichGp = Number(lichCurrency.gp || 0) + Number(lichCurrency.pp || 0) * 10;
+if (lichGp < 20) throw new Error(`Lich should drop serious coin, got gp-equivalent ${lichGp}`);
+
+const zombieCurrency = aggregateCurrencyFromItems(zombieLoot.items);
+const zombieGp = Number(zombieCurrency.gp || 0) + Number(zombieCurrency.pp || 0) * 10 + Number(zombieCurrency.sp || 0) / 10;
+if (lichGp <= zombieGp) {
+  throw new Error(`Lich coin should exceed zombie coin (lich=${lichGp}, zombie=${zombieGp})`);
+}
+
 
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);

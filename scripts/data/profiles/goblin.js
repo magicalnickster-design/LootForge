@@ -12,7 +12,7 @@ export const goblinProfile = {
   matchWholeWords: true,
   matchTypes: ["humanoid"],
   matchSubtypes: ["goblin", "goblinoid"],
-  excludeNames: ["hobgoblin"],
+  excludeNames: ["hobgoblin", "bugbear"],
   pools: {
     monsterParts: {
       type: "definitions",

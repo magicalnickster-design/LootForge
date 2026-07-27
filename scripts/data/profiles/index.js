@@ -6,18 +6,36 @@
  */
 
 import { animatedArmorProfile } from "./animated-armor.js";
+import { bugbearProfile } from "./bugbear.js";
 import { containerProfile } from "./container.js";
 import { dragonProfile } from "./dragon.js";
 import { goblinProfile } from "./goblin.js";
+import { lichProfile } from "./lich.js";
+import { mummyProfile } from "./mummy.js";
 import { orcProfile } from "./orc.js";
+import { skeletonProfile } from "./skeleton.js";
 import { spiderProfile } from "./spider.js";
 import { wolfProfile } from "./wolf.js";
+import { zombieProfile } from "./zombie.js";
 
 /**
- * Specific profiles first (spider before wolf, etc.).
+ * Specific profiles first (lich before generic undead names, spider before wolf, etc.).
  * Registry key may differ from profile.id (animatedArmor → animated-armor).
  */
-export const PROFILE_ORDER = ["container", "spider", "animatedArmor", "goblin", "orc", "dragon", "wolf"];
+export const PROFILE_ORDER = [
+  "container",
+  "spider",
+  "animatedArmor",
+  "bugbear",
+  "goblin",
+  "orc",
+  "dragon",
+  "lich",
+  "mummy",
+  "skeleton",
+  "zombie",
+  "wolf"
+];
 
 /** @type {Record<string, import("../creature-profiles.js").CreatureProfile>} */
 export const CREATURE_PROFILES = {
@@ -25,8 +43,13 @@ export const CREATURE_PROFILES = {
   spider: spiderProfile,
   animatedArmor: animatedArmorProfile,
   goblin: goblinProfile,
+  bugbear: bugbearProfile,
   orc: orcProfile,
   dragon: dragonProfile,
+  lich: lichProfile,
+  mummy: mummyProfile,
+  skeleton: skeletonProfile,
+  zombie: zombieProfile,
   wolf: wolfProfile
 };
 

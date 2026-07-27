@@ -1,0 +1,52 @@
+{
+  "_id": "LFBoneShard00000",
+  "name": "Bone Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bone-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A sharp fragment of animated bone. Still faintly cold to the touch.</p>",
+      "chat": "A bone shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bone-shard",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "undead",
+        "skeleton",
+        "bone"
+      ],
+      "stackingKey": "bone-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBoneShard00000"
+}

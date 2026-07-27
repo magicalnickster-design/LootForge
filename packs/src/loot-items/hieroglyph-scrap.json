@@ -1,0 +1,52 @@
+{
+  "_id": "LFHieroglyph0000",
+  "name": "Hieroglyph Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hieroglyph-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>Papyrus fragment: \"The name that must not wake lies beneath the third seal.\" Half a cartouche is burned away.</p>",
+      "chat": "A hieroglyph scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hieroglyph-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "mummy",
+        "readable"
+      ],
+      "stackingKey": "hieroglyph-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHieroglyph0000"
+}

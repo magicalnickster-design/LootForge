@@ -1,0 +1,53 @@
+{
+  "_id": "LFAncientEpitap0",
+  "name": "Ancient Epitaph",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/ancient-epitaph.svg",
+  "system": {
+    "description": {
+      "value": "<p>A stone chip carved: \"Here lies Captain Vorn — he rises when the horn calls.\" The horn is missing.</p>",
+      "chat": "An ancient epitaph chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "ancient-epitaph",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "undead",
+        "skeleton",
+        "readable"
+      ],
+      "stackingKey": "ancient-epitaph",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAncientEpitap0"
+}

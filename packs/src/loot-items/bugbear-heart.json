@@ -1,0 +1,52 @@
+{
+  "_id": "LFBugbearHeart00",
+  "name": "Bugbear Heart",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bugbear-heart.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dense, oversized heart cut from a powerful bugbear. Rarely intact after a brutal fight.</p>",
+      "chat": "A bugbear heart."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bugbear-heart",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "humanoid",
+        "bugbear",
+        "rare"
+      ],
+      "stackingKey": "bugbear-heart",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBugbearHeart00"
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "LFCoffinNail0000",
+  "name": "Coffin Nail",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/coffin-nail.svg",
+  "system": {
+    "description": {
+      "value": "<p>A long iron nail pulled from a coffin lid. Folklore says they ward off the restless — when unused.</p>",
+      "chat": "A coffin nail."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "coffin-nail",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "undead"
+      ],
+      "stackingKey": "coffin-nail",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCoffinNail0000"
+}

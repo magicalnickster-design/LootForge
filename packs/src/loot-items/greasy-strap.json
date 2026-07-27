@@ -1,0 +1,51 @@
+{
+  "_id": "LFGreasyStrap000",
+  "name": "Greasy Strap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/greasy-strap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A leather strap slick with oil and sweat. Once held a morningstar; now it just stains your pack.</p>",
+      "chat": "A greasy leather strap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "greasy-strap",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "bugbear"
+      ],
+      "stackingKey": "greasy-strap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGreasyStrap000"
+}

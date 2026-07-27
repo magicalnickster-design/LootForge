@@ -1,0 +1,53 @@
+{
+  "_id": "LFBugbearEar0000",
+  "name": "Bugbear Ear",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bugbear-ear.svg",
+  "system": {
+    "description": {
+      "value": "<p>A furred, pointed ear sliced from a bugbear. Border scouts still take them as proof of a kill.</p>",
+      "chat": "A bugbear ear."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bugbear-ear",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "bugbear",
+        "goblinoid",
+        "trophy"
+      ],
+      "stackingKey": "bugbear-ear",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBugbearEar0000"
+}
