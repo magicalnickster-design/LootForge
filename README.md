@@ -6,7 +6,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.23** |
+| Version | **0.5.24** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
 | Scope | **Wolf**, **Beasts** (Boar–Shark), **Spider**, **Animated Armor**, **Goblin**, **Hobgoblin**, **Bugbear**, **Stock Humanoids** (Bandit–Berserker), **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Bosses** (Ancient Red Dragon, Kraken, Tarrasque, Demon Lord, Archmage, Lich King), **Chest / Container** |
@@ -83,6 +83,7 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 - **Zombie / Skeleton / Mummy** — undead multi-pool profiles with type-specific parts, burial junk, and sheet gear when present
 - **Generic Undead** — fallback for wights, specters, ghosts, vampires, and other undead without a dedicated profile (also used when type is `undead`)
 - **Generic Humanoid** — type fallback for humanoids that are not a known race, goblinoid, stock NPC role, or boss
+- **Unknown** — last resort when name and type cannot be identified: pocket change plus maps / notes / posters (no monster parts)
 - **Lich** — high-tier undead profile:
   - Rare parts (lich dust, necrotic crystal, soul ash, phylactery shard)
   - Much richer gp/pp hoard currency
@@ -145,6 +146,7 @@ Creature profiles live under `scripts/data/profiles/`. Register new creatures in
 - Multi-pool profiles use `pools` (`monsterParts`, `currency`, `equipment`, `junk`, `trinkets`, `story`, …).
 - Optional `lootScale` on a profile multiplies quantities by name tokens (e.g. wyrmling/young/adult/ancient) or size.
 - **Type fallback:** if no name/subtype profile matches, loot uses the creature’s type (Fey, Humanoid, Beast, Undead, etc.) via `TYPE_FALLBACKS` — dedicated profiles (Wolf, Goblin, Archmage, …) still win first.
+- **Unknown fallback:** if type is missing or unrecognized, loot defaults to pocket change plus small story scraps (maps, notes, posters) via the `unknown` profile.
 - Generation code stays generic — do not hardcode creature names in the generator.
 
 ## Player access

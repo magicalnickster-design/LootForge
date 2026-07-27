@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.23") {
-  throw new Error(`Expected module version 0.5.23, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.24") {
+  throw new Error(`Expected module version 0.5.24, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -2405,7 +2405,11 @@ if (wight?.id !== "generic-undead") throw new Error(`Expected generic-undead for
 if (specter?.id !== "generic-undead") throw new Error(`Expected generic-undead for Specter, got ${specter?.id}`);
 if (mysteryHumanoid?.id !== "generic-humanoid") throw new Error(`Expected generic-humanoid for Mysterious Stranger, got ${mysteryHumanoid?.id}`);
 if (swarmInsects?.id !== "beast") throw new Error(`Expected beast swarm fallback, got ${swarmInsects?.id}`);
-if (noType != null) throw new Error(`Expected null for creature with no type and unknown name, got ${noType?.id}`);
+if (noType?.id !== "unknown") throw new Error(`Expected unknown fallback for creature with no type, got ${noType?.id}`);
+const typeUnknown = resolveCreatureProfile({ name: "Mystery Critter", creatureType: "unknown", creatureSubtype: "", size: "med" });
+const typeBogus = resolveCreatureProfile({ name: "Mystery Critter", creatureType: "totally-made-up", creatureSubtype: "", size: "med" });
+if (typeUnknown?.id !== "unknown") throw new Error(`Expected unknown for type "unknown", got ${typeUnknown?.id}`);
+if (typeBogus?.id !== "unknown") throw new Error(`Expected unknown for unrecognized type, got ${typeBogus?.id}`);
 if (wolfStillType?.id !== "wolf") throw new Error(`Type fallback must not steal Wolf, got ${wolfStillType?.id}`);
 if (archStillType?.id !== "archmage") throw new Error(`Type fallback must not steal Archmage, got ${archStillType?.id}`);
 if (lichKingStill?.id !== "lich-king") throw new Error(`Type fallback must not steal Lich King, got ${lichKingStill?.id}`);
@@ -2437,6 +2441,21 @@ const blinkLoot = await generateCreatureLoot({
 if (blinkLoot.profileId !== "fey") throw new Error("Blink Dog generation used wrong profile");
 if (!blinkLoot.items.some((i) => /fey-|pixie-|dryad-|satyr-|redcap-|hag-|wilted|fairy|bargain|coven/.test(String(i.definitionId || "")))) {
   throw new Error("Blink Dog loot missing fey family parts");
+}
+
+const unknownLoot = await generateCreatureLoot({
+  context: { name: "No Type Creature", creatureType: "", creatureSubtype: "", size: "med", challengeRating: 1, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (unknownLoot.profileId !== "unknown") throw new Error("Unidentified creature generation used wrong profile");
+const unknownHasStory = unknownLoot.items.some((i) => /scribbled-note|crude-map|wanted-poster|hunter-trail-map|ranger-warning|bounty-board/.test(String(i.definitionId || "")));
+const unknownCurrency = unknownLoot.currency ?? {};
+const unknownHasCoin = ["cp", "sp", "gp"].some((k) => Number(unknownCurrency[k] || 0) > 0)
+  || unknownLoot.items.some((i) => i.kind === "currency");
+if (!unknownHasStory) throw new Error("Unidentified creature loot missing story scraps");
+if (!unknownHasCoin) throw new Error("Unidentified creature loot missing money");
+if (unknownLoot.items.some((i) => /fang|claw|hide|blood-vial|scale|tooth|ichor|heart/.test(String(i.definitionId || "")))) {
+  throw new Error("Unidentified creature should not drop monster parts");
 }
 
 

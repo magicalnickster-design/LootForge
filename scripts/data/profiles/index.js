@@ -42,11 +42,13 @@ import { spiderProfile } from "./spider.js";
 import { wolfProfile } from "./wolf.js";
 import { beastProfile } from "./beast.js";
 import { zombieProfile } from "./zombie.js";
+import { unknownCreatureProfile } from "./unknown.js";
 
 /**
  * Specific profiles first (elf before human, lich before undead, spider before wolf, etc.).
  * Registry key may differ from profile.id (animatedArmor → animated-armor).
  * Type-only fallbacks (genericHumanoid) are not name-matched; see TYPE_FALLBACKS.
+ * `unknown` is never name-matched — only the final resolve fallback.
  */
 export const PROFILE_ORDER = [
   "container",
@@ -125,7 +127,8 @@ export const CREATURE_PROFILES = {
   skeleton: skeletonProfile,
   zombie: zombieProfile,
   genericUndead: genericUndeadProfile,
-  wolf: wolfProfile
+  wolf: wolfProfile,
+  unknown: unknownCreatureProfile
 };
 
 /**
@@ -205,5 +208,6 @@ export function resolveCreatureProfile(context) {
   // No dedicated name/subtype profile — use generic loot for the creature type.
   if (type && TYPE_FALLBACKS[type]) return TYPE_FALLBACKS[type];
 
-  return null;
+  // Still unidentified (no type, or unrecognized type) — pocket change + story scraps.
+  return CREATURE_PROFILES.unknown;
 }
