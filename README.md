@@ -7,7 +7,7 @@ Built for **Gambits Forge**.
 
 | | |
 | --- | --- |
-| Version | 0.6.1 |
+| Version | 0.6.2 |
 | Foundry | 13–14 (verified 14) |
 | System | dnd5e 4.0+ (verified 5.3.3) |
 
@@ -33,6 +33,8 @@ LootForge requires an active **Gambits Forge Tier 1 or higher** subscription.
 - A cached entitlement remains usable offline until the **server-issued** expiration (maximum 30 days from cache fetch). Expiration is never extended locally.
 
 Configure the account from **Module Settings → Gambits Forge Account**.
+
+Until `GET /api/entitlements/lootforge` is deployed on gambitsforge.online, LootForge falls back to `GET /api/subscription` for the same Tier 1+ check. Account-API operators: mount `tools/backend-entitlement-dropin/`.
 
 ## How it works
 

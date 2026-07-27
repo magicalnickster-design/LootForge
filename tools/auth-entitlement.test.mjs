@@ -105,3 +105,60 @@ test("auth client falls back to /api/subscription when lootforge entitlement is 
     globalThis.fetch = originalFetch;
   }
 });
+
+test("subscription fallback denies free accounts", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith("/api/entitlements/lootforge")) {
+      return { ok: false, status: 404, text: async () => "Cannot GET" };
+    }
+    return {
+      ok: true,
+      status: 200,
+      text: async () => JSON.stringify({
+        status: "inactive",
+        plan: { slug: "free", name: "Free" }
+      })
+    };
+  };
+  try {
+    const { getEntitlement } = await import("../scripts/auth/auth-client.js");
+    const result = await getEntitlement("token-free");
+    assert.equal(result.ok, false);
+    assert.equal(result.status, 403);
+    assert.equal(result.payload.reason, "subscription_required");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("subscription fallback caps expiresAt at 30 days", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith("/api/entitlements/lootforge")) {
+      return { ok: false, status: 404, text: async () => "Cannot GET" };
+    }
+    return {
+      ok: true,
+      status: 200,
+      text: async () => JSON.stringify({
+        status: "active",
+        plan: { slug: "founder", name: "Founder" },
+        currentPeriodEnd: "2035-01-01T00:00:00.000Z"
+      })
+    };
+  };
+  try {
+    const { getEntitlement } = await import("../scripts/auth/auth-client.js");
+    const before = Date.now();
+    const result = await getEntitlement("token-founder");
+    const after = Date.now();
+    assert.equal(result.ok, true);
+    const expiresMs = Date.parse(result.payload.expiresAt);
+    const maxMs = 30 * 24 * 60 * 60 * 1000;
+    assert.ok(expiresMs - before <= maxMs + 1000);
+    assert.ok(expiresMs - after <= maxMs);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

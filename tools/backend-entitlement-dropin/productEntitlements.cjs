@@ -1,3 +1,12 @@
+/**
+ * Drop-in product entitlement evaluator + Express router for the Gambits Forge
+ * account API (gambitsforge.online).
+ *
+ * Mount beside the existing SceneForgeAI entitlement route using the same
+ * auth middleware, user lookup, and subscription loader. LootForge does not
+ * consume generations.
+ */
+
 const MAX_ENTITLEMENT_MS = 30 * 24 * 60 * 60 * 1000;
 
 const PLAN_TIERS = Object.freeze({
@@ -76,10 +85,37 @@ function resolveSubscriptionStatus(subscription = {}) {
   return status;
 }
 
-function computeExpiresAt(subscription = {}, checkedAt = new Date()) {
+function resolveOverride(subscription = {}, options = {}) {
+  if (options.adminOverride === true || options.temporaryEntitlement === true) {
+    return { active: true, tier: Number(options.overrideTier) || 1 };
+  }
+  const override = subscription?.entitlementOverride
+    ?? subscription?.temporaryEntitlement
+    ?? subscription?.adminEntitlement
+    ?? null;
+  if (!override) return null;
+  if (override === true) return { active: true, tier: 1 };
+  if (typeof override !== "object") return null;
+  const approved = override.approved !== false && override.active !== false && override.revoked !== true;
+  if (!approved) return null;
+  const expiresMs = parseTime(override.expiresAt ?? override.expires);
+  if (Number.isFinite(expiresMs) && expiresMs <= Date.now()) return null;
+  const tier = Number(override.tier);
+  return {
+    active: true,
+    tier: Number.isFinite(tier) && tier >= 1 ? tier : 1,
+    expiresAt: Number.isFinite(expiresMs) ? new Date(expiresMs).toISOString() : undefined
+  };
+}
+
+function computeExpiresAt(subscription = {}, checkedAt = new Date(), override = null) {
   const maxMs = checkedAt.getTime() + MAX_ENTITLEMENT_MS;
-  const periodEndMs = parseTime(subscription?.currentPeriodEnd ?? subscription?.expiresAt);
-  const expiresMs = Number.isFinite(periodEndMs) ? Math.min(periodEndMs, maxMs) : maxMs;
+  const candidates = [
+    parseTime(subscription?.currentPeriodEnd ?? subscription?.expiresAt),
+    parseTime(override?.expiresAt)
+  ].filter((ms) => Number.isFinite(ms));
+  const earliestKnown = candidates.length ? Math.min(...candidates) : maxMs;
+  const expiresMs = Math.min(earliestKnown, maxMs);
   return new Date(expiresMs).toISOString();
 }
 
@@ -95,7 +131,7 @@ function deniedPayload(product, reason, extra = {}) {
   };
 }
 
-function allowedPayload(product, subscription, tierInfo, checkedAt = new Date()) {
+function allowedPayload(product, subscription, tierInfo, checkedAt = new Date(), override = null) {
   return {
     product,
     allowed: true,
@@ -104,7 +140,7 @@ function allowedPayload(product, subscription, tierInfo, checkedAt = new Date())
     tier: tierInfo.tier,
     tierName: tierInfo.tierName,
     subscriptionStatus: "active",
-    expiresAt: computeExpiresAt(subscription, checkedAt),
+    expiresAt: computeExpiresAt(subscription, checkedAt, override),
     checkedAt: nowIso(checkedAt)
   };
 }
@@ -153,14 +189,21 @@ function evaluateProductEntitlement(productSlug, subscription = {}, options = {}
     };
   }
 
-  const tierInfo = resolveTier(subscription);
+  const override = resolveOverride(subscription, options);
+  let tierInfo = resolveTier(subscription);
+  if (override?.active && override.tier > tierInfo.tier) {
+    if (override.tier >= 3) tierInfo = PLAN_TIERS.founder;
+    else if (override.tier >= 2) tierInfo = PLAN_TIERS["dungeon-master"];
+    else tierInfo = PLAN_TIERS.adventurer;
+  }
+
   const periodEndMs = parseTime(subscription?.currentPeriodEnd ?? subscription?.expiresAt);
   const expired =
     status === "expired"
-    || status === "canceled" && Number.isFinite(periodEndMs) && periodEndMs <= checkedAt.getTime()
-    || (Number.isFinite(periodEndMs) && periodEndMs <= checkedAt.getTime() && status !== "active");
+    || (status === "canceled" && Number.isFinite(periodEndMs) && periodEndMs <= checkedAt.getTime())
+    || (Number.isFinite(periodEndMs) && periodEndMs <= checkedAt.getTime() && status !== "active" && !override?.active);
 
-  if (expired || status === "expired") {
+  if ((expired || status === "expired") && !override?.active) {
     return {
       status: 403,
       body: deniedPayload(product.slug, "subscription_expired", {
@@ -170,7 +213,8 @@ function evaluateProductEntitlement(productSlug, subscription = {}, options = {}
     };
   }
 
-  if (status !== "active" && status !== "trialing") {
+  const subscriptionOk = status === "active" || status === "trialing" || Boolean(override?.active);
+  if (!subscriptionOk) {
     return {
       status: 403,
       body: deniedPayload(product.slug, "subscription_required", {
@@ -190,7 +234,7 @@ function evaluateProductEntitlement(productSlug, subscription = {}, options = {}
       status: 403,
       body: deniedPayload(product.slug, "tier_too_low", {
         checkedAt: nowIso(checkedAt),
-        subscriptionStatus: status,
+        subscriptionStatus: status === "inactive" && override?.active ? "active" : status,
         fields: {
           plan: tierInfo.plan,
           tier: tierInfo.tier,
@@ -200,6 +244,7 @@ function evaluateProductEntitlement(productSlug, subscription = {}, options = {}
     };
   }
 
+  // SceneForgeAI generation balance must never gate LootForge.
   if (product.requireGenerationBalance) {
     const remaining = Number(subscription?.generationsRemaining);
     const total = Number(subscription?.generationsTotal);
@@ -224,7 +269,7 @@ function evaluateProductEntitlement(productSlug, subscription = {}, options = {}
 
   return {
     status: 200,
-    body: allowedPayload(product.slug, subscription, tierInfo, checkedAt)
+    body: allowedPayload(product.slug, subscription, tierInfo, checkedAt, override)
   };
 }
 
@@ -255,7 +300,10 @@ function createEntitlementsRouter({
         subscriptionResult?.subscription ?? {},
         {
           accountSuspended: Boolean(subscriptionResult?.accountSuspended),
-          entitlementRevoked: Boolean(subscriptionResult?.revokedProducts?.includes?.(productSlug))
+          entitlementRevoked: Boolean(subscriptionResult?.revokedProducts?.includes?.(productSlug)),
+          adminOverride: Boolean(subscriptionResult?.adminOverride),
+          temporaryEntitlement: Boolean(subscriptionResult?.temporaryEntitlement),
+          overrideTier: subscriptionResult?.overrideTier
         }
       );
       return res.status(evaluated.status).json(evaluated.body);
@@ -282,7 +330,7 @@ function createEntitlementsRouter({
       });
     }
     return res.status(501).json({
-      error: "Consume is not implemented on this service",
+      error: "Consume is not implemented on this drop-in; keep the existing SceneForgeAI consume handler",
       code: "NOT_IMPLEMENTED",
       product: productSlug
     });
@@ -299,5 +347,6 @@ module.exports = {
   createEntitlementsRouter,
   resolveTier,
   computeExpiresAt,
-  normalizePlanKey
+  normalizePlanKey,
+  resolveOverride
 };
