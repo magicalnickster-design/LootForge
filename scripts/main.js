@@ -64,5 +64,5 @@ Hooks.once("ready", () => {
     ensureWorldLootActors
   };
 
-  log.info(`Ready v0.5.12 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.5.13 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

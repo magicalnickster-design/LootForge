@@ -1,0 +1,51 @@
+{
+  "_id": "LFGiantBootScrp0",
+  "name": "Giant Boot Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/giant-boot-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn scrap of leather from a giant's boot. Smells like road and livestock.</p>",
+      "chat": "A giant boot scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "giant-boot-scrap",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "junk"
+      ],
+      "stackingKey": "giant-boot-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGiantBootScrp0"
+}

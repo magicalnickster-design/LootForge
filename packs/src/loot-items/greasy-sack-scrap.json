@@ -1,0 +1,51 @@
+{
+  "_id": "LFGreasySack0000",
+  "name": "Greasy Sack Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/greasy-sack-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of a giant's food sack, stiff with grease and old meat.</p>",
+      "chat": "A greasy sack scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "greasy-sack-scrap",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "junk"
+      ],
+      "stackingKey": "greasy-sack-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGreasySack0000"
+}

@@ -13,6 +13,7 @@ import { dwarfProfile } from "./dwarf.js";
 import { elfProfile } from "./elf.js";
 import { feyProfile } from "./fey.js";
 import { fiendProfile } from "./fiend.js";
+import { giantProfile } from "./giant.js";
 import { goblinProfile } from "./goblin.js";
 import { halflingProfile } from "./halfling.js";
 import { humanProfile } from "./human.js";
@@ -40,6 +41,7 @@ export const PROFILE_ORDER = [
   "halfling",
   "human",
   "orc",
+  "giant",
   "monstrosity",
   "fey",
   "fiend",
@@ -63,6 +65,7 @@ export const CREATURE_PROFILES = {
   halfling: halflingProfile,
   human: humanProfile,
   orc: orcProfile,
+  giant: giantProfile,
   monstrosity: monstrosityProfile,
   fey: feyProfile,
   fiend: fiendProfile,

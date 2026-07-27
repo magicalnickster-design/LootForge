@@ -1,0 +1,51 @@
+{
+  "_id": "LFGiantThumbRng0",
+  "name": "Giant Thumb Ring",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/giant-thumb-ring.svg",
+  "system": {
+    "description": {
+      "value": "<p>A metal ring sized for a giant's thumb — a bracelet for a human, a trophy either way.</p>",
+      "chat": "A giant thumb ring."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "giant-thumb-ring",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "trinket"
+      ],
+      "stackingKey": "giant-thumb-ring",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGiantThumbRng0"
+}

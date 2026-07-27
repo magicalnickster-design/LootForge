@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.12") {
-  throw new Error(`Expected module version 0.5.12, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.13") {
+  throw new Error(`Expected module version 0.5.13, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -264,7 +264,27 @@ const expectedNames = new Set([
   "Dug-Up Pebble",
   "Hunter Warning",
   "Nest Map Scrap",
-  "Worm Tunnel Chart"
+  "Worm Tunnel Chart",
+  "Giant Tooth",
+  "Giant Knuckle Bone",
+  "Giant Hair Lock",
+  "Hill Giant Throwing Rock",
+  "Stone Giant Chip",
+  "Frost Giant Ice Shard",
+  "Fire Giant Slag",
+  "Cloud Giant Silk Scrap",
+  "Storm Spark Stone",
+  "Giant Thumb Ring",
+  "Boulder Charm",
+  "Rune-Carved Pebble",
+  "Giant Boot Scrap",
+  "Crushed Wagon Spoke",
+  "Greasy Sack Scrap",
+  "Cracked Boulder Chunk",
+  "Tribute List",
+  "Giant Clan Mark",
+  "Storm Omen Note",
+  "Raiding Map"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -479,7 +499,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 210) {
+if (listLootDefinitions().length < 230) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -1293,6 +1313,76 @@ const cockAvg = cockSum / 40;
 const wormAvg = wormSum / 40;
 if (wormAvg <= cockAvg * 1.3) {
   throw new Error(`Purple Worm should average more scaled parts than Cockatrice (worm=${wormAvg}, cockatrice=${cockAvg})`);
+}
+
+
+
+const hillGiant = resolveCreatureProfile({ name: "Hill Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+const stoneGiant = resolveCreatureProfile({ name: "Stone Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+const frostGiant = resolveCreatureProfile({ name: "Frost Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+const fireGiant = resolveCreatureProfile({ name: "Fire Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+const cloudGiant = resolveCreatureProfile({ name: "Cloud Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+const stormGiant = resolveCreatureProfile({ name: "Storm Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+const giantSpider = resolveCreatureProfile({ name: "Giant Spider", creatureType: "beast", creatureSubtype: "", size: "lg" });
+if (hillGiant?.id !== "giant") throw new Error(`Expected giant for Hill Giant, got ${hillGiant?.id}`);
+if (stoneGiant?.id !== "giant") throw new Error(`Expected giant for Stone Giant, got ${stoneGiant?.id}`);
+if (frostGiant?.id !== "giant") throw new Error(`Expected giant for Frost Giant, got ${frostGiant?.id}`);
+if (fireGiant?.id !== "giant") throw new Error(`Expected giant for Fire Giant, got ${fireGiant?.id}`);
+if (cloudGiant?.id !== "giant") throw new Error(`Expected giant for Cloud Giant, got ${cloudGiant?.id}`);
+if (stormGiant?.id !== "giant") throw new Error(`Expected giant for Storm Giant, got ${stormGiant?.id}`);
+if (giantSpider?.id === "giant") throw new Error("Giant Spider must not resolve to giant profile");
+if (giantSpider?.id !== "spider") throw new Error(`Expected spider for Giant Spider, got ${giantSpider?.id}`);
+
+if (resolveLootScale(hillGiant, { name: "Hill Giant", size: "huge" }) !== 0.85) throw new Error("Hill Giant lootScale should be 0.85");
+if (resolveLootScale(stoneGiant, { name: "Stone Giant", size: "huge" }) !== 1) throw new Error("Stone Giant lootScale should be 1");
+if (resolveLootScale(frostGiant, { name: "Frost Giant", size: "huge" }) !== 1.1) throw new Error("Frost Giant lootScale should be 1.1");
+if (resolveLootScale(fireGiant, { name: "Fire Giant", size: "huge" }) !== 1.2) throw new Error("Fire Giant lootScale should be 1.2");
+if (resolveLootScale(cloudGiant, { name: "Cloud Giant", size: "huge" }) !== 1.3) throw new Error("Cloud Giant lootScale should be 1.3");
+if (resolveLootScale(stormGiant, { name: "Storm Giant", size: "huge" }) !== 1.6) throw new Error("Storm Giant lootScale should be 1.6");
+
+const hillLoot = await generateCreatureLoot({
+  context: { name: "Hill Giant", creatureType: "giant", creatureSubtype: "", size: "huge", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false,
+  actor: {
+    id: "hg1", name: "Hill Giant",
+    items: { contents: [{
+      id: "w1", name: "Greatclub", type: "weapon", img: "icons/svg/sword.svg",
+      system: { quantity: 1, type: { value: "martialM" }, price: { value: 0, denomination: "gp" }, description: { value: "<p>Club.</p>" }, rarity: "common" },
+      flags: {},
+      toObject() { return { name: this.name, type: this.type, img: this.img, system: structuredClone(this.system), flags: {} }; }
+    }] }
+  }
+});
+if (hillLoot.profileId !== "giant") throw new Error("Hill Giant generation used wrong profile");
+if (!hillLoot.items.some((i) => ["giant-tooth","giant-knuckle","giant-hair-lock","hill-giant-rock"].includes(String(i.definitionId || "")))) {
+  throw new Error("Hill Giant loot missing giant parts");
+}
+
+const stormLoot = await generateCreatureLoot({
+  context: { name: "Storm Giant", creatureType: "giant", creatureSubtype: "", size: "huge", challengeRating: 13, isWolf: false, isBoss: true, isNamed: false },
+  survivalTotal: 22, naturalDie: 18, isNatural20: false, actor: null
+});
+if (stormLoot.profileId !== "giant") throw new Error("Storm Giant generation used wrong profile");
+
+let hillSum = 0;
+let stormSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Hill Giant", creatureType: "giant", creatureSubtype: "", size: "huge", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Storm Giant", creatureType: "giant", creatureSubtype: "", size: "huge", challengeRating: 13, isWolf: false, isBoss: true, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /giant|hill-giant|stone-giant|frost-giant|fire-giant|cloud-giant|storm-spark/;
+  hillSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  stormSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const hillAvg = hillSum / 40;
+const stormAvg = stormSum / 40;
+if (stormAvg <= hillAvg * 1.2) {
+  throw new Error(`Storm Giant should average more scaled parts than Hill Giant (storm=${stormAvg}, hill=${hillAvg})`);
 }
 
 

@@ -1,0 +1,51 @@
+{
+  "_id": "LFCrackedBouldr0",
+  "name": "Cracked Boulder Chunk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cracked-boulder.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chunk of boulder split by a giant's practice throw. Ordinary rock with a story.</p>",
+      "chat": "A cracked boulder chunk."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cracked-boulder",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "junk"
+      ],
+      "stackingKey": "cracked-boulder",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrackedBouldr0"
+}

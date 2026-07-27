@@ -1,0 +1,52 @@
+{
+  "_id": "LFCloudGiantSlk0",
+  "name": "Cloud Giant Silk Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cloud-giant-silk.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of sky-silk, lighter than it looks. Cloud giant clothing never quite falls.</p>",
+      "chat": "A scrap of cloud giant silk."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cloud-giant-silk",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "giant",
+        "cloud-giant",
+        "cloth"
+      ],
+      "stackingKey": "cloud-giant-silk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCloudGiantSlk0"
+}

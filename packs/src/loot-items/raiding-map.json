@@ -1,0 +1,52 @@
+{
+  "_id": "LFRaidingMap0000",
+  "name": "Raiding Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/raiding-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A map of roads and farms with X marks. Someone planned a hungry walk.</p>",
+      "chat": "A raiding map."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "raiding-map",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "raiding-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRaidingMap0000"
+}

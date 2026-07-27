@@ -1,0 +1,53 @@
+{
+  "_id": "LFStormSparkStn0",
+  "name": "Storm Spark Stone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/storm-spark-stone.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dark stone that crackles when rubbed. Storm giants keep them as prayer beads.</p>",
+      "chat": "A storm spark stone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "storm-spark-stone",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "giant",
+        "storm-giant",
+        "alchemy",
+        "lightning"
+      ],
+      "stackingKey": "storm-spark-stone",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFStormSparkStn0"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFFrostGiantIce0",
+  "name": "Frost Giant Ice Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/frost-giant-ice.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shard of ice that never melts in a cool cellar. Burns bare skin like frostbite.</p>",
+      "chat": "A frost giant ice shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "frost-giant-ice",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "frost-giant",
+        "alchemy",
+        "cold"
+      ],
+      "stackingKey": "frost-giant-ice",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFrostGiantIce0"
+}

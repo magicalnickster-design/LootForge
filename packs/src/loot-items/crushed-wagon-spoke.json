@@ -1,0 +1,51 @@
+{
+  "_id": "LFCrushedSpoke00",
+  "name": "Crushed Wagon Spoke",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crushed-wagon-spoke.svg",
+  "system": {
+    "description": {
+      "value": "<p>A wagon spoke snapped in a giant's fist. Proof someone met the wrong traveler.</p>",
+      "chat": "A crushed wagon spoke."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crushed-wagon-spoke",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "junk"
+      ],
+      "stackingKey": "crushed-wagon-spoke",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrushedSpoke00"
+}

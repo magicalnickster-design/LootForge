@@ -1,0 +1,52 @@
+{
+  "_id": "LFHillGiantRock0",
+  "name": "Hill Giant Throwing Rock",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hill-giant-rock.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fist-sized (for a giant) rock, scuffed from throwing practice. Still usable as a siege pebble.</p>",
+      "chat": "A hill giant throwing rock."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hill-giant-rock",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "hill-giant",
+        "weapon"
+      ],
+      "stackingKey": "hill-giant-rock",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHillGiantRock0"
+}

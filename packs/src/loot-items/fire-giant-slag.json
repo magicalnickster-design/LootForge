@@ -1,0 +1,53 @@
+{
+  "_id": "LFFireGiantSlag0",
+  "name": "Fire Giant Slag",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fire-giant-slag.svg",
+  "system": {
+    "description": {
+      "value": "<p>A lump of forge-slag still warm days later. Fire giants treat it like pocket change.</p>",
+      "chat": "A lump of fire giant slag."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fire-giant-slag",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "fire-giant",
+        "alchemy",
+        "fire"
+      ],
+      "stackingKey": "fire-giant-slag",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFireGiantSlag0"
+}

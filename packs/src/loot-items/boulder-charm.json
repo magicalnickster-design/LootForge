@@ -1,0 +1,51 @@
+{
+  "_id": "LFBoulderCharm00",
+  "name": "Boulder Charm",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/boulder-charm.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tiny carved boulder on a leather cord. Hill giants give these to kids who throw well.</p>",
+      "chat": "A boulder charm."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "boulder-charm",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "trinket"
+      ],
+      "stackingKey": "boulder-charm",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBoulderCharm00"
+}

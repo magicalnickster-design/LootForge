@@ -1,0 +1,52 @@
+{
+  "_id": "LFTributeList000",
+  "name": "Tribute List",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/tribute-list.svg",
+  "system": {
+    "description": {
+      "value": "<p>A crude list of villages and what they owe: \"oxen, ale, gold, silence.\"</p>",
+      "chat": "A tribute list."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "tribute-list",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "tribute-list",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTributeList000"
+}

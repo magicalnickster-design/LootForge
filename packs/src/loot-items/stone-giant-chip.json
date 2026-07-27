@@ -1,0 +1,52 @@
+{
+  "_id": "LFStoneGiantChp0",
+  "name": "Stone Giant Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/stone-giant-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A flake of living stone from a stone giant's skin. Carvers say it remembers shapes.</p>",
+      "chat": "A stone giant chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "stone-giant-chip",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "stone-giant",
+        "stone"
+      ],
+      "stackingKey": "stone-giant-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFStoneGiantChp0"
+}

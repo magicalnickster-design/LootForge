@@ -1,0 +1,52 @@
+{
+  "_id": "LFGiantTooth0000",
+  "name": "Giant Tooth",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/giant-tooth.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tooth the size of a dagger hilt. Still has dinner stuck in the groove.</p>",
+      "chat": "A giant tooth."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "giant-tooth",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "giant-tooth",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGiantTooth0000"
+}

@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.12** |
+| Version | **0.5.13** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,12 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Giant** — multi-pool profile for hill, stone, frost, fire, cloud, and storm giants:
+  - Parts (tooth, knuckle, hair, type-specific rocks/ice/slag/silk, rare storm spark stone)
+  - Rich tribute currency and **sheet equipment** (weapons/armor/bags)
+  - Boot scraps / crushed spokes, thumb rings, tribute lists & raiding maps
+  - **Name scaling:** Hill Giant drops less; Storm Giant drops more (`lootScale`)
+  - Excludes "giant spider" and similar beast names (those stay on beast/monstrosity profiles)
 - **Monstrosity** — multi-pool profile for owlbears, basilisks, chimerae, hydras, purple worms, mimics, ropers, and kin:
   - Parts (hide, fang, creature-specific trophies, rare basilisk eye / purple worm tooth)
   - Nest/gullet currency and **sheet equipment** when present (prey gear)

@@ -1,0 +1,52 @@
+{
+  "_id": "LFGiantKnuckle00",
+  "name": "Giant Knuckle Bone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/giant-knuckle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A knuckle bone big enough to use as a club. Dice-makers and ogres both want it.</p>",
+      "chat": "A giant knuckle bone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "giant-knuckle",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "giant",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "giant-knuckle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGiantKnuckle00"
+}

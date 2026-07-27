@@ -1,0 +1,51 @@
+{
+  "_id": "LFGiantHair00000",
+  "name": "Giant Hair Lock",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/giant-hair-lock.svg",
+  "system": {
+    "description": {
+      "value": "<p>A greasy lock of giant hair, rope-thick. Alchemists braid it into strength draughts.</p>",
+      "chat": "A lock of giant hair."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "giant-hair-lock",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "giant",
+        "alchemy"
+      ],
+      "stackingKey": "giant-hair-lock",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGiantHair00000"
+}
