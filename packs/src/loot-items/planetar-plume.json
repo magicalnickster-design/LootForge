@@ -1,0 +1,52 @@
+{
+  "_id": "LFPlanetarPlum00",
+  "name": "Planetar Plume",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/planetar-plume.svg",
+  "system": {
+    "description": {
+      "value": "<p>A emerald-green plume from a planetar's wing. It smells of rain and ozone.</p>",
+      "chat": "A emerald-green plume from a planetar's wing. It smells of rain and ozone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "planetar-plume",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "celestial",
+        "planetar",
+        "trophy"
+      ],
+      "stackingKey": "planetar-plume",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPlanetarPlum00"
+}

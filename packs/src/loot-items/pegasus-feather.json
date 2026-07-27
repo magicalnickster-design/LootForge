@@ -1,0 +1,52 @@
+{
+  "_id": "LFPegasusFeath00",
+  "name": "Pegasus Feather",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/pegasus-feather.svg",
+  "system": {
+    "description": {
+      "value": "<p>A white wing feather from a pegasus. The barbs catch light like frost.</p>",
+      "chat": "A white wing feather from a pegasus. The barbs catch light like frost."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "pegasus-feather",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "celestial",
+        "pegasus",
+        "trophy"
+      ],
+      "stackingKey": "pegasus-feather",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPegasusFeath00"
+}

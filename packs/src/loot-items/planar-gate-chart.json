@@ -1,0 +1,52 @@
+{
+  "_id": "LFPlanarGateCt00",
+  "name": "Planar Gate Chart",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/planar-gate-chart.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chart of celestial gates and safe hours of passage. Several marks glow faintly.</p>",
+      "chat": "A chart of celestial gates and safe hours of passage. Several marks glow faintly."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "planar-gate-chart",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "celestial",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "planar-gate-chart",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPlanarGateCt00"
+}

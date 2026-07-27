@@ -1,0 +1,51 @@
+{
+  "_id": "LFSilverHolyCp00",
+  "name": "Silvered Holy Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/silvered-holy-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chip from a silvered holy symbol, polished by countless prayers.</p>",
+      "chat": "A chip from a silvered holy symbol, polished by countless prayers."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "silvered-holy-chip",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "celestial",
+        "trinket"
+      ],
+      "stackingKey": "silvered-holy-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSilverHolyCp00"
+}

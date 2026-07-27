@@ -1,0 +1,53 @@
+{
+  "_id": "LFSolarHaloShr00",
+  "name": "Solar Halo Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/solar-halo-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fragment of radiance that once crowned a solar. It refuses to cool.</p>",
+      "chat": "A fragment of radiance that once crowned a solar. It refuses to cool."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 75,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "solar-halo-shard",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "celestial",
+        "solar",
+        "alchemy",
+        "rare"
+      ],
+      "stackingKey": "solar-halo-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSolarHaloShr00"
+}

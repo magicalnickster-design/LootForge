@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.18") {
-  throw new Error(`Expected module version 0.5.18, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.19") {
+  throw new Error(`Expected module version 0.5.19, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -378,7 +378,26 @@ const expectedNames = new Set([
   "Fungal Lantern Cap",
   "Grove Warning Scrap",
   "Blight Circle Map",
-  "Treant Oath Bark"
+  "Treant Oath Bark",
+  "Celestial Feather",
+  "Radiant Essence Vial",
+  "Pegasus Feather",
+  "Unicorn Horn Shard",
+  "Couatl Scale",
+  "Planetar Plume",
+  "Solar Wing Feather",
+  "Angelic Blood Vial",
+  "Solar Halo Shard",
+  "Shed Down Clump",
+  "Cracked Holy Charm",
+  "Faded Prayer Ribbon",
+  "Incense Ash Pouch",
+  "Dawn Pearl",
+  "Celestial Sigil Seal",
+  "Silvered Holy Chip",
+  "Heavenly Mandate Scrap",
+  "Planar Gate Chart",
+  "Solar Edict Fragment"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -593,7 +612,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 330) {
+if (listLootDefinitions().length < 350) {
   throw new Error("Expected expanded definition registry");
 }
 if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plate") || !getLootDefinition("golem-manual-page")) {
@@ -601,6 +620,9 @@ if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plat
 }
 if (!getLootDefinition("plant-fiber") || !getLootDefinition("treant-bark-plate") || !getLootDefinition("heartwood-core")) {
   throw new Error("Missing plant loot definitions");
+}
+if (!getLootDefinition("celestial-feather") || !getLootDefinition("solar-wing-feather") || !getLootDefinition("solar-halo-shard")) {
+  throw new Error("Missing celestial loot definitions");
 }
 
 if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
@@ -1953,6 +1975,131 @@ const twigAvg = twigSum / 40;
 const treantAvg = treantSum / 40;
 if (treantAvg <= twigAvg * 1.3) {
   throw new Error(`Treant should average more scaled parts than Twig Blight (treant=${treantAvg}, twig=${twigAvg})`);
+}
+
+const pegasus = resolveCreatureProfile({
+  name: "Pegasus",
+  creatureType: "celestial",
+  creatureSubtype: "",
+  size: "lg"
+});
+const unicorn = resolveCreatureProfile({
+  name: "Unicorn",
+  creatureType: "celestial",
+  creatureSubtype: "",
+  size: "lg"
+});
+const couatl = resolveCreatureProfile({
+  name: "Couatl",
+  creatureType: "celestial",
+  creatureSubtype: "",
+  size: "med"
+});
+const planetar = resolveCreatureProfile({
+  name: "Planetar",
+  creatureType: "celestial",
+  creatureSubtype: "",
+  size: "lg"
+});
+const solar = resolveCreatureProfile({
+  name: "Solar",
+  creatureType: "celestial",
+  creatureSubtype: "",
+  size: "lg"
+});
+const solarDragon = resolveCreatureProfile({
+  name: "Adult Solar Dragon",
+  creatureType: "dragon",
+  creatureSubtype: "",
+  size: "huge"
+});
+if (pegasus?.id !== "celestial") throw new Error(`Expected celestial for Pegasus, got ${pegasus?.id}`);
+if (unicorn?.id !== "celestial") throw new Error(`Expected celestial for Unicorn, got ${unicorn?.id}`);
+if (couatl?.id !== "celestial") throw new Error(`Expected celestial for Couatl, got ${couatl?.id}`);
+if (planetar?.id !== "celestial") throw new Error(`Expected celestial for Planetar, got ${planetar?.id}`);
+if (solar?.id !== "celestial") throw new Error(`Expected celestial for Solar, got ${solar?.id}`);
+if (solarDragon?.id === "celestial") throw new Error("Adult Solar Dragon should not use celestial profile");
+
+if (resolveLootScale(pegasus, { name: "Pegasus", size: "lg" }) !== 0.55) {
+  throw new Error("Pegasus lootScale should be 0.55");
+}
+if (resolveLootScale(unicorn, { name: "Unicorn", size: "lg" }) !== 0.85) {
+  throw new Error("Unicorn lootScale should be 0.85");
+}
+if (resolveLootScale(couatl, { name: "Couatl", size: "med" }) !== 1.05) {
+  throw new Error("Couatl lootScale should be 1.05");
+}
+if (resolveLootScale(planetar, { name: "Planetar", size: "lg" }) !== 1.55) {
+  throw new Error("Planetar lootScale should be 1.55");
+}
+if (resolveLootScale(solar, { name: "Solar", size: "lg" }) !== 1.9) {
+  throw new Error("Solar lootScale should be 1.9");
+}
+
+const solarLoot = await generateCreatureLoot({
+  context: {
+    name: "Solar",
+    creatureType: "celestial",
+    creatureSubtype: "",
+    size: "lg",
+    challengeRating: 21,
+    isWolf: false,
+    isBoss: true,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: null
+});
+if (solarLoot.profileId !== "celestial") throw new Error("Solar generation used wrong profile");
+if (!solarLoot.items.some((i) => /celestial|radiant|pegasus|unicorn|couatl|planetar|solar|angelic|dawn|heavenly|planar-gate|shed-down|prayer|incense|silvered-holy/.test(String(i.definitionId || "")))) {
+  throw new Error("Solar loot missing celestial parts");
+}
+
+let pegSum = 0;
+let solSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: {
+      name: "Pegasus",
+      creatureType: "celestial",
+      creatureSubtype: "",
+      size: "lg",
+      challengeRating: 2,
+      isWolf: false,
+      isBoss: false,
+      isNamed: false
+    },
+    survivalTotal: 18,
+    naturalDie: 12,
+    isNatural20: false,
+    actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: {
+      name: "Solar",
+      creatureType: "celestial",
+      creatureSubtype: "",
+      size: "lg",
+      challengeRating: 21,
+      isWolf: false,
+      isBoss: true,
+      isNamed: false
+    },
+    survivalTotal: 18,
+    naturalDie: 12,
+    isNatural20: false,
+    actor: null
+  });
+  const partRe = /celestial|radiant|pegasus|unicorn|couatl|planetar|solar|angelic|dawn|heavenly|planar-gate|shed-down|prayer|incense|silvered-holy/;
+  pegSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  solSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const pegAvg = pegSum / 40;
+const solAvg = solSum / 40;
+if (solAvg <= pegAvg * 1.3) {
+  throw new Error(`Solar should average more scaled parts than Pegasus (solar=${solAvg}, pegasus=${pegAvg})`);
 }
 
 

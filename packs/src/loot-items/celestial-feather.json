@@ -1,0 +1,51 @@
+{
+  "_id": "LFCelestFeather0",
+  "name": "Celestial Feather",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/celestial-feather.svg",
+  "system": {
+    "description": {
+      "value": "<p>A luminous feather shed by a celestial. Soft as silk, warm as sunlight.</p>",
+      "chat": "A luminous feather shed by a celestial. Soft as silk, warm as sunlight."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "celestial-feather",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "celestial",
+        "trophy"
+      ],
+      "stackingKey": "celestial-feather",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCelestFeather0"
+}

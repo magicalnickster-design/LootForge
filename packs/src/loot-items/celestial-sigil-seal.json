@@ -1,0 +1,51 @@
+{
+  "_id": "LFCelestSigilS00",
+  "name": "Celestial Sigil Seal",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/celestial-sigil-seal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A wax seal bearing a celestial court sigil. Warm to the touch.</p>",
+      "chat": "A wax seal bearing a celestial court sigil. Warm to the touch."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "celestial-sigil-seal",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "celestial",
+        "trinket"
+      ],
+      "stackingKey": "celestial-sigil-seal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCelestSigilS00"
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "LFAngelicBlood00",
+  "name": "Angelic Blood Vial",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/angelic-blood-vial.svg",
+  "system": {
+    "description": {
+      "value": "<p>Golden blood that glows when holy rites are spoken nearby.</p>",
+      "chat": "Golden blood that glows when holy rites are spoken nearby."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "angelic-blood-vial",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "celestial",
+        "alchemy"
+      ],
+      "stackingKey": "angelic-blood-vial",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAngelicBlood00"
+}
