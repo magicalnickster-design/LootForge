@@ -10,6 +10,7 @@ import { bugbearProfile } from "./bugbear.js";
 import { containerProfile } from "./container.js";
 import { dragonProfile } from "./dragon.js";
 import { dwarfProfile } from "./dwarf.js";
+import { elementalProfile } from "./elemental.js";
 import { elfProfile } from "./elf.js";
 import { feyProfile } from "./fey.js";
 import { fiendProfile } from "./fiend.js";
@@ -41,6 +42,7 @@ export const PROFILE_ORDER = [
   "halfling",
   "human",
   "orc",
+  "elemental",
   "giant",
   "monstrosity",
   "fey",
@@ -65,6 +67,7 @@ export const CREATURE_PROFILES = {
   halfling: halflingProfile,
   human: humanProfile,
   orc: orcProfile,
+  elemental: elementalProfile,
   giant: giantProfile,
   monstrosity: monstrosityProfile,
   fey: feyProfile,

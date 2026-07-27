@@ -1,0 +1,52 @@
+{
+  "_id": "LFMyrmidonPlate0",
+  "name": "Myrmidon Plate Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/myrmidon-plate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shard of elemental myrmidon plate, still faintly charged with its element.</p>",
+      "chat": "A myrmidon plate shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "myrmidon-plate",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "elemental",
+        "myrmidon",
+        "armor"
+      ],
+      "stackingKey": "myrmidon-plate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMyrmidonPlate0"
+}

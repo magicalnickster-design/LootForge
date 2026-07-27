@@ -1,0 +1,53 @@
+{
+  "_id": "LFStormGlassBed0",
+  "name": "Storm Glass Bead",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/storm-glass-bead.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bead that clouds when storms approach and clears when they pass.</p>",
+      "chat": "A storm glass bead."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "storm-glass-bead",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "elemental",
+        "air",
+        "water",
+        "trinket"
+      ],
+      "stackingKey": "storm-glass-bead",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFStormGlassBed0"
+}

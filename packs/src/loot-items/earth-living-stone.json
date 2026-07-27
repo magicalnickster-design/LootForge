@@ -1,0 +1,53 @@
+{
+  "_id": "LFEarthLivStone0",
+  "name": "Earth Living Stone",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/earth-living-stone.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chunk of stone that slowly regrows chips overnight. Heavy and stubborn.</p>",
+      "chat": "A living stone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 10,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "earth-living-stone",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "elemental",
+        "earth",
+        "alchemy",
+        "stone"
+      ],
+      "stackingKey": "earth-living-stone",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFEarthLivStone0"
+}

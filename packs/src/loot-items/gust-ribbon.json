@@ -1,0 +1,51 @@
+{
+  "_id": "LFGustRibbon0000",
+  "name": "Gust Ribbon",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/gust-ribbon.svg",
+  "system": {
+    "description": {
+      "value": "<p>A ribbon that forever flutters toward the nearest open window.</p>",
+      "chat": "A gust ribbon."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "gust-ribbon",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "elemental",
+        "air"
+      ],
+      "stackingKey": "gust-ribbon",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGustRibbon0000"
+}

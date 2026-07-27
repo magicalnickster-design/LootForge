@@ -1,0 +1,52 @@
+{
+  "_id": "LFGravelCluster0",
+  "name": "Gravel Cluster",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/gravel-cluster.svg",
+  "system": {
+    "description": {
+      "value": "<p>A cluster of gravel fused by an earth elemental's step. Good for sling stones.</p>",
+      "chat": "A gravel cluster."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "gravel-cluster",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "elemental",
+        "earth",
+        "stone"
+      ],
+      "stackingKey": "gravel-cluster",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGravelCluster0"
+}

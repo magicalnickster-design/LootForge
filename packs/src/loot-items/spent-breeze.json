@@ -1,0 +1,52 @@
+{
+  "_id": "LFSpentBreeze000",
+  "name": "Spent Breeze Pouch",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/spent-breeze.svg",
+  "system": {
+    "description": {
+      "value": "<p>A pouch that once held a captive breeze. Now it only sighs when squeezed.</p>",
+      "chat": "A spent breeze pouch."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "spent-breeze",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "elemental",
+        "air",
+        "junk"
+      ],
+      "stackingKey": "spent-breeze",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSpentBreeze000"
+}

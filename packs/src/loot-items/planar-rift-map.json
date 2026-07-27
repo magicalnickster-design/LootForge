@@ -1,0 +1,52 @@
+{
+  "_id": "LFPlanarRiftMap0",
+  "name": "Planar Rift Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/planar-rift-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A map of local planar thin-spots. Several are marked \"unstable — bring salt.\"</p>",
+      "chat": "A planar rift map."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "planar-rift-map",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "elemental",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "planar-rift-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPlanarRiftMap0"
+}

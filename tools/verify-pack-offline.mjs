@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.13") {
-  throw new Error(`Expected module version 0.5.13, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.14") {
+  throw new Error(`Expected module version 0.5.14, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -284,7 +284,27 @@ const expectedNames = new Set([
   "Tribute List",
   "Giant Clan Mark",
   "Storm Omen Note",
-  "Raiding Map"
+  "Raiding Map",
+  "Elemental Essence",
+  "Fire Ember Core",
+  "Water Brine Pearl",
+  "Earth Living Stone",
+  "Air Wind Whorl",
+  "Scorched Cinder",
+  "Tidal Foam Vial",
+  "Gravel Cluster",
+  "Gust Ribbon",
+  "Myrmidon Plate Shard",
+  "Bound Element Sigil",
+  "Planar Ash Charm",
+  "Storm Glass Bead",
+  "Cooled Slag Lump",
+  "Puddle Residue",
+  "Cracked Dirt Clod",
+  "Spent Breeze Pouch",
+  "Summoning Circle Scrap",
+  "Elemental Binding Note",
+  "Planar Rift Map"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -499,7 +519,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 230) {
+if (listLootDefinitions().length < 250) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -1383,6 +1403,70 @@ const hillAvg = hillSum / 40;
 const stormAvg = stormSum / 40;
 if (stormAvg <= hillAvg * 1.2) {
   throw new Error(`Storm Giant should average more scaled parts than Hill Giant (storm=${stormAvg}, hill=${hillAvg})`);
+}
+
+
+
+const fireEl = resolveCreatureProfile({ name: "Fire Elemental", creatureType: "elemental", creatureSubtype: "fire", size: "lg" });
+const waterEl = resolveCreatureProfile({ name: "Water Elemental", creatureType: "elemental", creatureSubtype: "water", size: "lg" });
+const earthEl = resolveCreatureProfile({ name: "Earth Elemental", creatureType: "elemental", creatureSubtype: "earth", size: "lg" });
+const airEl = resolveCreatureProfile({ name: "Air Elemental", creatureType: "elemental", creatureSubtype: "air", size: "lg" });
+const myrmidon = resolveCreatureProfile({ name: "Fire Elemental Myrmidon", creatureType: "elemental", creatureSubtype: "fire", size: "med" });
+const fireGiantVsElemental = resolveCreatureProfile({ name: "Fire Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+if (fireEl?.id !== "elemental") throw new Error(`Expected elemental for Fire Elemental, got ${fireEl?.id}`);
+if (waterEl?.id !== "elemental") throw new Error(`Expected elemental for Water Elemental, got ${waterEl?.id}`);
+if (earthEl?.id !== "elemental") throw new Error(`Expected elemental for Earth Elemental, got ${earthEl?.id}`);
+if (airEl?.id !== "elemental") throw new Error(`Expected elemental for Air Elemental, got ${airEl?.id}`);
+if (myrmidon?.id !== "elemental") throw new Error(`Expected elemental for Myrmidon, got ${myrmidon?.id}`);
+if (fireGiantVsElemental?.id !== "giant") throw new Error(`Fire Giant must stay on giant profile, got ${fireGiantVsElemental?.id}`);
+
+if (resolveLootScale(fireEl, { name: "Fire Elemental", size: "lg" }) !== 1) throw new Error("Fire Elemental lootScale should be 1");
+if (resolveLootScale(myrmidon, { name: "Fire Elemental Myrmidon", size: "med" }) !== 1.35) throw new Error("Fire Elemental Myrmidon lootScale should be 1.35");
+if (resolveLootScale(myrmidon, { name: "Air Myrmidon", size: "med" }) !== 1.3) throw new Error("Air Myrmidon lootScale should be 1.3");
+
+const fireLoot = await generateCreatureLoot({
+  context: { name: "Fire Elemental", creatureType: "elemental", creatureSubtype: "fire", size: "lg", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (fireLoot.profileId !== "elemental") throw new Error("Fire Elemental generation used wrong profile");
+if (!fireLoot.items.some((i) => ["elemental-essence","fire-ember-core","scorched-cinder","water-brine-pearl","earth-living-stone","air-wind-whorl"].includes(String(i.definitionId || "")))) {
+  throw new Error("Fire Elemental loot missing elemental parts");
+}
+
+const myrLoot = await generateCreatureLoot({
+  context: { name: "Earth Elemental Myrmidon", creatureType: "elemental", creatureSubtype: "earth", size: "med", challengeRating: 7, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 20, naturalDie: 15, isNatural20: false,
+  actor: {
+    id: "myr1", name: "Earth Elemental Myrmidon",
+    items: { contents: [{
+      id: "w1", name: "Maul", type: "weapon", img: "icons/svg/sword.svg",
+      system: { quantity: 1, type: { value: "martialM" }, price: { value: 10, denomination: "gp" }, description: { value: "<p>Maul.</p>" }, rarity: "common" },
+      flags: {},
+      toObject() { return { name: this.name, type: this.type, img: this.img, system: structuredClone(this.system), flags: {} }; }
+    }] }
+  }
+});
+if (myrLoot.profileId !== "elemental") throw new Error("Myrmidon generation used wrong profile");
+
+let elSum = 0;
+let myrSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Air Elemental", creatureType: "elemental", creatureSubtype: "air", size: "lg", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Air Elemental Myrmidon", creatureType: "elemental", creatureSubtype: "air", size: "med", challengeRating: 7, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /elemental|fire-ember|water-brine|earth-living|air-wind|scorched-cinder|tidal-foam|gravel|gust-ribbon|myrmidon/;
+  elSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  myrSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const elAvg = elSum / 40;
+const myrAvg = myrSum / 40;
+if (myrAvg <= elAvg * 1.15) {
+  throw new Error(`Myrmidon should average more scaled parts than base elemental (myrmidon=${myrAvg}, elemental=${elAvg})`);
 }
 
 

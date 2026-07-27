@@ -1,0 +1,52 @@
+{
+  "_id": "LFPuddleResidue0",
+  "name": "Puddle Residue",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/puddle-residue.svg",
+  "system": {
+    "description": {
+      "value": "<p>A damp stain that never fully dries. Smells like deep lake water.</p>",
+      "chat": "Puddle residue."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "puddle-residue",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "elemental",
+        "water",
+        "junk"
+      ],
+      "stackingKey": "puddle-residue",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPuddleResidue0"
+}

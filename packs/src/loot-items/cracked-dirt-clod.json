@@ -1,0 +1,52 @@
+{
+  "_id": "LFCrackedDirt000",
+  "name": "Cracked Dirt Clod",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cracked-dirt-clod.svg",
+  "system": {
+    "description": {
+      "value": "<p>A clod of dirt shot through with tiny stone veins. Breaks into useful grit.</p>",
+      "chat": "A cracked dirt clod."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cracked-dirt-clod",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "elemental",
+        "earth",
+        "junk"
+      ],
+      "stackingKey": "cracked-dirt-clod",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrackedDirt000"
+}

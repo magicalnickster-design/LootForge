@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.13** |
+| Version | **0.5.14** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Elemental** — multi-pool profile for fire/water/earth/air elementals and myrmidons:
+  - Parts (elemental essence, ember cores / brine pearls / living stone / wind whorls, myrmidon plate shards)
+  - Sparse coin; **sheet equipment** common on myrmidons
+  - Elemental residue junk, binding sigils, summoning scraps & planar rift maps
+  - **Name scaling:** base elementals at 1.0; myrmidons scale up (`lootScale`)
 - **Giant** — multi-pool profile for hill, stone, frost, fire, cloud, and storm giants:
   - Parts (tooth, knuckle, hair, type-specific rocks/ice/slag/silk, rare storm spark stone)
   - Rich tribute currency and **sheet equipment** (weapons/armor/bags)

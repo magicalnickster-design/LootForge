@@ -1,0 +1,52 @@
+{
+  "_id": "LFSummonCircScr0",
+  "name": "Summoning Circle Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/summoning-circle-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn diagram of a summoning circle. One node is circled: \"DO NOT SKIP.\"</p>",
+      "chat": "A summoning circle scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "summoning-circle-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "elemental",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "summoning-circle-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSummonCircScr0"
+}

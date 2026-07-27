@@ -1,0 +1,52 @@
+{
+  "_id": "LFWaterBrinePrl0",
+  "name": "Water Brine Pearl",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/water-brine-pearl.svg",
+  "system": {
+    "description": {
+      "value": "<p>A pearl formed from living water. It weeps salt when held too long.</p>",
+      "chat": "A water brine pearl."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 10,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "water-brine-pearl",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "elemental",
+        "water",
+        "alchemy"
+      ],
+      "stackingKey": "water-brine-pearl",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWaterBrinePrl0"
+}
