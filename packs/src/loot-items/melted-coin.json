@@ -1,0 +1,52 @@
+{
+  "_id": "LFMeltedCoin0000",
+  "name": "Melted Coin",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/melted-coin.svg",
+  "system": {
+    "description": {
+      "value": "<p>A coin half-melted into a lump. Face and mint are gone; value is mostly sentimental.</p>",
+      "chat": "A melted coin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "melted-coin",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "fiend",
+        "junk",
+        "currency"
+      ],
+      "stackingKey": "melted-coin",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMeltedCoin0000"
+}

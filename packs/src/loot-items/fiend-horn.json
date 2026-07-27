@@ -1,0 +1,52 @@
+{
+  "_id": "LFFiendHorn00000",
+  "name": "Fiend Horn",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fiend-horn.svg",
+  "system": {
+    "description": {
+      "value": "<p>A ridged horn, warm to the touch. Smoke curls from the broken base when scraped.</p>",
+      "chat": "A severed fiend horn."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fiend-horn",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "fiend-horn",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFiendHorn00000"
+}

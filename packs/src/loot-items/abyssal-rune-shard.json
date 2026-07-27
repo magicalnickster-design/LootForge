@@ -1,0 +1,53 @@
+{
+  "_id": "LFAbyssalRune000",
+  "name": "Abyssal Rune Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/abyssal-rune-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A jagged shard carved with an Abyssal rune that rearranges itself when ignored.</p>",
+      "chat": "An abyssal rune shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 40,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "abyssal-rune-shard",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "fiend",
+        "demon",
+        "trinket",
+        "abyssal"
+      ],
+      "stackingKey": "abyssal-rune-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAbyssalRune000"
+}

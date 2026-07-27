@@ -1,0 +1,52 @@
+{
+  "_id": "LFBrimstoneChk00",
+  "name": "Brimstone Chunk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/brimstone-chunk.svg",
+  "system": {
+    "description": {
+      "value": "<p>A porous yellow-black lump that reeks of rotten eggs and forge smoke.</p>",
+      "chat": "A chunk of brimstone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "brimstone-chunk",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "fiend",
+        "alchemy",
+        "mineral"
+      ],
+      "stackingKey": "brimstone-chunk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBrimstoneChk00"
+}

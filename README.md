@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.9** |
+| Version | **0.5.10** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Fiend** — multi-pool profile for imps, quasits, hell hounds, and named devil/demon forms:
+  - Parts (ichor, horn, brimstone, hellhound/imp/quasit bits, barbed spines, chain links, bone spurs, rare pit-fiend scale / balor ash)
+  - Infernal coin (gp/pp leaning; CR-scaled) and **sheet equipment** for armed devils
+  - Scorched junk, soul-coin chips / seals / abyssal runes, contracts & Blood War orders
+  - **Name scaling:** Imp/Quasit drop less; Pit Fiend & Balor drop more (`lootScale`)
 - **Dragon** — multi-pool profile (excludes dragonborn / half-dragon):
   - Monster parts (scale, fang, claw, blood, hide, horn, rare heart)
   - Hoard currency (gp/pp heavy; CR-scaled)

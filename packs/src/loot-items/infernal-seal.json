@@ -1,0 +1,53 @@
+{
+  "_id": "LFInfernalSeal00",
+  "name": "Infernal Seal",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/infernal-seal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A brass seal stamped with a devil's personal sigil. Useful for forging orders — and getting killed.</p>",
+      "chat": "An infernal seal."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "infernal-seal",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "devil",
+        "trinket",
+        "infernal"
+      ],
+      "stackingKey": "infernal-seal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFInfernalSeal00"
+}

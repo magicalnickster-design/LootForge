@@ -1,0 +1,53 @@
+{
+  "_id": "LFHellhoundFang0",
+  "name": "Hell Hound Fang",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hellhound-fang.svg",
+  "system": {
+    "description": {
+      "value": "<p>A curved fang still warm, smelling faintly of charcoal. Sparks jump if struck on stone.</p>",
+      "chat": "A hell hound fang."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hellhound-fang",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "hellhound",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "hellhound-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHellhoundFang0"
+}

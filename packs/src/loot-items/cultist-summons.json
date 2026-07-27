@@ -1,0 +1,52 @@
+{
+  "_id": "LFCultistSummns0",
+  "name": "Cultist Summons",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cultist-summons.svg",
+  "system": {
+    "description": {
+      "value": "<p>A letter summoning cultists to a cellar rite. The meeting time has already passed — or hasn't.</p>",
+      "chat": "A cultist summons."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cultist-summons",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "cultist-summons",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCultistSummns0"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFBarbedSpine000",
+  "name": "Barbed Spine",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/barbed-spine.svg",
+  "system": {
+    "description": {
+      "value": "<p>A needle-sharp spine pulled from a barbed devil's hide. Still sticky with venomous sweat.</p>",
+      "chat": "A barbed devil spine."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "barbed-spine",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "devil",
+        "barbed",
+        "trophy"
+      ],
+      "stackingKey": "barbed-spine",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBarbedSpine000"
+}

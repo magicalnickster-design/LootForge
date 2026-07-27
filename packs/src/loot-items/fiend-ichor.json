@@ -1,0 +1,52 @@
+{
+  "_id": "LFFiendIchor0000",
+  "name": "Fiend Ichor",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fiend-ichor.svg",
+  "system": {
+    "description": {
+      "value": "<p>Black-red ichor that steams in open air. It eats through cheap glass and stains everything it touches.</p>",
+      "chat": "A vial of fiend ichor."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fiend-ichor",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "alchemy",
+        "blood"
+      ],
+      "stackingKey": "fiend-ichor",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFiendIchor0000"
+}

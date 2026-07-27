@@ -1,0 +1,51 @@
+{
+  "_id": "LFSulfurCloth000",
+  "name": "Sulfur-Stained Cloth",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/sulfur-stained-cloth.svg",
+  "system": {
+    "description": {
+      "value": "<p>A rag yellowed and stiff with sulfur. Was once something nicer.</p>",
+      "chat": "Sulfur-stained cloth."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "sulfur-stained-cloth",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "fiend",
+        "junk"
+      ],
+      "stackingKey": "sulfur-stained-cloth",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSulfurCloth000"
+}

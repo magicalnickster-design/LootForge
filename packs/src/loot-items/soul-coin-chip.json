@@ -1,0 +1,53 @@
+{
+  "_id": "LFSoulCoinChip00",
+  "name": "Soul Coin Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/soul-coin-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A broken fragment of a soul coin. A face flickers in the metal when held near a flame.</p>",
+      "chat": "A chip from a soul coin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "soul-coin-chip",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "fiend",
+        "trinket",
+        "currency",
+        "infernal"
+      ],
+      "stackingKey": "soul-coin-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSoulCoinChip00"
+}

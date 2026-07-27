@@ -1,0 +1,53 @@
+{
+  "_id": "LFHellhoundHide0",
+  "name": "Hell Hound Hide Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hellhound-hide.svg",
+  "system": {
+    "description": {
+      "value": "<p>Charred fur over heat-toughened hide. Useful for fire-resistant leatherwork — if you can stand the smell.</p>",
+      "chat": "A scrap of hell hound hide."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hellhound-hide",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "hellhound",
+        "hide",
+        "leatherworking"
+      ],
+      "stackingKey": "hellhound-hide",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHellhoundHide0"
+}

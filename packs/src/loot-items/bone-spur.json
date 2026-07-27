@@ -1,0 +1,53 @@
+{
+  "_id": "LFBoneSpur000000",
+  "name": "Bone Spur",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bone-spur.svg",
+  "system": {
+    "description": {
+      "value": "<p>A hooked spur of bone from a bone devil's elbow. Light as ash, hard as iron.</p>",
+      "chat": "A bone devil spur."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 10,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bone-spur",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "devil",
+        "bone",
+        "trophy"
+      ],
+      "stackingKey": "bone-spur",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBoneSpur000000"
+}

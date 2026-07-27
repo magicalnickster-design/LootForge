@@ -1,0 +1,53 @@
+{
+  "_id": "LFDevilChainLnk0",
+  "name": "Devil Chain Link",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/devil-chain-link.svg",
+  "system": {
+    "description": {
+      "value": "<p>A heavy iron link from a chain devil's living chains. It flexes when no one is looking.</p>",
+      "chat": "A devil chain link."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "devil-chain-link",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "devil",
+        "chain",
+        "metal"
+      ],
+      "stackingKey": "devil-chain-link",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDevilChainLnk0"
+}

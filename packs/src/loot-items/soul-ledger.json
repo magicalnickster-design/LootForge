@@ -1,0 +1,53 @@
+{
+  "_id": "LFSoulLedger0000",
+  "name": "Soul Ledger Page",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/soul-ledger.svg",
+  "system": {
+    "description": {
+      "value": "<p>A page of names, debts, and delivery dates. Several entries are crossed out in gold ink.</p>",
+      "chat": "A soul ledger page."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 20,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "soul-ledger",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "fiend",
+        "story",
+        "readable",
+        "infernal"
+      ],
+      "stackingKey": "soul-ledger",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSoulLedger0000"
+}

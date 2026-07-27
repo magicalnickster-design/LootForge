@@ -1,0 +1,53 @@
+{
+  "_id": "LFBloodWarOrdr00",
+  "name": "Blood War Orders",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/blood-war-orders.svg",
+  "system": {
+    "description": {
+      "value": "<p>Orders written in Infernal: rally point, target, and a reminder that failure feeds the Abyss.</p>",
+      "chat": "Blood War orders."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "blood-war-orders",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "fiend",
+        "story",
+        "readable",
+        "military"
+      ],
+      "stackingKey": "blood-war-orders",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBloodWarOrdr00"
+}

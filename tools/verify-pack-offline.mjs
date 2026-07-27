@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.9") {
-  throw new Error(`Expected module version 0.5.9, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.10") {
+  throw new Error(`Expected module version 0.5.10, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -196,7 +196,30 @@ const expectedNames = new Set([
   "Pocket Handkerchief",
   "Recipe Card",
   "County Fair Ticket",
-  "Shire Map Scrap"
+  "Shire Map Scrap",
+  "Fiend Ichor",
+  "Fiend Horn",
+  "Brimstone Chunk",
+  "Hell Hound Fang",
+  "Hell Hound Hide Scrap",
+  "Imp Wing Membrane",
+  "Quasit Claw",
+  "Barbed Spine",
+  "Devil Chain Link",
+  "Bone Spur",
+  "Pit Fiend Scale",
+  "Balor Ash",
+  "Soul Coin Chip",
+  "Brimstone Charm",
+  "Infernal Seal",
+  "Abyssal Rune Shard",
+  "Scorched Scrap",
+  "Melted Coin",
+  "Sulfur-Stained Cloth",
+  "Infernal Contract Scrap",
+  "Blood War Orders",
+  "Cultist Summons",
+  "Soul Ledger Page"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -411,7 +434,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 150) {
+if (listLootDefinitions().length < 170) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -995,6 +1018,99 @@ const halflingLoot = await generateCreatureLoot({
   survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
 });
 if (halflingLoot.profileId !== "halfling") throw new Error("Halfling generation used wrong profile");
+
+
+
+const fiend = resolveCreatureProfile({ name: "Barbed Devil", creatureType: "fiend", creatureSubtype: "devil", size: "med" });
+const imp = resolveCreatureProfile({ name: "Imp", creatureType: "fiend", creatureSubtype: "devil", size: "tiny" });
+const quasit = resolveCreatureProfile({ name: "Quasit", creatureType: "fiend", creatureSubtype: "demon", size: "tiny" });
+const hellHound = resolveCreatureProfile({ name: "Hell Hound", creatureType: "fiend", creatureSubtype: "", size: "med" });
+const pitFiend = resolveCreatureProfile({ name: "Pit Fiend", creatureType: "fiend", creatureSubtype: "devil", size: "lg" });
+const balor = resolveCreatureProfile({ name: "Balor", creatureType: "fiend", creatureSubtype: "demon", size: "huge" });
+if (fiend?.id !== "fiend") throw new Error(`Expected fiend profile for Barbed Devil, got ${fiend?.id}`);
+if (imp?.id !== "fiend") throw new Error(`Expected fiend profile for Imp, got ${imp?.id}`);
+if (quasit?.id !== "fiend") throw new Error(`Expected fiend profile for Quasit, got ${quasit?.id}`);
+if (hellHound?.id !== "fiend") throw new Error(`Expected fiend profile for Hell Hound, got ${hellHound?.id}`);
+if (pitFiend?.id !== "fiend") throw new Error(`Expected fiend profile for Pit Fiend, got ${pitFiend?.id}`);
+if (balor?.id !== "fiend") throw new Error(`Expected fiend profile for Balor, got ${balor?.id}`);
+
+if (resolveLootScale(fiend, { name: "Imp", size: "tiny" }) !== 0.4) {
+  throw new Error("Imp lootScale should be 0.4");
+}
+if (resolveLootScale(fiend, { name: "Quasit", size: "tiny" }) !== 0.4) {
+  throw new Error("Quasit lootScale should be 0.4");
+}
+if (resolveLootScale(fiend, { name: "Hell Hound", size: "med" }) !== 0.7) {
+  throw new Error("Hell Hound lootScale should be 0.7");
+}
+if (resolveLootScale(fiend, { name: "Bearded Devil", size: "med" }) !== 0.9) {
+  throw new Error("Bearded Devil lootScale should be 0.9");
+}
+if (resolveLootScale(fiend, { name: "Barbed Devil", size: "med" }) !== 1.1) {
+  throw new Error("Barbed Devil lootScale should be 1.1");
+}
+if (resolveLootScale(fiend, { name: "Chain Devil", size: "med" }) !== 1.2) {
+  throw new Error("Chain Devil lootScale should be 1.2");
+}
+if (resolveLootScale(fiend, { name: "Bone Devil", size: "lg" }) !== 1.3) {
+  throw new Error("Bone Devil lootScale should be 1.3");
+}
+if (resolveLootScale(fiend, { name: "Horned Devil", size: "lg" }) !== 1.45) {
+  throw new Error("Horned Devil lootScale should be 1.45");
+}
+if (resolveLootScale(fiend, { name: "Pit Fiend", size: "lg" }) !== 1.85) {
+  throw new Error("Pit Fiend lootScale should be 1.85");
+}
+if (resolveLootScale(fiend, { name: "Balor", size: "huge" }) !== 1.9) {
+  throw new Error("Balor lootScale should be 1.9");
+}
+
+const impLoot = await generateCreatureLoot({
+  context: { name: "Imp", creatureType: "fiend", creatureSubtype: "devil", size: "tiny", challengeRating: 1, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
+});
+if (impLoot.profileId !== "fiend") throw new Error("Imp generation used wrong profile");
+if (!impLoot.items.some((i) => ["fiend-ichor","fiend-horn","brimstone-chunk","imp-wing"].includes(String(i.definitionId || "")))) {
+  throw new Error("Imp loot missing fiend parts");
+}
+
+const balorLoot = await generateCreatureLoot({
+  context: { name: "Balor", creatureType: "fiend", creatureSubtype: "demon", size: "huge", challengeRating: 19, isWolf: false, isBoss: true, isNamed: false },
+  survivalTotal: 22, naturalDie: 18, isNatural20: false,
+  actor: {
+    id: "balor1", name: "Balor",
+    items: { contents: [{
+      id: "w1", name: "Longsword", type: "weapon", img: "icons/svg/sword.svg",
+      system: { quantity: 1, type: { value: "martialM" }, price: { value: 15, denomination: "gp" }, description: { value: "<p>Sword.</p>" }, rarity: "common" },
+      flags: {},
+      toObject() { return { name: this.name, type: this.type, img: this.img, system: structuredClone(this.system), flags: {} }; }
+    }] }
+  }
+});
+if (balorLoot.profileId !== "fiend") throw new Error("Balor generation used wrong profile");
+if (!balorLoot.items.some((i) => String(i.definitionId || "").match(/fiend|brimstone|balor|pit-fiend|horn|ichor/))) {
+  throw new Error("Balor loot missing fiend parts");
+}
+
+let impPartSum = 0;
+let balorPartSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Imp", creatureType: "fiend", creatureSubtype: "devil", size: "tiny", challengeRating: 1, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Balor", creatureType: "fiend", creatureSubtype: "demon", size: "huge", challengeRating: 19, isWolf: false, isBoss: true, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  impPartSum += a.items.filter((it) => ["monster-part","part"].includes(String(it.category || "")) || String(it.definitionId || "").match(/fiend|brimstone|hellhound|imp|quasit|barbed|devil-chain|bone-spur|pit-fiend|balor/)).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  balorPartSum += b.items.filter((it) => String(it.definitionId || "").match(/fiend|brimstone|hellhound|imp|quasit|barbed|devil-chain|bone-spur|pit-fiend|balor/)).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const impAvg = impPartSum / 40;
+const balorAvg = balorPartSum / 40;
+if (balorAvg <= impAvg * 1.3) {
+  throw new Error(`Balor should average more scaled parts than Imp (balor=${balorAvg}, imp=${impAvg})`);
+}
 
 
 console.log("Offline pack verification passed.");

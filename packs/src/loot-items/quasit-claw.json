@@ -1,0 +1,53 @@
+{
+  "_id": "LFQuasitClaw0000",
+  "name": "Quasit Claw",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/quasit-claw.svg",
+  "system": {
+    "description": {
+      "value": "<p>A small hooked claw with a greenish sheen. Scratching yourself with it is a terrible idea.</p>",
+      "chat": "A quasit claw."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "quasit-claw",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "fiend",
+        "quasit",
+        "trophy",
+        "poison"
+      ],
+      "stackingKey": "quasit-claw",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFQuasitClaw0000"
+}
