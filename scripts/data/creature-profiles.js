@@ -5,7 +5,12 @@
  * Add future creatures there; keep generation logic generic.
  */
 
-export { CREATURE_PROFILES, PROFILE_ORDER, resolveCreatureProfile } from "./profiles/index.js";
+export {
+  CREATURE_PROFILES,
+  PROFILE_ORDER,
+  TYPE_FALLBACKS,
+  resolveCreatureProfile
+} from "./profiles/index.js";
 
 /**
  * @typedef {object} ProfileDrop

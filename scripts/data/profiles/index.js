@@ -28,6 +28,8 @@ import { giantProfile } from "./giant.js";
 import { goblinProfile } from "./goblin.js";
 import { hobgoblinProfile } from "./hobgoblin.js";
 import { stockHumanoidProfile } from "./stock-humanoid.js";
+import { genericHumanoidProfile } from "./generic-humanoid.js";
+import { genericUndeadProfile } from "./generic-undead.js";
 import { halflingProfile } from "./halfling.js";
 import { humanProfile } from "./human.js";
 import { lichProfile } from "./lich.js";
@@ -44,6 +46,7 @@ import { zombieProfile } from "./zombie.js";
 /**
  * Specific profiles first (elf before human, lich before undead, spider before wolf, etc.).
  * Registry key may differ from profile.id (animatedArmor → animated-armor).
+ * Type-only fallbacks (genericHumanoid) are not name-matched; see TYPE_FALLBACKS.
  */
 export const PROFILE_ORDER = [
   "container",
@@ -80,6 +83,7 @@ export const PROFILE_ORDER = [
   "mummy",
   "skeleton",
   "zombie",
+  "genericUndead",
   "wolf"
 ];
 
@@ -101,6 +105,7 @@ export const CREATURE_PROFILES = {
   goblin: goblinProfile,
   hobgoblin: hobgoblinProfile,
   stockHumanoid: stockHumanoidProfile,
+  genericHumanoid: genericHumanoidProfile,
   bugbear: bugbearProfile,
   elf: elfProfile,
   dwarf: dwarfProfile,
@@ -119,7 +124,32 @@ export const CREATURE_PROFILES = {
   mummy: mummyProfile,
   skeleton: skeletonProfile,
   zombie: zombieProfile,
+  genericUndead: genericUndeadProfile,
   wolf: wolfProfile
+};
+
+/**
+ * When no name/subtype profile matches, fall back to family loot by creature type.
+ * Specific profiles above always win first (Wolf, Goblin, Archmage, etc.).
+ * @type {Record<string, import("../creature-profiles.js").CreatureProfile>}
+ */
+export const TYPE_FALLBACKS = {
+  aberration: aberrationProfile,
+  beast: beastProfile,
+  celestial: celestialProfile,
+  construct: constructProfile,
+  dragon: dragonProfile,
+  elemental: elementalProfile,
+  fey: feyProfile,
+  fiend: fiendProfile,
+  giant: giantProfile,
+  humanoid: genericHumanoidProfile,
+  monstrosity: monstrosityProfile,
+  ooze: oozeProfile,
+  plant: plantProfile,
+  undead: genericUndeadProfile,
+  // Swarms are usually beasts in 5e; treat as beast loot when typed as swarm.
+  swarm: beastProfile
 };
 
 /**
@@ -171,6 +201,9 @@ export function resolveCreatureProfile(context) {
     if ((nameHit || subtypeHit) && typeOk) return profile;
     if (nameHit) return profile;
   }
+
+  // No dedicated name/subtype profile — use generic loot for the creature type.
+  if (type && TYPE_FALLBACKS[type]) return TYPE_FALLBACKS[type];
 
   return null;
 }

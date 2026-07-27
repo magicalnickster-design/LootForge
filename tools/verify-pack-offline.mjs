@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.22") {
-  throw new Error(`Expected module version 0.5.22, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.23") {
+  throw new Error(`Expected module version 0.5.23, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -2382,6 +2382,61 @@ const ratAvg = ratSum / 40;
 const sharkAvg = sharkSum / 40;
 if (sharkAvg <= ratAvg * 1.3) {
   throw new Error(`Giant Shark should average more scaled parts than Giant Rat (shark=${sharkAvg}, rat=${ratAvg})`);
+}
+
+// Type fallbacks: unknown names use creature type family loot; specifics still win.
+const blinkDog = resolveCreatureProfile({ name: "Blink Dog", creatureType: "fey", creatureSubtype: "", size: "med" });
+const unknownBeast = resolveCreatureProfile({ name: "Unknown Beast", creatureType: "beast", creatureSubtype: "", size: "med" });
+const weirdThing = resolveCreatureProfile({ name: "Weird Thing", creatureType: "aberration", creatureSubtype: "", size: "med" });
+const wight = resolveCreatureProfile({ name: "Wight", creatureType: "undead", creatureSubtype: "", size: "med" });
+const specter = resolveCreatureProfile({ name: "Specter", creatureType: "", creatureSubtype: "", size: "med" });
+const mysteryHumanoid = resolveCreatureProfile({ name: "Mysterious Stranger", creatureType: "humanoid", creatureSubtype: "", size: "med" });
+const swarmInsects = resolveCreatureProfile({ name: "Swarm of Insects", creatureType: "swarm", creatureSubtype: "", size: "med" });
+const noType = resolveCreatureProfile({ name: "No Type Creature", creatureType: "", creatureSubtype: "", size: "med" });
+const wolfStillType = resolveCreatureProfile({ name: "Wolf", creatureType: "beast", creatureSubtype: "", size: "med" });
+const archStillType = resolveCreatureProfile({ name: "Archmage", creatureType: "humanoid", creatureSubtype: "", size: "med" });
+const lichKingStill = resolveCreatureProfile({ name: "Lich King", creatureType: "undead", creatureSubtype: "", size: "med" });
+const zombieStill = resolveCreatureProfile({ name: "Zombie", creatureType: "undead", creatureSubtype: "", size: "med" });
+const assassinStill = resolveCreatureProfile({ name: "Assassin", creatureType: "humanoid", creatureSubtype: "", size: "med" });
+if (blinkDog?.id !== "fey") throw new Error(`Expected fey type fallback for Blink Dog, got ${blinkDog?.id}`);
+if (unknownBeast?.id !== "beast") throw new Error(`Expected beast type fallback for Unknown Beast, got ${unknownBeast?.id}`);
+if (weirdThing?.id !== "aberration") throw new Error(`Expected aberration type fallback for Weird Thing, got ${weirdThing?.id}`);
+if (wight?.id !== "generic-undead") throw new Error(`Expected generic-undead for Wight, got ${wight?.id}`);
+if (specter?.id !== "generic-undead") throw new Error(`Expected generic-undead for Specter, got ${specter?.id}`);
+if (mysteryHumanoid?.id !== "generic-humanoid") throw new Error(`Expected generic-humanoid for Mysterious Stranger, got ${mysteryHumanoid?.id}`);
+if (swarmInsects?.id !== "beast") throw new Error(`Expected beast swarm fallback, got ${swarmInsects?.id}`);
+if (noType != null) throw new Error(`Expected null for creature with no type and unknown name, got ${noType?.id}`);
+if (wolfStillType?.id !== "wolf") throw new Error(`Type fallback must not steal Wolf, got ${wolfStillType?.id}`);
+if (archStillType?.id !== "archmage") throw new Error(`Type fallback must not steal Archmage, got ${archStillType?.id}`);
+if (lichKingStill?.id !== "lich-king") throw new Error(`Type fallback must not steal Lich King, got ${lichKingStill?.id}`);
+if (zombieStill?.id !== "zombie") throw new Error(`Type fallback must not steal Zombie, got ${zombieStill?.id}`);
+if (assassinStill?.id !== "stock-humanoid") throw new Error(`Type fallback must not steal Assassin, got ${assassinStill?.id}`);
+
+const wightLoot = await generateCreatureLoot({
+  context: { name: "Wight", creatureType: "undead", creatureSubtype: "", size: "med", challengeRating: 3, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (wightLoot.profileId !== "generic-undead") throw new Error("Wight generation used wrong profile");
+if (!wightLoot.items.some((i) => /rotten-flesh|bone-shard|grave-dirt|ectoplasm|burial|coffin|holy-symbol|unfinished-will/.test(String(i.definitionId || "")))) {
+  throw new Error("Wight loot missing generic undead parts");
+}
+
+const mysteryLoot = await generateCreatureLoot({
+  context: { name: "Mysterious Stranger", creatureType: "humanoid", creatureSubtype: "", size: "med", challengeRating: 1, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (mysteryLoot.profileId !== "generic-humanoid") throw new Error("Mysterious Stranger generation used wrong profile");
+if (!mysteryLoot.items.some((i) => /mercenary-blood|calloused-knuckle|dirty-rag|empty-bottle|worn-insignia|copper-ring|wanted-poster|scribbled-note|bounty-board/.test(String(i.definitionId || "")))) {
+  throw new Error("Mysterious Stranger loot missing generic humanoid parts");
+}
+
+const blinkLoot = await generateCreatureLoot({
+  context: { name: "Blink Dog", creatureType: "fey", creatureSubtype: "", size: "med", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (blinkLoot.profileId !== "fey") throw new Error("Blink Dog generation used wrong profile");
+if (!blinkLoot.items.some((i) => /fey-|pixie-|dryad-|satyr-|redcap-|hag-|wilted|fairy|bargain|coven/.test(String(i.definitionId || "")))) {
+  throw new Error("Blink Dog loot missing fey family parts");
 }
 
 
