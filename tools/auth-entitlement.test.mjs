@@ -162,3 +162,97 @@ test("subscription fallback caps expiresAt at 30 days", async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+test("native /api/entitlements/lootforge 403 denied is returned without subscription fallback", async () => {
+  const calls = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    calls.push(String(url));
+    if (String(url).endsWith("/api/entitlements/lootforge")) {
+      return {
+        ok: false,
+        status: 403,
+        text: async () => JSON.stringify({
+          product: "lootforge",
+          allowed: false,
+          entitled: false,
+          reason: "subscription_required",
+          subscriptionStatus: "inactive",
+          checkedAt: "2026-07-27T12:00:00.000Z"
+        })
+      };
+    }
+    throw new Error("subscription fallback should not be called on 403");
+  };
+  try {
+    const { getEntitlement } = await import("../scripts/auth/auth-client.js");
+    const result = await getEntitlement("token-denied");
+    assert.equal(result.ok, false);
+    assert.equal(result.status, 403);
+    assert.equal(result.payload.reason, "subscription_required");
+    assert.equal(calls.filter((u) => u.endsWith("/api/subscription")).length, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("401 from native entitlement route is handled cleanly", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith("/api/entitlements/lootforge")) {
+      return {
+        ok: false,
+        status: 401,
+        text: async () => JSON.stringify({
+          error: "Unauthorized",
+          code: "AUTH_REQUIRED"
+        })
+      };
+    }
+    throw new Error("subscription fallback should not be called on 401");
+  };
+  try {
+    const { getEntitlement, stateFromError } = await import("../scripts/auth/auth-client.js");
+    const result = await getEntitlement("expired-or-missing");
+    assert.equal(result.ok, false);
+    assert.equal(result.status, 401);
+    assert.equal(result.errorCode, "AUTH_REQUIRED");
+    assert.equal(stateFromError(result), "signed_out");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("404 non-JSON then 401 from /api/subscription is handled cleanly", async () => {
+  const calls = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    calls.push(String(url));
+    if (String(url).endsWith("/api/entitlements/lootforge")) {
+      return { ok: false, status: 404, text: async () => "<html>Cannot GET</html>" };
+    }
+    if (String(url).endsWith("/api/subscription")) {
+      return {
+        ok: false,
+        status: 401,
+        text: async () => JSON.stringify({
+          error: "Session expired — please log in again",
+          code: "SESSION_EXPIRED"
+        })
+      };
+    }
+    throw new Error("unexpected route");
+  };
+  try {
+    const { getEntitlement, stateFromError } = await import("../scripts/auth/auth-client.js");
+    const result = await getEntitlement("expired-session");
+    assert.equal(result.ok, false);
+    assert.equal(result.status, 401);
+    assert.equal(result.errorCode, "SESSION_EXPIRED");
+    assert.equal(stateFromError(result), "session_expired");
+    assert.ok(calls.some((u) => u.endsWith("/api/entitlements/lootforge")));
+    assert.ok(calls.some((u) => u.endsWith("/api/subscription")));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
