@@ -1,0 +1,52 @@
+{
+  "_id": "LFBeastLairScrat",
+  "name": "Beast Lair Scratching",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/beast-lair-scratching.svg",
+  "system": {
+    "description": {
+      "value": "<p>Bark or stone scratched with territory marks. A ranger can read them.</p>",
+      "chat": "Bark or stone scratched with territory marks. A ranger can read them."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "beast-lair-scratching",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "beast-lair-scratching",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBeastLairScrat"
+}

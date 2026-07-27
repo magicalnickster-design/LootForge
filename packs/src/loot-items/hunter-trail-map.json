@@ -1,0 +1,52 @@
+{
+  "_id": "LFHunterTrailMap",
+  "name": "Hunter Trail Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hunter-trail-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A map of game trails and watering holes. Blood stains optional.</p>",
+      "chat": "A map of game trails and watering holes. Blood stains optional."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hunter-trail-map",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "hunter-trail-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHunterTrailMap"
+}

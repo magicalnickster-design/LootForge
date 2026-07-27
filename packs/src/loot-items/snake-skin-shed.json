@@ -1,0 +1,52 @@
+{
+  "_id": "LFSnakeSkinShed0",
+  "name": "Snake Skin Shed",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/snake-skin-shed.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shed of giant snake skin, patterned and tough.</p>",
+      "chat": "A shed of giant snake skin, patterned and tough."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "snake-skin-shed",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "snake",
+        "trophy"
+      ],
+      "stackingKey": "snake-skin-shed",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSnakeSkinShed0"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFBoarTusk000000",
+  "name": "Boar Tusk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/boar-tusk.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thick boar tusk, yellowed and sharp.</p>",
+      "chat": "A thick boar tusk, yellowed and sharp."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "boar-tusk",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "boar",
+        "trophy"
+      ],
+      "stackingKey": "boar-tusk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBoarTusk000000"
+}

@@ -1,0 +1,54 @@
+{
+  "_id": "LFGreatCatFang00",
+  "name": "Great Cat Fang",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/great-cat-fang.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fang from a great cat \u2014 panther, lion, or tiger.</p>",
+      "chat": "A fang from a great cat \u2014 panther, lion, or tiger."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "great-cat-fang",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "panther",
+        "lion",
+        "tiger",
+        "trophy"
+      ],
+      "stackingKey": "great-cat-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGreatCatFang00"
+}

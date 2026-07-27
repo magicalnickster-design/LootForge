@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.21** |
+| Version | **0.5.22** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Hobgoblin**, **Bugbear**, **Stock Humanoids** (Bandit–Berserker), **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Bosses** (Ancient Red Dragon, Kraken, Tarrasque, Demon Lord, Archmage, Lich King), **Chest / Container** |
+| Scope | **Wolf**, **Beasts** (Boar–Shark), **Spider**, **Animated Armor**, **Goblin**, **Hobgoblin**, **Bugbear**, **Stock Humanoids** (Bandit–Berserker), **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Bosses** (Ancient Red Dragon, Kraken, Tarrasque, Demon Lord, Archmage, Lich King), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -29,7 +29,13 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 ## Creature loot notes
 
-- **Wolf** — wolf parts only (whole-word match; excludes “wolf spider”). Legacy `drops[]` profile.
+- **Wolf** — wolf parts only (whole-word match; excludes “wolf spider”). Legacy `drops[]` profile. Dire Wolf uses this profile.
+- **Beasts** — multi-pool profile for Boar, Bear, Panther, Lion, Tiger, Giant Rat, Giant Scorpion, Giant Snake, Giant Frog, Giant Eagle, Giant Owl, Crocodile, Shark (and common variants):
+  - Parts (hide, fang, claw, meat) plus form trophies (tusks, stingers, feathers, shark teeth)
+  - Sparse swallowed coin / nest junk; occasional sheet gear from prey
+  - Hunter trail maps & lair scratchings
+  - **Name scaling:** Giant Rat drops less; Giant Shark / Scorpion drop more (`lootScale`)
+  - Wolf and Spider stay on their dedicated profiles
 - **Spider / Wolf Spider / Phase Spider** — multi-pool beast profile:
   - Monster parts (silk, fang, venom gland, eye, chitin, rare spinneret)
   - Occasional web-caught coins

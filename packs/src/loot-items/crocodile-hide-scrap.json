@@ -1,0 +1,52 @@
+{
+  "_id": "LFCrocHideScrap0",
+  "name": "Crocodile Hide Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crocodile-hide-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of crocodile hide, ridged and waterproof.</p>",
+      "chat": "A scrap of crocodile hide, ridged and waterproof."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 18,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crocodile-hide-scrap",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "crocodile",
+        "trophy"
+      ],
+      "stackingKey": "crocodile-hide-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrocHideScrap0"
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "LFBeastHide00000",
+  "name": "Beast Hide",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/beast-hide.svg",
+  "system": {
+    "description": {
+      "value": "<p>A patch of hide from a wild beast. Still warm.</p>",
+      "chat": "A patch of hide from a wild beast. Still warm."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "beast-hide",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "trophy"
+      ],
+      "stackingKey": "beast-hide",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBeastHide00000"
+}

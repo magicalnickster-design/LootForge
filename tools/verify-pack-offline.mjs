@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.21") {
-  throw new Error(`Expected module version 0.5.21, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.22") {
+  throw new Error(`Expected module version 0.5.22, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -457,7 +457,31 @@ const expectedNames = new Set([
   "Priest Prayer Bead",
   "Scout Trail Chalk",
   "Thug's Brass Knuckle",
-  "Veteran's Service Pin"
+  "Veteran's Service Pin",
+  "Bear Claw",
+  "Beast Claw",
+  "Beast Fang",
+  "Beast Hide",
+  "Beast Lair Scratching",
+  "Beast Meat",
+  "Beast Tooth Necklace",
+  "Bloody Fur Tuft",
+  "Boar Tusk",
+  "Cracked Claw Sheath",
+  "Crocodile Hide Scrap",
+  "Fishbone Cluster",
+  "Frog Poison Sac",
+  "Giant Eagle Feather",
+  "Giant Owl Feather",
+  "Giant Rat Tail",
+  "Great Cat Fang",
+  "Hunter Trail Map",
+  "Nest Twig Bundle",
+  "Polished Fang Charm",
+  "Ranger Warning Scrap",
+  "Scorpion Stinger",
+  "Shark Tooth",
+  "Snake Skin Shed"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -672,7 +696,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 400) {
+if (listLootDefinitions().length < 420) {
   throw new Error("Expected expanded definition registry");
 }
 if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plate") || !getLootDefinition("golem-manual-page")) {
@@ -690,6 +714,10 @@ if (!getLootDefinition("boss-trophy-crest") || !getLootDefinition("legendary-cra
 if (!getLootDefinition("hobgoblin-ear") || !getLootDefinition("mercenary-blood-vial") || !getLootDefinition("assassin-garrote-cord")) {
   throw new Error("Missing hobgoblin/stock-humanoid loot definitions");
 }
+if (!getLootDefinition("beast-hide") || !getLootDefinition("scorpion-stinger") || !getLootDefinition("shark-tooth")) {
+  throw new Error("Missing beast loot definitions");
+}
+
 
 
 
@@ -2294,6 +2322,66 @@ const cultAvg = cultSum / 40;
 const assassinAvg = assassinSum / 40;
 if (assassinAvg <= cultAvg * 1.25) {
   throw new Error(`Assassin should average more scaled parts than Cultist (assassin=${assassinAvg}, cultist=${cultAvg})`);
+}
+
+
+
+const beastBoar = resolveCreatureProfile({ name: "Boar", creatureType: "beast", creatureSubtype: "", size: "med" });
+const beastBear = resolveCreatureProfile({ name: "Brown Bear", creatureType: "beast", creatureSubtype: "", size: "lg" });
+const beastTiger = resolveCreatureProfile({ name: "Tiger", creatureType: "beast", creatureSubtype: "", size: "lg" });
+const beastRat = resolveCreatureProfile({ name: "Giant Rat", creatureType: "beast", creatureSubtype: "", size: "sm" });
+const beastScorp = resolveCreatureProfile({ name: "Giant Scorpion", creatureType: "beast", creatureSubtype: "", size: "lg" });
+const beastFrog = resolveCreatureProfile({ name: "Giant Frog", creatureType: "beast", creatureSubtype: "", size: "med" });
+const beastShark = resolveCreatureProfile({ name: "Giant Shark", creatureType: "beast", creatureSubtype: "", size: "huge" });
+const beastWolfStill = resolveCreatureProfile({ name: "Wolf", creatureType: "beast", creatureSubtype: "", size: "med" });
+const beastSpiderStill = resolveCreatureProfile({ name: "Giant Spider", creatureType: "beast", creatureSubtype: "", size: "lg" });
+const beastDireWolf = resolveCreatureProfile({ name: "Dire Wolf", creatureType: "beast", creatureSubtype: "", size: "lg" });
+const hillGiantStill = resolveCreatureProfile({ name: "Hill Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
+if (beastBoar?.id !== "beast") throw new Error(`Expected beast for Boar, got ${beastBoar?.id}`);
+if (beastBear?.id !== "beast") throw new Error(`Expected beast for Brown Bear, got ${beastBear?.id}`);
+if (beastTiger?.id !== "beast") throw new Error(`Expected beast for Tiger, got ${beastTiger?.id}`);
+if (beastRat?.id !== "beast") throw new Error(`Expected beast for Giant Rat, got ${beastRat?.id}`);
+if (beastScorp?.id !== "beast") throw new Error(`Expected beast for Giant Scorpion, got ${beastScorp?.id}`);
+if (beastFrog?.id !== "beast") throw new Error(`Expected beast for Giant Frog, got ${beastFrog?.id}`);
+if (beastShark?.id !== "beast") throw new Error(`Expected beast for Giant Shark, got ${beastShark?.id}`);
+if (beastWolfStill?.id !== "wolf") throw new Error(`Expected wolf for Wolf, got ${beastWolfStill?.id}`);
+if (beastSpiderStill?.id !== "spider") throw new Error(`Expected spider for Giant Spider, got ${beastSpiderStill?.id}`);
+if (beastDireWolf?.id !== "wolf") throw new Error(`Expected wolf for Dire Wolf, got ${beastDireWolf?.id}`);
+if (hillGiantStill?.id !== "giant") throw new Error(`Expected giant for Hill Giant, got ${hillGiantStill?.id}`);
+
+if (resolveLootScale(beastBoar, { name: "Giant Rat", size: "sm" }) !== 0.4) throw new Error("Giant Rat lootScale should be 0.4");
+if (resolveLootScale(beastBoar, { name: "Boar", size: "med" }) !== 0.65) throw new Error("Boar lootScale should be 0.65");
+if (resolveLootScale(beastBoar, { name: "Giant Scorpion", size: "lg" }) !== 1.2) throw new Error("Giant Scorpion lootScale should be 1.2");
+if (resolveLootScale(beastBoar, { name: "Giant Shark", size: "huge" }) !== 1.35) throw new Error("Giant Shark lootScale should be 1.35");
+
+const scorpLoot = await generateCreatureLoot({
+  context: { name: "Giant Scorpion", creatureType: "beast", creatureSubtype: "", size: "lg", challengeRating: 3, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (scorpLoot.profileId !== "beast") throw new Error("Giant Scorpion generation used wrong profile");
+if (!scorpLoot.items.some((i) => /beast-|boar-|bear-|great-cat|giant-rat|scorpion|snake-skin|frog-poison|eagle-feather|owl-feather|crocodile|shark-tooth|bloody-fur|claw-sheath|nest-twig|fishbone|fang-charm|tooth-necklace|hunter-trail|beast-lair|ranger-warning/.test(String(i.definitionId || "")))) {
+  throw new Error("Giant Scorpion loot missing beast parts");
+}
+
+let ratSum = 0;
+let sharkSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Giant Rat", creatureType: "beast", creatureSubtype: "", size: "sm", challengeRating: 0.125, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Giant Shark", creatureType: "beast", creatureSubtype: "", size: "huge", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /beast-|boar-|bear-|great-cat|giant-rat|scorpion|snake-skin|frog-poison|eagle-feather|owl-feather|crocodile|shark-tooth|bloody-fur|claw-sheath|nest-twig|fishbone|fang-charm|tooth-necklace|hunter-trail|beast-lair|ranger-warning/;
+  ratSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  sharkSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const ratAvg = ratSum / 40;
+const sharkAvg = sharkSum / 40;
+if (sharkAvg <= ratAvg * 1.3) {
+  throw new Error(`Giant Shark should average more scaled parts than Giant Rat (shark=${sharkAvg}, rat=${ratAvg})`);
 }
 
 

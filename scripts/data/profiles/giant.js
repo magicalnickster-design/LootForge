@@ -22,7 +22,7 @@ export const giantProfile = {
   matchSubtypes: ["giant"],
   // Avoid matching "giant spider", "giant wolf spider", etc. via type alone —
   // those are beasts/monstrosities already handled by spider/monstrosity profiles.
-  excludeNames: ["giant spider", "giant wolf", "giant rat", "giant eagle", "giant owl", "giant toad", "giant weasel", "giant crab", "giant crocodile", "giant constrictor", "giant centipede", "giant bat", "giant goat", "giant hyena", "giant lizard", "giant octopus", "giant seahorse", "giant shark", "giant vulture", "giant elk", "giant boar", "giant fire beetle", "giant poisonous", "giant badger"],
+  excludeNames: ["giant scorpion", "giant frog", "giant snake", "giant poisonous snake", "giant constrictor snake", "giant spider", "giant wolf", "giant rat", "giant eagle", "giant owl", "giant toad", "giant weasel", "giant crab", "giant crocodile", "giant constrictor", "giant centipede", "giant bat", "giant goat", "giant hyena", "giant lizard", "giant octopus", "giant seahorse", "giant shark", "giant vulture", "giant elk", "giant boar", "giant fire beetle", "giant poisonous", "giant badger"],
   lootScale: {
     // Longest token wins (see resolveLootScale).
     nameTokens: {

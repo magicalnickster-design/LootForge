@@ -1,0 +1,51 @@
+{
+  "_id": "LFBeastClaw00000",
+  "name": "Beast Claw",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/beast-claw.svg",
+  "system": {
+    "description": {
+      "value": "<p>A curved claw, useful for tools or trophies.</p>",
+      "chat": "A curved claw, useful for tools or trophies."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "beast-claw",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "trophy"
+      ],
+      "stackingKey": "beast-claw",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBeastClaw00000"
+}

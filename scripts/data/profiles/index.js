@@ -38,6 +38,7 @@ import { orcProfile } from "./orc.js";
 import { skeletonProfile } from "./skeleton.js";
 import { spiderProfile } from "./spider.js";
 import { wolfProfile } from "./wolf.js";
+import { beastProfile } from "./beast.js";
 import { zombieProfile } from "./zombie.js";
 
 /**
@@ -53,6 +54,7 @@ export const PROFILE_ORDER = [
   "lichKing",
   "archmage",
   "spider",
+  "beast",
   "animatedArmor",
   "construct",
   "plant",
@@ -91,6 +93,7 @@ export const CREATURE_PROFILES = {
   lichKing: lichKingProfile,
   archmage: archmageProfile,
   spider: spiderProfile,
+  beast: beastProfile,
   animatedArmor: animatedArmorProfile,
   construct: constructProfile,
   plant: plantProfile,

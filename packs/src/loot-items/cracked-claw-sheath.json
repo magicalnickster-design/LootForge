@@ -1,0 +1,51 @@
+{
+  "_id": "LFCrackClawSheat",
+  "name": "Cracked Claw Sheath",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cracked-claw-sheath.svg",
+  "system": {
+    "description": {
+      "value": "<p>A cracked keratin sheath from a claw.</p>",
+      "chat": "A cracked keratin sheath from a claw."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cracked-claw-sheath",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "junk"
+      ],
+      "stackingKey": "cracked-claw-sheath",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrackClawSheat"
+}

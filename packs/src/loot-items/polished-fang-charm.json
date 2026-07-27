@@ -1,0 +1,51 @@
+{
+  "_id": "LFPolishFangChrm",
+  "name": "Polished Fang Charm",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/polished-fang-charm.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fang polished into a charm. Still faintly sharp.</p>",
+      "chat": "A fang polished into a charm. Still faintly sharp."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "polished-fang-charm",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "trinket"
+      ],
+      "stackingKey": "polished-fang-charm",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPolishFangChrm"
+}

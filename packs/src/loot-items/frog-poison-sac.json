@@ -1,0 +1,52 @@
+{
+  "_id": "LFFrogPoisonSac0",
+  "name": "Frog Poison Sac",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/frog-poison-sac.svg",
+  "system": {
+    "description": {
+      "value": "<p>A poison sac from a giant frog. Do not lick.</p>",
+      "chat": "A poison sac from a giant frog. Do not lick."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "frog-poison-sac",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "frog",
+        "alchemy"
+      ],
+      "stackingKey": "frog-poison-sac",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFrogPoisonSac0"
+}

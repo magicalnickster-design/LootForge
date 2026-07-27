@@ -1,0 +1,52 @@
+{
+  "_id": "LFBearClaw000000",
+  "name": "Bear Claw",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bear-claw.svg",
+  "system": {
+    "description": {
+      "value": "<p>A heavy bear claw. Hunters mount these over doors.</p>",
+      "chat": "A heavy bear claw. Hunters mount these over doors."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.25,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bear-claw",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "beast",
+        "bear",
+        "trophy"
+      ],
+      "stackingKey": "bear-claw",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBearClaw000000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFFishboneClustr",
+  "name": "Fishbone Cluster",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fishbone-cluster.svg",
+  "system": {
+    "description": {
+      "value": "<p>A cluster of fishbones from a predator's last meal.</p>",
+      "chat": "A cluster of fishbones from a predator's last meal."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fishbone-cluster",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "junk",
+        "shark"
+      ],
+      "stackingKey": "fishbone-cluster",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFishboneClustr"
+}

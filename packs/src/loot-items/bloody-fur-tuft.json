@@ -1,0 +1,51 @@
+{
+  "_id": "LFBloodyFurTuft0",
+  "name": "Bloody Fur Tuft",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bloody-fur-tuft.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bloody tuft of fur left after the fight.</p>",
+      "chat": "A bloody tuft of fur left after the fight."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bloody-fur-tuft",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "beast",
+        "junk"
+      ],
+      "stackingKey": "bloody-fur-tuft",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBloodyFurTuft0"
+}
