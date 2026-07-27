@@ -1,0 +1,52 @@
+{
+  "_id": "LFConstructGear0",
+  "name": "Construct Gears",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/construct-gears.svg",
+  "system": {
+    "description": {
+      "value": "<p>A handful of gears and pins from a broken construct. Still faintly warm.</p>",
+      "chat": "A handful of construct gears."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "construct-gears",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "construct",
+        "trophy",
+        "metal"
+      ],
+      "stackingKey": "construct-gears",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFConstructGear0"
+}

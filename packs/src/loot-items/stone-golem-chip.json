@@ -1,0 +1,52 @@
+{
+  "_id": "LFStoneGolemChp0",
+  "name": "Stone Golem Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/stone-golem-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chip of enchanted stone from a golem's body. Heavier than it looks.</p>",
+      "chat": "A stone golem chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 10,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "stone-golem-chip",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "golem",
+        "stone-golem"
+      ],
+      "stackingKey": "stone-golem-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFStoneGolemChp0"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFHelmedPlate000",
+  "name": "Helmed Horror Plate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/helmed-horror-plate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A plate from animated armor that fought with purpose. The joints still flex.</p>",
+      "chat": "A helmed horror plate."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "helmed-horror-plate",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "helmed-horror",
+        "armor"
+      ],
+      "stackingKey": "helmed-horror-plate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHelmedPlate000"
+}

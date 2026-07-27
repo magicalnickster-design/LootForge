@@ -1,0 +1,53 @@
+{
+  "_id": "LFGolemManualPg0",
+  "name": "Golem Manual Page",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/golem-manual-page.svg",
+  "system": {
+    "description": {
+      "value": "<p>A page from a golem manual. Incomplete — which is probably why this golem went wrong.</p>",
+      "chat": "A golem manual page."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "golem-manual-page",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "construct",
+        "golem",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "golem-manual-page",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGolemManualPg0"
+}

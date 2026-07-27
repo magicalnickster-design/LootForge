@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.16") {
-  throw new Error(`Expected module version 0.5.16, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.17") {
+  throw new Error(`Expected module version 0.5.17, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -341,7 +341,25 @@ const expectedNames = new Set([
   "Sticky Film",
   "Partially Digested Note",
   "Dungeon Warning Scrap",
-  "Ooze Lair Map"
+  "Ooze Lair Map",
+  "Construct Gears",
+  "Arcane Core Shard",
+  "Flying Sword Hilt",
+  "Helmed Horror Plume",
+  "Helmed Horror Plate",
+  "Flesh Golem Stitching",
+  "Clay Golem Chunk",
+  "Stone Golem Chip",
+  "Iron Golem Plate",
+  "Guardian Amulet Shard",
+  "Clockwork Spring",
+  "Binding Rune Plate",
+  "Rusted Rivet",
+  "Scorched Wiring",
+  "Bent Armor Joint",
+  "Creator Schematic Scrap",
+  "Activation Phrase Note",
+  "Golem Manual Page"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -556,8 +574,11 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 290) {
+if (listLootDefinitions().length < 310) {
   throw new Error("Expected expanded definition registry");
+}
+if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plate") || !getLootDefinition("golem-manual-page")) {
+  throw new Error("Missing construct loot definitions");
 }
 
 if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
@@ -1625,6 +1646,163 @@ const grayAvg = graySum / 40;
 const pudAvg = pudSum / 40;
 if (pudAvg <= grayAvg * 1.3) {
   throw new Error(`Black Pudding should average more scaled parts than Gray Ooze (pudding=${pudAvg}, gray=${grayAvg})`);
+}
+
+const animatedArmorStill = resolveCreatureProfile({
+  name: "Animated Armor",
+  creatureType: "construct",
+  creatureSubtype: "",
+  size: "med"
+});
+const flyingSword = resolveCreatureProfile({
+  name: "Flying Sword",
+  creatureType: "construct",
+  creatureSubtype: "",
+  size: "sm"
+});
+const helmedHorror = resolveCreatureProfile({
+  name: "Helmed Horror",
+  creatureType: "construct",
+  creatureSubtype: "",
+  size: "med"
+});
+const fleshGolem = resolveCreatureProfile({
+  name: "Flesh Golem",
+  creatureType: "construct",
+  creatureSubtype: "golem",
+  size: "med"
+});
+const clayGolem = resolveCreatureProfile({
+  name: "Clay Golem",
+  creatureType: "construct",
+  creatureSubtype: "golem",
+  size: "lg"
+});
+const stoneGolem = resolveCreatureProfile({
+  name: "Stone Golem",
+  creatureType: "construct",
+  creatureSubtype: "golem",
+  size: "lg"
+});
+const ironGolem = resolveCreatureProfile({
+  name: "Iron Golem",
+  creatureType: "construct",
+  creatureSubtype: "golem",
+  size: "lg"
+});
+const shieldGuardian = resolveCreatureProfile({
+  name: "Shield Guardian",
+  creatureType: "construct",
+  creatureSubtype: "",
+  size: "lg"
+});
+const genericGolem = resolveCreatureProfile({
+  name: "Golem",
+  creatureType: "construct",
+  creatureSubtype: "golem",
+  size: "lg"
+});
+if (animatedArmorStill?.id !== "animated-armor") {
+  throw new Error(`Expected animated-armor for Animated Armor, got ${animatedArmorStill?.id}`);
+}
+if (flyingSword?.id !== "construct") throw new Error(`Expected construct for Flying Sword, got ${flyingSword?.id}`);
+if (helmedHorror?.id !== "construct") throw new Error(`Expected construct for Helmed Horror, got ${helmedHorror?.id}`);
+if (fleshGolem?.id !== "construct") throw new Error(`Expected construct for Flesh Golem, got ${fleshGolem?.id}`);
+if (clayGolem?.id !== "construct") throw new Error(`Expected construct for Clay Golem, got ${clayGolem?.id}`);
+if (stoneGolem?.id !== "construct") throw new Error(`Expected construct for Stone Golem, got ${stoneGolem?.id}`);
+if (ironGolem?.id !== "construct") throw new Error(`Expected construct for Iron Golem, got ${ironGolem?.id}`);
+if (shieldGuardian?.id !== "construct") throw new Error(`Expected construct for Shield Guardian, got ${shieldGuardian?.id}`);
+if (genericGolem?.id !== "construct") throw new Error(`Expected construct for Golem, got ${genericGolem?.id}`);
+
+if (resolveLootScale(flyingSword, { name: "Flying Sword", size: "sm" }) !== 0.4) {
+  throw new Error("Flying Sword lootScale should be 0.4");
+}
+if (resolveLootScale(helmedHorror, { name: "Helmed Horror", size: "med" }) !== 1) {
+  throw new Error("Helmed Horror lootScale should be 1");
+}
+if (resolveLootScale(fleshGolem, { name: "Flesh Golem", size: "med" }) !== 1.05) {
+  throw new Error("Flesh Golem lootScale should be 1.05");
+}
+if (resolveLootScale(clayGolem, { name: "Clay Golem", size: "lg" }) !== 1.25) {
+  throw new Error("Clay Golem lootScale should be 1.25");
+}
+if (resolveLootScale(stoneGolem, { name: "Stone Golem", size: "lg" }) !== 1.35) {
+  throw new Error("Stone Golem lootScale should be 1.35");
+}
+if (resolveLootScale(ironGolem, { name: "Iron Golem", size: "lg" }) !== 1.65) {
+  throw new Error("Iron Golem lootScale should be 1.65");
+}
+if (resolveLootScale(shieldGuardian, { name: "Shield Guardian", size: "lg" }) !== 1.2) {
+  throw new Error("Shield Guardian lootScale should be 1.2");
+}
+if (resolveLootScale(genericGolem, { name: "Golem", size: "lg" }) !== 1.2) {
+  throw new Error("Generic Golem lootScale should be 1.2");
+}
+
+const ironLoot = await generateCreatureLoot({
+  context: {
+    name: "Iron Golem",
+    creatureType: "construct",
+    creatureSubtype: "golem",
+    size: "lg",
+    challengeRating: 16,
+    isWolf: false,
+    isBoss: true,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: null
+});
+if (ironLoot.profileId !== "construct") throw new Error("Iron Golem generation used wrong profile");
+if (!ironLoot.items.some((i) => /construct|arcane-core|golem|helmed|flying-sword|guardian|rivet|wiring|schematic|manual|activation|clockwork|binding|bent-armor/.test(String(i.definitionId || "")))) {
+  throw new Error("Iron Golem loot missing construct parts");
+}
+
+let swordSum = 0;
+let ironSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: {
+      name: "Flying Sword",
+      creatureType: "construct",
+      creatureSubtype: "",
+      size: "sm",
+      challengeRating: 0.25,
+      isWolf: false,
+      isBoss: false,
+      isNamed: false
+    },
+    survivalTotal: 18,
+    naturalDie: 12,
+    isNatural20: false,
+    actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: {
+      name: "Iron Golem",
+      creatureType: "construct",
+      creatureSubtype: "golem",
+      size: "lg",
+      challengeRating: 16,
+      isWolf: false,
+      isBoss: true,
+      isNamed: false
+    },
+    survivalTotal: 18,
+    naturalDie: 12,
+    isNatural20: false,
+    actor: null
+  });
+  const partRe = /construct|arcane-core|golem|helmed|flying-sword|guardian|rivet|wiring|schematic|manual|activation|clockwork|binding|bent-armor/;
+  swordSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  ironSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const swordAvg = swordSum / 40;
+const ironAvg = ironSum / 40;
+if (ironAvg <= swordAvg * 1.3) {
+  throw new Error(`Iron Golem should average more scaled parts than Flying Sword (iron=${ironAvg}, sword=${swordAvg})`);
 }
 
 

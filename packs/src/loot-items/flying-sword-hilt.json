@@ -1,0 +1,53 @@
+{
+  "_id": "LFFlyingSwordHt0",
+  "name": "Flying Sword Hilt",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/flying-sword-hilt.svg",
+  "system": {
+    "description": {
+      "value": "<p>The hilt of a flying sword, runes still faintly lit. The blade is gone — or elsewhere.</p>",
+      "chat": "A flying sword hilt."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "flying-sword-hilt",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "flying-sword",
+        "trophy",
+        "weapon"
+      ],
+      "stackingKey": "flying-sword-hilt",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFlyingSwordHt0"
+}

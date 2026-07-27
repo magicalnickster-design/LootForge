@@ -7,6 +7,7 @@
 
 import { aberrationProfile } from "./aberration.js";
 import { animatedArmorProfile } from "./animated-armor.js";
+import { constructProfile } from "./construct.js";
 import { bugbearProfile } from "./bugbear.js";
 import { containerProfile } from "./container.js";
 import { dragonProfile } from "./dragon.js";
@@ -37,6 +38,7 @@ export const PROFILE_ORDER = [
   "container",
   "spider",
   "animatedArmor",
+  "construct",
   "bugbear",
   "goblin",
   "elf",
@@ -64,6 +66,7 @@ export const CREATURE_PROFILES = {
   container: containerProfile,
   spider: spiderProfile,
   animatedArmor: animatedArmorProfile,
+  construct: constructProfile,
   goblin: goblinProfile,
   bugbear: bugbearProfile,
   elf: elfProfile,

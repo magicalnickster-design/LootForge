@@ -1,0 +1,51 @@
+{
+  "_id": "LFClockworkSprg0",
+  "name": "Clockwork Spring",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/clockwork-spring.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tightly wound spring from a construct's joints. It ticks when held to the ear.</p>",
+      "chat": "A clockwork spring."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "clockwork-spring",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "trinket"
+      ],
+      "stackingKey": "clockwork-spring",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFClockworkSprg0"
+}

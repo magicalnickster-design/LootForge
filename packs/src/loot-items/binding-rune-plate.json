@@ -1,0 +1,52 @@
+{
+  "_id": "LFBindingRunePl0",
+  "name": "Binding Rune Plate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/binding-rune-plate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A small plate etched with the rune that bound life to metal. Copying it is illegal in three cities.</p>",
+      "chat": "A binding rune plate."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "binding-rune-plate",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "trinket",
+        "arcane"
+      ],
+      "stackingKey": "binding-rune-plate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBindingRunePl0"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFGuardianAmuSh0",
+  "name": "Guardian Amulet Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/guardian-amulet-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shard of a shield guardian's control amulet. Without the whole, the construct sleeps forever.</p>",
+      "chat": "A guardian amulet shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 75,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "guardian-amulet-shard",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "construct",
+        "shield-guardian",
+        "arcane",
+        "rare"
+      ],
+      "stackingKey": "guardian-amulet-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGuardianAmuSh0"
+}

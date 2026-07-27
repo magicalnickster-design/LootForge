@@ -1,0 +1,53 @@
+{
+  "_id": "LFIronGolemPlt00",
+  "name": "Iron Golem Plate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/iron-golem-plate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A plate of golem-iron, still faintly toxic. Armorers dream of forging with it.</p>",
+      "chat": "An iron golem plate."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 40,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "iron-golem-plate",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "construct",
+        "golem",
+        "iron-golem",
+        "armor"
+      ],
+      "stackingKey": "iron-golem-plate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFIronGolemPlt00"
+}

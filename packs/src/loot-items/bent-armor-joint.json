@@ -1,0 +1,51 @@
+{
+  "_id": "LFBentArmorJnt00",
+  "name": "Bent Armor Joint",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bent-armor-joint.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bent joint from animated armor or a golem limb. Good for scrap, bad for reuse.</p>",
+      "chat": "A bent armor joint."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bent-armor-joint",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "construct",
+        "junk"
+      ],
+      "stackingKey": "bent-armor-joint",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBentArmorJnt00"
+}

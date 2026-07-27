@@ -1,0 +1,53 @@
+{
+  "_id": "LFActivatePhrase",
+  "name": "Activation Phrase Note",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/activation-phrase.svg",
+  "system": {
+    "description": {
+      "value": "<p>A note with a shield guardian's command phrase. Half the letters are smudged on purpose.</p>",
+      "chat": "An activation phrase note."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "activation-phrase",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "story",
+        "readable",
+        "shield-guardian"
+      ],
+      "stackingKey": "activation-phrase",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFActivatePhrase"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFHelmedPlume000",
+  "name": "Helmed Horror Plume",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/helmed-horror-plume.svg",
+  "system": {
+    "description": {
+      "value": "<p>A plume from a helmed horror's crest, stiff with enchantment. It never droops.</p>",
+      "chat": "A helmed horror plume."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "helmed-horror-plume",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "construct",
+        "helmed-horror",
+        "trophy"
+      ],
+      "stackingKey": "helmed-horror-plume",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHelmedPlume000"
+}
