@@ -129,7 +129,42 @@
       "DebugLogging": {
         "Name": "Debug logging",
         "Hint": "Print detailed LootForge logs to the console."
+      },
+      "Auth": {
+        "MenuName": "Gambits Forge Account",
+        "MenuLabel": "Manage Account",
+        "Hint": "Sign in with your Gambits Forge account. LootForge requires Tier 1 or higher. Players do not need their own subscription when the GM is entitled.",
+        "AccessStatus": "LootForge access",
+        "AccessGranted": "Active",
+        "AccessLocked": "Locked",
+        "AuthState": "Auth state",
+        "WorldAccess": "World unlock",
+        "WorldUnlocked": "Unlocked for players",
+        "WorldLocked": "Locked",
+        "ApiBaseUrl": {
+          "Name": "Gambits Forge API base URL",
+          "Hint": "Backend URL for account and entitlement checks. Defaults to the production Gambits Forge API."
+        },
+        "Debug": {
+          "Name": "Debug authentication logging",
+          "Hint": "Log auth flow details to the console. Tokens and passwords are never printed."
+        }
       }
+    },
+    "Access": {
+      "Title": "LootForge Access",
+      "Required": "LootForge requires an active Gambits Forge Tier 1 or higher subscription.",
+      "Expired": "Your LootForge access has expired. Connect to the internet and check your subscription.",
+      "NoEntitledGM": "No entitled GM is available to process LootForge actions.",
+      "Account": "Account",
+      "Plan": "Plan",
+      "Expires": "Entitlement expires",
+      "NoAccount": "Not signed in",
+      "SignIn": "Sign In",
+      "CheckSubscription": "Check Subscription",
+      "OpenWebsite": "Open Gambits Forge Website",
+      "OpenAccount": "Open Account Page",
+      "LogOut": "Log Out"
     }
   }
 }

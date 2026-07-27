@@ -324,6 +324,8 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
 }
 
 export async function openDmLootReview(tokenDoc, options = {}) {
+  const { requireAccess } = await import("../auth/access.js");
+  if (!(await requireAccess({ openWindow: true }))) return null;
   for (const app of foundry.applications.instances.values()) {
     if (app instanceof DmLootReview && app.tokenDoc?.uuid === tokenDoc.uuid) {
       await app.render({ force: true });

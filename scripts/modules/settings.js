@@ -1,6 +1,77 @@
 import { MODULE_ID } from "./constants.js";
+import {
+  DEFAULT_AUTH_API_BASE_URL,
+  SETTING_AUTH_API_BASE_URL,
+  SETTING_AUTH_DEBUG
+} from "../auth/auth-constants.js";
+import { registerSessionSettings } from "../auth/session-store.js";
+import { registerEntitlementSettings } from "../auth/entitlement-service.js";
+import { registerWorldAccessSettings } from "../auth/access.js";
+
+function openAuthSettingsSafe() {
+  return import("../applications/auth-settings.js").then((m) => m.openAuthSettings());
+}
 
 export function registerSettings() {
+  registerSessionSettings();
+  registerEntitlementSettings();
+  registerWorldAccessSettings();
+
+  game.settings.register(MODULE_ID, SETTING_AUTH_API_BASE_URL, {
+    name: "LOOTFORGE.Settings.Auth.ApiBaseUrl.Name",
+    hint: "LOOTFORGE.Settings.Auth.ApiBaseUrl.Hint",
+    scope: "client",
+    config: false,
+    type: String,
+    default: DEFAULT_AUTH_API_BASE_URL,
+    restricted: false
+  });
+
+  game.settings.register(MODULE_ID, SETTING_AUTH_DEBUG, {
+    name: "LOOTFORGE.Settings.Auth.Debug.Name",
+    hint: "LOOTFORGE.Settings.Auth.Debug.Hint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.registerMenu(MODULE_ID, "authMenu", {
+    name: "LOOTFORGE.Settings.Auth.MenuName",
+    label: "LOOTFORGE.Settings.Auth.MenuLabel",
+    hint: "LOOTFORGE.Settings.Auth.Hint",
+    icon: "fas fa-user-shield",
+    type: class LootForgeAuthSettingsMenu extends FormApplication {
+      constructor(object = {}, options = {}) {
+        super(object, options);
+        void openAuthSettingsSafe();
+        queueMicrotask(() => this.close({ force: true }));
+      }
+      static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+          id: "lootforge-auth-settings-menu-shim",
+          title: "LootForge Account",
+          template: `modules/${MODULE_ID}/templates/access-window.hbs`,
+          classes: ["lootforge-hidden-settings-shim"]
+        });
+      }
+      getData() {
+        return {};
+      }
+      async _updateObject() {}
+    },
+    restricted: false
+  });
+
+  try {
+    const configured = String(game.settings.get(MODULE_ID, SETTING_AUTH_API_BASE_URL) ?? "").trim();
+    if (!configured) {
+      void game.settings.set(MODULE_ID, SETTING_AUTH_API_BASE_URL, DEFAULT_AUTH_API_BASE_URL);
+    }
+  } catch {
+    // ignore
+  }
+
   const settings = [
     {
       key: "requireSurvivalRoll",

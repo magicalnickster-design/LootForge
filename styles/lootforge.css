@@ -473,3 +473,48 @@
 .chat-message .lootforge-handoff {
   display: none;
 }
+
+
+.lootforge-access-window .lootforge-access-body,
+.lootforge-auth-settings .lootforge-auth-settings-body {
+  padding: 0.75rem 0.25rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lootforge-access-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.lootforge-access-brand i {
+  font-size: 1.6rem;
+}
+
+.lootforge-access-brand h2 {
+  margin: 0;
+}
+
+.lootforge-access-message {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.lootforge-access-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.92rem;
+}
+
+.lootforge-access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lootforge-hidden-settings-shim {
+  display: none !important;
+}

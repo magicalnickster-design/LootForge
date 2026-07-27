@@ -8,8 +8,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.25") {
-  throw new Error(`Expected module version 0.5.25, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.6.0") {
+  throw new Error(`Expected module version 0.6.0, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");

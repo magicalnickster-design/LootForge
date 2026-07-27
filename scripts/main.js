@@ -9,6 +9,8 @@ import { registerSceneControls } from "./ui/scene-controls.js";
 import { registerTokenDoubleClickLoot } from "./ui/token-dblclick.js";
 import { registerLootKeybinding, registerTokenContext } from "./ui/token-context.js";
 import { registerTokenHud } from "./ui/token-hud.js";
+import { LootForgeAccess, publishWorldAccess } from "./auth/access.js";
+import { restoreSessionOnStartup } from "./auth/entitlement-service.js";
 
 Hooks.once("init", async () => {
   log.info("Initializing");
@@ -19,7 +21,9 @@ Hooks.once("init", async () => {
 
   await foundry.applications.handlebars.loadTemplates([
     `modules/${MODULE_ID}/templates/dm-loot-review.hbs`,
-    `modules/${MODULE_ID}/templates/player-loot-window.hbs`
+    `modules/${MODULE_ID}/templates/player-loot-window.hbs`,
+    `modules/${MODULE_ID}/templates/access-window.hbs`,
+    `modules/${MODULE_ID}/templates/auth-settings.hbs`
   ]);
 });
 
@@ -40,7 +44,17 @@ Hooks.once("ready", () => {
 
   void ensureWorldLootActors();
 
+  void (async () => {
+    try {
+      await restoreSessionOnStartup({ notify: false });
+      if (game.user?.isGM) await publishWorldAccess();
+    } catch (err) {
+      log.warn("Auth startup failed safely", err?.message ?? err);
+    }
+  })();
+
   game.modules.get(MODULE_ID).api = {
+    access: LootForgeAccess,
     lootBody: async (token) => {
       const { lootBody } = await import("./modules/loot-workflow.js");
       return lootBody(token);
@@ -56,5 +70,5 @@ Hooks.once("ready", () => {
     ensureWorldLootActors
   };
 
-  log.info(`Ready v0.5.25 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.6.0 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

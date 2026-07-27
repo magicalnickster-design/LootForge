@@ -19,6 +19,7 @@ import {
   takeCorpseItem
 } from "./loot-transfer.js";
 import { refreshLootWindows } from "../applications/window-registry.js";
+import { canHandleAuthoritativeLoot, canUse } from "../auth/access.js";
 
 let registered = false;
 
@@ -91,6 +92,7 @@ export function registerSocketManager() {
     const flag = message.flags?.[MODULE_ID];
     if (!flag?.handoff || !flag.op) return;
     if (!isResponsibleGm()) return;
+    if (!canHandleAuthoritativeLoot()) return;
 
     const op = flag.op;
     if (op !== OPS.TAKE_ITEM && op !== OPS.TAKE_ALL && op !== OPS.DONE_LOOT) return;
@@ -169,7 +171,11 @@ async function handleSocketPayload(payload) {
       await onLootReleased(payload);
       return;
 
+    case OPS.WORLD_ACCESS:
+      return;
+
     case OPS.OPEN_PLAYER_WINDOW:
+      if (!canUse()) return;
       log.info("Socket event received", {
         op,
         fromUserId: payload.fromUserId,
@@ -184,11 +190,16 @@ async function handleSocketPayload(payload) {
     case OPS.PLAYER_START_LOOT:
     case OPS.CLAIM_LOOT_SESSION:
       if (!isResponsibleGm()) return;
+      if (!canHandleAuthoritativeLoot()) {
+        rejectTake(payload, "LOOTFORGE.Access.Required");
+        return;
+      }
       await onPlayerStartLoot(payload);
       return;
 
     case OPS.INVESTIGATION_READY:
       if (!game.user.isGM) return;
+      if (!canHandleAuthoritativeLoot()) return;
       {
         log.info("Socket event received", {
           op: OPS.INVESTIGATION_READY,
@@ -208,6 +219,10 @@ async function handleSocketPayload(payload) {
     case OPS.TAKE_ALL:
     case OPS.DONE_LOOT:
       if (!isResponsibleGm()) return;
+      if (!canHandleAuthoritativeLoot()) {
+        rejectTake(payload, "LOOTFORGE.Access.NoEntitledGM");
+        return;
+      }
       await handleTakeRequest(payload);
       return;
 

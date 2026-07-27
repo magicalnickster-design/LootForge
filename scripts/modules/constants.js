@@ -33,7 +33,8 @@ export const OPS = Object.freeze({
   CLAIM_LOOT_SESSION: "claimLootSession",
   INVESTIGATION_READY: "investigationReady",
   LOOT_RELEASED: "lootReleased",
-  STATE_UPDATED: "stateUpdated"
+  STATE_UPDATED: "stateUpdated",
+  WORLD_ACCESS: "worldAccess"
 });
 
 export const LOOT_SKILL_INV = "inv";

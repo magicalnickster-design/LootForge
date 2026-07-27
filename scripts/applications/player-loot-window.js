@@ -226,6 +226,9 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
 }
 
 export async function openPlayerLootWindow(tokenDoc) {
+  const { requireAccess } = await import("../auth/access.js");
+  if (!(await requireAccess({ openWindow: true }))) return null;
+
   log.info("openPlayerLootWindow()", {
     tokenUuid: tokenDoc?.uuid,
     userId: game.user.id,

@@ -1,0 +1,24 @@
+<div class="lootforge-access-body">
+  <div class="lootforge-access-brand">
+    <i class="fa-solid fa-sack"></i>
+    <h2>{{brand}}</h2>
+  </div>
+  <p class="lootforge-access-message">{{message}}</p>
+  <div class="lootforge-access-meta">
+    <div><strong>{{localize "LOOTFORGE.Access.Account"}}</strong> {{accountEmail}}</div>
+    {{#if isGM}}
+      <div><strong>{{localize "LOOTFORGE.Access.Plan"}}</strong> {{plan}}</div>
+      <div><strong>{{localize "LOOTFORGE.Access.Expires"}}</strong> {{expiresAt}}</div>
+    {{/if}}
+  </div>
+  <div class="lootforge-access-actions">
+    {{#unless signedIn}}
+      <button type="button" data-action="signIn"><i class="fa-solid fa-right-to-bracket"></i> {{localize "LOOTFORGE.Access.SignIn"}}</button>
+    {{/unless}}
+    <button type="button" data-action="checkSubscription"><i class="fa-solid fa-rotate"></i> {{localize "LOOTFORGE.Access.CheckSubscription"}}</button>
+    <button type="button" data-action="openWebsite"><i class="fa-solid fa-up-right-from-square"></i> {{localize "LOOTFORGE.Access.OpenWebsite"}}</button>
+    {{#if signedIn}}
+      <button type="button" data-action="logout"><i class="fa-solid fa-right-from-bracket"></i> {{localize "LOOTFORGE.Access.LogOut"}}</button>
+    {{/if}}
+  </div>
+</div>

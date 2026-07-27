@@ -46,6 +46,7 @@ import {
   requestPlayerStartLoot
 } from "./socket-manager.js";
 import { MODULE_ID, OPS } from "./constants.js";
+import { requireAccess, canGenerateLoot } from "../auth/access.js";
 
 const generatingTokens = new Set();
 
@@ -66,6 +67,8 @@ export async function lootBody(token) {
   if (flowKey && !beginLootFlow(flowKey)) return;
 
   try {
+    if (!(await requireAccess({ openWindow: true }))) return;
+
     if (game.system.id !== "dnd5e") {
       ui.notifications.error(game.i18n.localize("LOOTFORGE.Notify.WrongSystem"));
       return;
@@ -499,6 +502,11 @@ export async function generateLootForCorpse(token, tokenDoc, creature, {
   pendingLooterUserId = null,
   lootSkill = null
 } = {}) {
+  if (!canGenerateLoot()) {
+    ui.notifications.error(game.i18n.localize("LOOTFORGE.Access.Required"));
+    return null;
+  }
+
   if (getSetting("preventDuplicateGeneration") && isLootGenerated(tokenDoc)) {
     log.info("Prevent duplicate generation — opening existing review", tokenDoc.uuid);
     if (openReview && game.user.isGM) {
