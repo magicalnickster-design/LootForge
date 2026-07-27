@@ -1,0 +1,53 @@
+{
+  "_id": "LFDryadBark00000",
+  "name": "Dryad Bark Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dryad-bark.svg",
+  "system": {
+    "description": {
+      "value": "<p>Living bark peeled from a dryad's skin. Tiny green shoots try to root overnight.</p>",
+      "chat": "A scrap of dryad bark."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dryad-bark",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "dryad",
+        "plant",
+        "alchemy"
+      ],
+      "stackingKey": "dryad-bark",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDryadBark00000"
+}

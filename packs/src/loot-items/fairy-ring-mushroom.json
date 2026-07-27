@@ -1,0 +1,52 @@
+{
+  "_id": "LFFairyMushroom0",
+  "name": "Fairy Ring Mushroom",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fairy-ring-mushroom.svg",
+  "system": {
+    "description": {
+      "value": "<p>A spotted mushroom from a fairy ring. Eating it is a gamble; keeping it is wiser.</p>",
+      "chat": "A fairy ring mushroom."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fairy-ring-mushroom",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "trinket",
+        "plant"
+      ],
+      "stackingKey": "fairy-ring-mushroom",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFairyMushroom0"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFFeyBargain0000",
+  "name": "Fey Bargain Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fey-bargain-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn promise written in flower-ink: \"Three truths for one name…\" The rest is eaten by snails.</p>",
+      "chat": "A scrap of a fey bargain."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fey-bargain-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "fey-bargain-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFeyBargain0000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFBloodCapScrap0",
+  "name": "Bloodstained Cap Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bloodstained-cap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of a redcap's hat, stiff with old blood. They dye them the hard way.</p>",
+      "chat": "A bloodstained cap scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bloodstained-cap",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "fey",
+        "redcap",
+        "junk"
+      ],
+      "stackingKey": "bloodstained-cap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBloodCapScrap0"
+}

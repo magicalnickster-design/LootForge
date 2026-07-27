@@ -1,5 +1,5 @@
-2026/07/27-04:00:48.249672 7fdbccfbd6c0 Delete type=3 #1
-2026/07/27-04:00:48.262450 7fdbcbfbb6c0 Level-0 table #5: started
-2026/07/27-04:00:48.264076 7fdbcbfbb6c0 Level-0 table #5: 54395 bytes OK
-2026/07/27-04:00:48.264858 7fdbcbfbb6c0 Delete type=0 #3
-2026/07/27-04:00:48.264934 7fdbcbfbb6c0 Manual compaction at level-0 from '!items!LFAbyssalRune000' @ 72057594037927935 : 1 .. '!items!LFZombieTooth000' @ 0 : 0; will stop at (end)
+2026/07/27-04:04:15.655753 7f4ca7fff6c0 Delete type=3 #1
+2026/07/27-04:04:15.668211 7f4ca63ff6c0 Level-0 table #5: started
+2026/07/27-04:04:15.669770 7f4ca63ff6c0 Level-0 table #5: 59550 bytes OK
+2026/07/27-04:04:15.670505 7f4ca63ff6c0 Delete type=0 #3
+2026/07/27-04:04:15.670588 7f4ca63ff6c0 Manual compaction at level-0 from '!items!LFAbyssalRune000' @ 72057594037927935 : 1 .. '!items!LFZombieTooth000' @ 0 : 0; will stop at (end)

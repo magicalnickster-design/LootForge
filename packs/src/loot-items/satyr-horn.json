@@ -1,0 +1,53 @@
+{
+  "_id": "LFSatyrHorn00000",
+  "name": "Satyr Horn Tip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/satyr-horn.svg",
+  "system": {
+    "description": {
+      "value": "<p>A spiral horn tip, still faintly warm. Good for drinking horns or troublemaking.</p>",
+      "chat": "A satyr horn tip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "satyr-horn",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "fey",
+        "satyr",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "satyr-horn",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSatyrHorn00000"
+}

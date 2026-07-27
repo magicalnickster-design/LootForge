@@ -1,0 +1,53 @@
+{
+  "_id": "LFHagHair0000000",
+  "name": "Hag Hair Lock",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hag-hair.svg",
+  "system": {
+    "description": {
+      "value": "<p>A greasy lock of hag hair that ties itself into knots. Alchemists and curse-breakers both want it.</p>",
+      "chat": "A lock of hag hair."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hag-hair",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "hag",
+        "alchemy",
+        "curse"
+      ],
+      "stackingKey": "hag-hair",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHagHair0000000"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFHagCovenNote00",
+  "name": "Hag Coven Note",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hag-coven-note.svg",
+  "system": {
+    "description": {
+      "value": "<p>A damp note: \"Sister — bring the child at moonrise. The eye hungers.\" Signed with a claw mark.</p>",
+      "chat": "A hag coven note."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hag-coven-note",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "hag",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "hag-coven-note",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHagCovenNote00"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFFeyBlood000000",
+  "name": "Fey Blood Vial",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fey-blood-vial.svg",
+  "system": {
+    "description": {
+      "value": "<p>Sap-thin blood that shimmers green-gold. It refuses to clot in daylight.</p>",
+      "chat": "A vial of fey blood."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.25,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fey-blood-vial",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "alchemy",
+        "blood"
+      ],
+      "stackingKey": "fey-blood-vial",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFeyBlood000000"
+}

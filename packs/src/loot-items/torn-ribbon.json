@@ -1,0 +1,51 @@
+{
+  "_id": "LFTornRibbon0000",
+  "name": "Torn Ribbon",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/torn-ribbon.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of festival ribbon, muddied and snagged. Someone danced hard.</p>",
+      "chat": "A torn ribbon."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "torn-ribbon",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "fey",
+        "junk"
+      ],
+      "stackingKey": "torn-ribbon",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTornRibbon0000"
+}

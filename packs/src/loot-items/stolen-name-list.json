@@ -1,0 +1,53 @@
+{
+  "_id": "LFStolenNames000",
+  "name": "Stolen Name List",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/stolen-name-list.svg",
+  "system": {
+    "description": {
+      "value": "<p>A list of mortal names, some crossed out in green ink. Knowing a true name is dangerous currency.</p>",
+      "chat": "A list of stolen names."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "stolen-name-list",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "fey",
+        "hag",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "stolen-name-list",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFStolenNames000"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFHagEyeAmulet00",
+  "name": "Hag Eye Amulet",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hag-eye-amulet.svg",
+  "system": {
+    "description": {
+      "value": "<p>A cloudy glass eye set in tarnished silver. Sometimes it looks at you first.</p>",
+      "chat": "A hag eye amulet."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.25,
+      "units": "lb"
+    },
+    "price": {
+      "value": 35,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hag-eye-amulet",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "fey",
+        "hag",
+        "trinket",
+        "curse"
+      ],
+      "stackingKey": "hag-eye-amulet",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHagEyeAmulet00"
+}

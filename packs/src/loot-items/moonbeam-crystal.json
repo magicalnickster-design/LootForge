@@ -1,0 +1,52 @@
+{
+  "_id": "LFMoonbeamCryst0",
+  "name": "Moonbeam Crystal",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/moonbeam-crystal.svg",
+  "system": {
+    "description": {
+      "value": "<p>A pale crystal that glows faintly under moonlight and not at all under sun.</p>",
+      "chat": "A moonbeam crystal."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "moonbeam-crystal",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "trinket",
+        "crystal"
+      ],
+      "stackingKey": "moonbeam-crystal",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMoonbeamCryst0"
+}

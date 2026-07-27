@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.10** |
+| Version | **0.5.11** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Fey** — multi-pool profile for pixies, dryads, satyrs, redcaps, and hags:
+  - Parts (fey dust, blood, pixie wing, dryad bark, satyr horn, redcap tooth, hag hair, rare hag eye)
+  - Pocket currency and **sheet equipment** when present
+  - Wilted petals / ribbons / bloodstained cap scraps, fairy-ring trinkets, bargains & coven notes
+  - **Name scaling:** Pixie/Satyr drop less; Night Hag drops more (`lootScale`)
 - **Fiend** — multi-pool profile for imps, quasits, hell hounds, and named devil/demon forms:
   - Parts (ichor, horn, brimstone, hellhound/imp/quasit bits, barbed spines, chain links, bone spurs, rare pit-fiend scale / balor ash)
   - Infernal coin (gp/pp leaning; CR-scaled) and **sheet equipment** for armed devils

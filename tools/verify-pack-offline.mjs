@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.10") {
-  throw new Error(`Expected module version 0.5.10, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.11") {
+  throw new Error(`Expected module version 0.5.11, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -219,7 +219,27 @@ const expectedNames = new Set([
   "Infernal Contract Scrap",
   "Blood War Orders",
   "Cultist Summons",
-  "Soul Ledger Page"
+  "Soul Ledger Page",
+  "Fey Dust",
+  "Fey Blood Vial",
+  "Pixie Wing",
+  "Dryad Bark Scrap",
+  "Satyr Horn Tip",
+  "Redcap Tooth",
+  "Hag Hair Lock",
+  "Hag Eye",
+  "Fairy Ring Mushroom",
+  "Moonbeam Crystal",
+  "Iron Nail Ward",
+  "Hag Eye Amulet",
+  "Wilted Petal",
+  "Tangled Vine",
+  "Torn Ribbon",
+  "Bloodstained Cap Scrap",
+  "Fey Bargain Scrap",
+  "Court Invitation",
+  "Hag Coven Note",
+  "Stolen Name List"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -434,7 +454,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 170) {
+if (listLootDefinitions().length < 190) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -1110,6 +1130,79 @@ const impAvg = impPartSum / 40;
 const balorAvg = balorPartSum / 40;
 if (balorAvg <= impAvg * 1.3) {
   throw new Error(`Balor should average more scaled parts than Imp (balor=${balorAvg}, imp=${impAvg})`);
+}
+
+
+
+const fey = resolveCreatureProfile({ name: "Dryad", creatureType: "fey", creatureSubtype: "", size: "med" });
+const pixie = resolveCreatureProfile({ name: "Pixie", creatureType: "fey", creatureSubtype: "", size: "tiny" });
+const satyr = resolveCreatureProfile({ name: "Satyr", creatureType: "fey", creatureSubtype: "", size: "med" });
+const redcap = resolveCreatureProfile({ name: "Redcap", creatureType: "fey", creatureSubtype: "", size: "sm" });
+const greenHag = resolveCreatureProfile({ name: "Green Hag", creatureType: "fey", creatureSubtype: "", size: "med" });
+const nightHag = resolveCreatureProfile({ name: "Night Hag", creatureType: "fiend", creatureSubtype: "", size: "med" });
+if (fey?.id !== "fey") throw new Error(`Expected fey profile for Dryad, got ${fey?.id}`);
+if (pixie?.id !== "fey") throw new Error(`Expected fey profile for Pixie, got ${pixie?.id}`);
+if (satyr?.id !== "fey") throw new Error(`Expected fey profile for Satyr, got ${satyr?.id}`);
+if (redcap?.id !== "fey") throw new Error(`Expected fey profile for Redcap, got ${redcap?.id}`);
+if (greenHag?.id !== "fey") throw new Error(`Expected fey profile for Green Hag, got ${greenHag?.id}`);
+if (nightHag?.id !== "fey") throw new Error(`Expected fey profile for Night Hag, got ${nightHag?.id}`);
+
+if (resolveLootScale(fey, { name: "Pixie", size: "tiny" }) !== 0.4) {
+  throw new Error("Pixie lootScale should be 0.4");
+}
+if (resolveLootScale(fey, { name: "Satyr", size: "med" }) !== 0.55) {
+  throw new Error("Satyr lootScale should be 0.55");
+}
+if (resolveLootScale(fey, { name: "Dryad", size: "med" }) !== 0.75) {
+  throw new Error("Dryad lootScale should be 0.75");
+}
+if (resolveLootScale(fey, { name: "Redcap", size: "sm" }) !== 0.95) {
+  throw new Error("Redcap lootScale should be 0.95");
+}
+if (resolveLootScale(fey, { name: "Green Hag", size: "med" }) !== 1.1) {
+  throw new Error("Green Hag lootScale should be 1.1");
+}
+if (resolveLootScale(fey, { name: "Night Hag", size: "med" }) !== 1.4) {
+  throw new Error("Night Hag lootScale should be 1.4");
+}
+if (resolveLootScale(fey, { name: "Hag", size: "med" }) !== 1.15) {
+  throw new Error("Hag lootScale should be 1.15");
+}
+
+const pixieLoot = await generateCreatureLoot({
+  context: { name: "Pixie", creatureType: "fey", creatureSubtype: "", size: "tiny", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
+});
+if (pixieLoot.profileId !== "fey") throw new Error("Pixie generation used wrong profile");
+if (!pixieLoot.items.some((i) => ["fey-dust","fey-blood-vial","pixie-wing","dryad-bark","satyr-horn","redcap-tooth","hag-hair","hag-eye"].includes(String(i.definitionId || "")))) {
+  throw new Error("Pixie loot missing fey parts");
+}
+
+const nightHagLoot = await generateCreatureLoot({
+  context: { name: "Night Hag", creatureType: "fiend", creatureSubtype: "", size: "med", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 20, naturalDie: 15, isNatural20: false, actor: null
+});
+if (nightHagLoot.profileId !== "fey") throw new Error("Night Hag generation used wrong profile");
+
+let pixiePartSum = 0;
+let nightPartSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Pixie", creatureType: "fey", creatureSubtype: "", size: "tiny", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Night Hag", creatureType: "fiend", creatureSubtype: "", size: "med", challengeRating: 5, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /fey|pixie|dryad|satyr|redcap|hag/;
+  pixiePartSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  nightPartSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const pixieAvg = pixiePartSum / 40;
+const nightAvg = nightPartSum / 40;
+if (nightAvg <= pixieAvg * 1.25) {
+  throw new Error(`Night Hag should average more scaled parts than Pixie (night=${nightAvg}, pixie=${pixieAvg})`);
 }
 
 

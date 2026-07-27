@@ -1,0 +1,52 @@
+{
+  "_id": "LFFeyDust0000000",
+  "name": "Fey Dust",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fey-dust.svg",
+  "system": {
+    "description": {
+      "value": "<p>Iridescent dust that slips through fingers and settles into patterns that almost look like words.</p>",
+      "chat": "A pinch of fey dust."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fey-dust",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "fey",
+        "alchemy",
+        "dust"
+      ],
+      "stackingKey": "fey-dust",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFeyDust0000000"
+}

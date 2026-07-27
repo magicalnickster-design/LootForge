@@ -1,0 +1,54 @@
+{
+  "_id": "LFHagEye00000000",
+  "name": "Hag Eye",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hag-eye.svg",
+  "system": {
+    "description": {
+      "value": "<p>A milky eye still twitching in its jar. Night hags use these for coven sight — and worse.</p>",
+      "chat": "A preserved hag eye."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hag-eye",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "fey",
+        "hag",
+        "night-hag",
+        "alchemy",
+        "rare"
+      ],
+      "stackingKey": "hag-eye",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHagEye00000000"
+}
