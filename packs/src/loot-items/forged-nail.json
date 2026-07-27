@@ -1,0 +1,52 @@
+{
+  "_id": "LFForgedNail0000",
+  "name": "Forged Nail",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/forged-nail.svg",
+  "system": {
+    "description": {
+      "value": "<p>A square-cut iron nail, dwarf-forged. Holds better than anything from a human smithy.</p>",
+      "chat": "A dwarf-forged nail."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "forged-nail",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "dwarf",
+        "crafting"
+      ],
+      "stackingKey": "forged-nail",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFForgedNail0000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFRecipeCard0000",
+  "name": "Recipe Card",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/recipe-card.svg",
+  "system": {
+    "description": {
+      "value": "<p>A grease-stuffed recipe for honey-cake. \"A pinch more nutmeg than mother allows.\"</p>",
+      "chat": "A recipe card."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "recipe-card",
+      "category": "story",
+      "rarity": "common",
+      "tags": [
+        "story",
+        "halfling",
+        "readable"
+      ],
+      "stackingKey": "recipe-card",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRecipeCard0000"
+}

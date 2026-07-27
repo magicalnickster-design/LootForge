@@ -1,0 +1,51 @@
+{
+  "_id": "LFWhetstoneChip0",
+  "name": "Whetstone Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/whetstone-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chip from a well-used whetstone. Dwarves never throw these away — until they must.</p>",
+      "chat": "A whetstone chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "whetstone-chip",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "dwarf"
+      ],
+      "stackingKey": "whetstone-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWhetstoneChip0"
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "LFHalfHair000000",
+  "name": "Halfling Hair Lock",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/halfling-hair-lock.svg",
+  "system": {
+    "description": {
+      "value": "<p>A curly lock of halfling hair, bound with a bit of ribbon. Cheerful color — somber circumstance.</p>",
+      "chat": "A lock of halfling hair."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "halfling-hair-lock",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "halfling"
+      ],
+      "stackingKey": "halfling-hair-lock",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHalfHair000000"
+}

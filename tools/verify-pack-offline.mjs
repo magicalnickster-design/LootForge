@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.8") {
-  throw new Error(`Expected module version 0.5.8, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.9") {
+  throw new Error(`Expected module version 0.5.9, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -161,6 +161,42 @@ const expectedNames = new Set([
   "Phylactery Notes",
   "Spell Research Page",
   "Lichdom Formula",
+  "Human Blood Vial",
+  "Human Hair Lock",
+  "Worn Insignia",
+  "Traveler's Token",
+  "Crumpled Receipt",
+  "Torn Ledger Page",
+  "Guild Letter",
+  "Bandit Pass",
+  "Love Letter",
+  "Elf Blood Vial",
+  "Elf Hair Lock",
+  "Moon-Silver Splinter",
+  "Elven Arrowhead",
+  "Silver Leaf Charm",
+  "Perfume Vial",
+  "Silk Scrap",
+  "Elven Poetry Scrap",
+  "Woodland Map",
+  "Dwarf Blood Vial",
+  "Dwarf Beard Braid",
+  "Iron Beard Ring",
+  "Forged Nail",
+  "Coal Dust Pouch",
+  "Whetstone Chip",
+  "Clan Crest Chip",
+  "Mining Claim",
+  "Ale-Stained Mug",
+  "Halfling Blood Vial",
+  "Halfling Hair Lock",
+  "Halfling Pipe",
+  "Lucky Charm",
+  "Harvest Apple",
+  "Pocket Handkerchief",
+  "Recipe Card",
+  "County Fair Ticket",
+  "Shire Map Scrap"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -372,7 +408,10 @@ if (!getLootDefinition("dragon-scale") || !getLootDefinition("dragon-heart") || 
 if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !getLootDefinition("phylactery-shard") || !getLootDefinition("lichdom-formula")) {
   throw new Error("Missing bugbear/undead loot definitions");
 }
-if (listLootDefinitions().length < 110) {
+if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
+  throw new Error("Missing PC race loot definitions");
+}
+if (listLootDefinitions().length < 150) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -909,6 +948,53 @@ const zombieGp = Number(zombieCurrency.gp || 0) + Number(zombieCurrency.pp || 0)
 if (lichGp <= zombieGp) {
   throw new Error(`Lich coin should exceed zombie coin (lich=${lichGp}, zombie=${zombieGp})`);
 }
+
+
+
+const human = resolveCreatureProfile({ name: "Human Bandit", creatureType: "humanoid", creatureSubtype: "human" });
+const elf = resolveCreatureProfile({ name: "Wood Elf", creatureType: "humanoid", creatureSubtype: "elf" });
+const drow = resolveCreatureProfile({ name: "Drow", creatureType: "humanoid", creatureSubtype: "elf" });
+const dwarf = resolveCreatureProfile({ name: "Dwarf", creatureType: "humanoid", creatureSubtype: "dwarf" });
+const halfling = resolveCreatureProfile({ name: "Halfling", creatureType: "humanoid", creatureSubtype: "halfling" });
+const halfElf = resolveCreatureProfile({ name: "Half-Elf Scout", creatureType: "humanoid", creatureSubtype: "half-elf" });
+const duergar = resolveCreatureProfile({ name: "Duergar", creatureType: "humanoid", creatureSubtype: "dwarf" });
+if (human?.id !== "human") throw new Error(`Expected human profile, got ${human?.id}`);
+if (elf?.id !== "elf") throw new Error(`Expected elf profile for Wood Elf, got ${elf?.id}`);
+if (drow?.id !== "elf") throw new Error(`Expected elf profile for Drow, got ${drow?.id}`);
+if (dwarf?.id !== "dwarf") throw new Error(`Expected dwarf profile, got ${dwarf?.id}`);
+if (halfling?.id !== "halfling") throw new Error(`Expected halfling profile, got ${halfling?.id}`);
+if (halfElf?.id === "elf" || halfElf?.id === "human") throw new Error("Half-elf must not resolve to elf or human profile");
+if (duergar?.id === "dwarf") throw new Error("Duergar must not resolve to dwarf profile");
+
+const humanLoot = await generateCreatureLoot({
+  context: { name: "Human Bandit", creatureType: "humanoid", creatureSubtype: "human", size: "med", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (humanLoot.profileId !== "human") throw new Error("Human generation used wrong profile");
+if (!humanLoot.items.some((i) => String(i.definitionId || "").startsWith("human-"))) {
+  throw new Error("Human loot missing human parts");
+}
+
+const elfLoot = await generateCreatureLoot({
+  context: { name: "High Elf", creatureType: "humanoid", creatureSubtype: "elf", size: "med", challengeRating: 0.5, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (elfLoot.profileId !== "elf") throw new Error("Elf generation used wrong profile");
+
+const dwarfLoot = await generateCreatureLoot({
+  context: { name: "Dwarf Guard", creatureType: "humanoid", creatureSubtype: "dwarf", size: "med", challengeRating: 0.5, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (dwarfLoot.profileId !== "dwarf") throw new Error("Dwarf generation used wrong profile");
+if (!dwarfLoot.items.some((i) => String(i.definitionId || "").includes("dwarf"))) {
+  throw new Error("Dwarf loot missing dwarf parts");
+}
+
+const halflingLoot = await generateCreatureLoot({
+  context: { name: "Halfling", creatureType: "humanoid", creatureSubtype: "halfling", size: "sm", challengeRating: 0, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
+});
+if (halflingLoot.profileId !== "halfling") throw new Error("Halfling generation used wrong profile");
 
 
 console.log("Offline pack verification passed.");

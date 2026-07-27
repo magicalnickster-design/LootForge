@@ -1,0 +1,51 @@
+{
+  "_id": "LFHumanHair00000",
+  "name": "Human Hair Lock",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/human-hair-lock.svg",
+  "system": {
+    "description": {
+      "value": "<p>A braided lock of human hair, cut clean. Some rituals call for it; most find it morbid.</p>",
+      "chat": "A lock of human hair."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "human-hair-lock",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "human"
+      ],
+      "stackingKey": "human-hair-lock",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHumanHair00000"
+}

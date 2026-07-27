@@ -1,0 +1,52 @@
+{
+  "_id": "LFMiningClaim000",
+  "name": "Mining Claim",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/mining-claim.svg",
+  "system": {
+    "description": {
+      "value": "<p>A stamped claim slip for a played-out silver vein. \"Depth 400 ft. Sealed by clan vote.\"</p>",
+      "chat": "A mining claim document."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "mining-claim",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "dwarf",
+        "readable"
+      ],
+      "stackingKey": "mining-claim",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMiningClaim000"
+}

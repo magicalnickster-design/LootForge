@@ -1,0 +1,52 @@
+{
+  "_id": "LFDwarfBeard0000",
+  "name": "Dwarf Beard Braid",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dwarf-beard-braid.svg",
+  "system": {
+    "description": {
+      "value": "<p>A braided lock of dwarf beard-hair bound with a copper ring. Cutting one is a grave insult — taking one is worse.</p>",
+      "chat": "A dwarf beard braid."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dwarf-beard-braid",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "dwarf",
+        "trophy"
+      ],
+      "stackingKey": "dwarf-beard-braid",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDwarfBeard0000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFWoodlandMap000",
+  "name": "Woodland Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/woodland-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>Bark-paper map of hidden trails and moonlit clearings. Marked in elven runes.</p>",
+      "chat": "A woodland trail map."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "woodland-map",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "elf",
+        "readable"
+      ],
+      "stackingKey": "woodland-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWoodlandMap000"
+}

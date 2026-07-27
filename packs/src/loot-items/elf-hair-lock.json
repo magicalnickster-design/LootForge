@@ -1,0 +1,51 @@
+{
+  "_id": "LFElfHair0000000",
+  "name": "Elf Hair Lock",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/elf-hair-lock.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fine silver-gold lock of elf hair, impossibly soft. Bards weave them into charms.</p>",
+      "chat": "A lock of elf hair."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "elf-hair-lock",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "elf"
+      ],
+      "stackingKey": "elf-hair-lock",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFElfHair0000000"
+}

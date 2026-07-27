@@ -1,0 +1,52 @@
+{
+  "_id": "LFMoonSilver0000",
+  "name": "Moon-Silver Splinter",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/moon-silver-splinter.svg",
+  "system": {
+    "description": {
+      "value": "<p>A hair-thin splinter of moon-silver, sometimes found in elf gear or ritual kits.</p>",
+      "chat": "A moon-silver splinter."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "moon-silver-splinter",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "elf",
+        "crafting"
+      ],
+      "stackingKey": "moon-silver-splinter",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMoonSilver0000"
+}

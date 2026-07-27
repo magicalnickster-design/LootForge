@@ -1,0 +1,51 @@
+{
+  "_id": "LFElvenArrow0000",
+  "name": "Elven Arrowhead",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/elven-arrowhead.svg",
+  "system": {
+    "description": {
+      "value": "<p>A masterfully fletched arrowhead of pale steel. Elven make — light, sharp, and balanced.</p>",
+      "chat": "An elven arrowhead."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "elven-arrowhead",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "elf"
+      ],
+      "stackingKey": "elven-arrowhead",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFElvenArrow0000"
+}

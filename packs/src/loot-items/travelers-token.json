@@ -1,0 +1,51 @@
+{
+  "_id": "LFTravelToken000",
+  "name": "Traveler's Token",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/travelers-token.svg",
+  "system": {
+    "description": {
+      "value": "<p>A stamped copper token good for one night at a roadside inn along a trade route.</p>",
+      "chat": "A traveler's token."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "travelers-token",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "human"
+      ],
+      "stackingKey": "travelers-token",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTravelToken000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFElfBlood000000",
+  "name": "Elf Blood Vial",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/elf-blood-vial.svg",
+  "system": {
+    "description": {
+      "value": "<p>A vial of pale, faintly luminous elf blood. Alchemists pay well for fey-touched samples.</p>",
+      "chat": "A vial of elf blood."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "elf-blood-vial",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "elf",
+        "alchemy"
+      ],
+      "stackingKey": "elf-blood-vial",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFElfBlood000000"
+}

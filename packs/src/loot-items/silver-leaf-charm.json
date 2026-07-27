@@ -1,0 +1,52 @@
+{
+  "_id": "LFSilverLeaf0000",
+  "name": "Silver Leaf Charm",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/silver-leaf-charm.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tiny silver leaf on a silk cord. A woodland blessing — or a mark of the high court.</p>",
+      "chat": "A silver leaf charm."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "silver-leaf-charm",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "elf",
+        "religion"
+      ],
+      "stackingKey": "silver-leaf-charm",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSilverLeaf0000"
+}

@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.8** |
+| Version | **0.5.9** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -48,6 +48,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Orc-themed junk / trinkets / war-order story scraps
 - **Bugbear** — multi-pool goblinoid profile:
   - Parts (ear, fang, hide scrap, rare heart), coin, sheet gear, raid orders / tally
+- **Human / Elf / Dwarf / Halfling** — civilized humanoid multi-pool profiles:
+  - Alchemy samples (blood vial, hair lock) plus racial trinkets / junk / story scraps
+  - Pocket currency and **sheet equipment** with quality (Broken → Masterwork)
+  - Elf includes drow / eladrin; half-elf and duergar excluded
 - **Zombie / Skeleton / Mummy** — undead multi-pool profiles with type-specific parts, burial junk, and sheet gear when present
 - **Lich** — high-tier undead profile:
   - Rare parts (lich dust, necrotic crystal, soul ash, phylactery shard)

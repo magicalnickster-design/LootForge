@@ -1,0 +1,51 @@
+{
+  "_id": "LFSilkScrap00000",
+  "name": "Silk Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/silk-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of fine elven silk, dyed forest green. Too small for a garment — perfect for spell components.</p>",
+      "chat": "A scrap of silk."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "silk-scrap",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "elf"
+      ],
+      "stackingKey": "silk-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSilkScrap00000"
+}

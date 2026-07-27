@@ -1,0 +1,51 @@
+{
+  "_id": "LFClanCrestChip0",
+  "name": "Clan Crest Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/clan-crest-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chipped stone bearing a clan hammer-and-anvil crest. Someone died wearing it.</p>",
+      "chat": "A clan crest chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "clan-crest-chip",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "trinket",
+        "dwarf"
+      ],
+      "stackingKey": "clan-crest-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFClanCrestChip0"
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "LFHarvestApple00",
+  "name": "Harvest Apple",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/harvest-apple.svg",
+  "system": {
+    "description": {
+      "value": "<p>A slightly bruised apple from a halfling's pocket. Still good — probably.</p>",
+      "chat": "A pocket apple."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "harvest-apple",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "halfling"
+      ],
+      "stackingKey": "harvest-apple",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHarvestApple00"
+}

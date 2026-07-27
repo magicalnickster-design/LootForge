@@ -1,0 +1,52 @@
+{
+  "_id": "LFShireMapScrap0",
+  "name": "Shire Map Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/shire-map-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn map of hedgerows, ponds, and a smial marked with an X. \"Aunt's cellar — best mushrooms.\"</p>",
+      "chat": "A shire map scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "shire-map-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "story",
+        "halfling",
+        "readable"
+      ],
+      "stackingKey": "shire-map-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFShireMapScrap0"
+}

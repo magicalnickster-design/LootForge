@@ -1,0 +1,51 @@
+{
+  "_id": "LFCrumpledRcpt00",
+  "name": "Crumpled Receipt",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crumpled-receipt.svg",
+  "system": {
+    "description": {
+      "value": "<p>A crumpled shop receipt for rope, lamp oil, and \"don't ask.\"</p>",
+      "chat": "A crumpled receipt."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crumpled-receipt",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "junk",
+        "human"
+      ],
+      "stackingKey": "crumpled-receipt",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrumpledRcpt00"
+}

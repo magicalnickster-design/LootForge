@@ -1,0 +1,51 @@
+{
+  "_id": "LFLuckyCharm0000",
+  "name": "Lucky Charm",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/lucky-charm.svg",
+  "system": {
+    "description": {
+      "value": "<p>A carved wooden button on a string. Halflings swear by them; statisticians do not.</p>",
+      "chat": "A lucky charm."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.02,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "lucky-charm",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "trinket",
+        "halfling"
+      ],
+      "stackingKey": "lucky-charm",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLuckyCharm0000"
+}
