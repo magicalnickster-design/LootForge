@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.20") {
-  throw new Error(`Expected module version 0.5.20, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.21") {
+  throw new Error(`Expected module version 0.5.21, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -430,7 +430,34 @@ const expectedNames = new Set([
   "Crown of Bones Shard",
   "Royal Lich Dust",
   "Death Decree Scroll",
-  "Soul Throne Fragment"
+  "Soul Throne Fragment",
+  "Assassin Garrote Cord",
+  "Bandit Mask Scrap",
+  "Barracks Roster",
+  "Berserker Rage Totem",
+  "Bounty Board Scrap",
+  "Calloused Knuckle Bone",
+  "Captain's Purse Clasp",
+  "Cult Brand Mark",
+  "Cult Cell Roster",
+  "Gladiator Arena Token",
+  "Guard Watch Badge",
+  "Hobgoblin Banner Scrap",
+  "Hobgoblin Blood Vial",
+  "Hobgoblin Boot Nail",
+  "Hobgoblin Ear",
+  "Hobgoblin Legion Badge",
+  "Hobgoblin Marching Orders",
+  "Hobgoblin Ration Tin",
+  "Hobgoblin Tooth",
+  "Letter of Marque",
+  "Mage Component Scrap",
+  "Mercenary Blood Vial",
+  "Noble Signet Wax",
+  "Priest Prayer Bead",
+  "Scout Trail Chalk",
+  "Thug's Brass Knuckle",
+  "Veteran's Service Pin"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -645,7 +672,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 380) {
+if (listLootDefinitions().length < 400) {
   throw new Error("Expected expanded definition registry");
 }
 if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plate") || !getLootDefinition("golem-manual-page")) {
@@ -660,6 +687,10 @@ if (!getLootDefinition("celestial-feather") || !getLootDefinition("solar-wing-fe
 if (!getLootDefinition("boss-trophy-crest") || !getLootDefinition("legendary-craft-essence") || !getLootDefinition("lich-king-phylactery-core")) {
   throw new Error("Missing boss loot definitions");
 }
+if (!getLootDefinition("hobgoblin-ear") || !getLootDefinition("mercenary-blood-vial") || !getLootDefinition("assassin-garrote-cord")) {
+  throw new Error("Missing hobgoblin/stock-humanoid loot definitions");
+}
+
 
 
 if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
@@ -1198,7 +1229,7 @@ if (lichGp <= zombieGp) {
 
 
 
-const human = resolveCreatureProfile({ name: "Human Bandit", creatureType: "humanoid", creatureSubtype: "human" });
+const human = resolveCreatureProfile({ name: "Human Commoner", creatureType: "humanoid", creatureSubtype: "human" });
 const elf = resolveCreatureProfile({ name: "Wood Elf", creatureType: "humanoid", creatureSubtype: "elf" });
 const drow = resolveCreatureProfile({ name: "Drow", creatureType: "humanoid", creatureSubtype: "elf" });
 const dwarf = resolveCreatureProfile({ name: "Dwarf", creatureType: "humanoid", creatureSubtype: "dwarf" });
@@ -1214,7 +1245,7 @@ if (halfElf?.id === "elf" || halfElf?.id === "human") throw new Error("Half-elf 
 if (duergar?.id === "dwarf") throw new Error("Duergar must not resolve to dwarf profile");
 
 const humanLoot = await generateCreatureLoot({
-  context: { name: "Human Bandit", creatureType: "humanoid", creatureSubtype: "human", size: "med", challengeRating: 0.25, isWolf: false, isBoss: false, isNamed: false },
+  context: { name: "Human Commoner", creatureType: "humanoid", creatureSubtype: "human", size: "med", challengeRating: 0, isWolf: false, isBoss: false, isNamed: false },
   survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
 });
 if (humanLoot.profileId !== "human") throw new Error("Human generation used wrong profile");
@@ -2196,6 +2227,74 @@ await assertBossGuarantees("Archmage", "humanoid", "human", "med", 12, "archmage
 await assertBossGuarantees("Lich King", "undead", "lich", "med", 21, "lich-king", [
   "lich-king-phylactery-core", "crown-of-bones-shard", "royal-lich-dust", "soul-throne-fragment"
 ]);
+
+
+
+const hobgoblinStock = resolveCreatureProfile({ name: "Hobgoblin", creatureType: "humanoid", creatureSubtype: "goblinoid", size: "med" });
+if (hobgoblinStock?.id !== "hobgoblin") throw new Error(`Expected hobgoblin, got ${hobgoblinStock?.id}`);
+
+const stockRoles = [
+  "Bandit", "Bandit Captain", "Guard", "Scout", "Veteran", "Cultist", "Cult Fanatic",
+  "Noble", "Mage", "Priest", "Assassin", "Thug", "Gladiator", "Berserker"
+];
+for (const role of stockRoles) {
+  const p = resolveCreatureProfile({ name: role, creatureType: "humanoid", creatureSubtype: "", size: "med" });
+  if (p?.id !== "stock-humanoid") throw new Error(`Expected stock-humanoid for ${role}, got ${p?.id}`);
+}
+const humanBandit = resolveCreatureProfile({ name: "Human Bandit", creatureType: "humanoid", creatureSubtype: "human", size: "med" });
+if (humanBandit?.id !== "stock-humanoid") throw new Error(`Expected stock-humanoid for Human Bandit, got ${humanBandit?.id}`);
+const plainHuman = resolveCreatureProfile({ name: "Human", creatureType: "humanoid", creatureSubtype: "human", size: "med" });
+if (plainHuman?.id !== "human") throw new Error(`Expected human for Human, got ${plainHuman?.id}`);
+const mageNotArch = resolveCreatureProfile({ name: "Mage", creatureType: "humanoid", creatureSubtype: "", size: "med" });
+const archStill = resolveCreatureProfile({ name: "Archmage", creatureType: "humanoid", creatureSubtype: "", size: "med" });
+if (mageNotArch?.id !== "stock-humanoid") throw new Error(`Expected stock-humanoid for Mage, got ${mageNotArch?.id}`);
+if (archStill?.id !== "archmage") throw new Error(`Expected archmage for Archmage, got ${archStill?.id}`);
+
+const stockProfile = resolveCreatureProfile({ name: "Assassin", creatureType: "humanoid", creatureSubtype: "", size: "med" });
+if (resolveLootScale(stockProfile, { name: "Cultist", size: "med" }) !== 0.55) throw new Error("Cultist lootScale should be 0.55");
+if (resolveLootScale(stockProfile, { name: "Bandit", size: "med" }) !== 0.65) throw new Error("Bandit lootScale should be 0.65");
+if (resolveLootScale(stockProfile, { name: "Bandit Captain", size: "med" }) !== 1.15) throw new Error("Bandit Captain lootScale should be 1.15");
+if (resolveLootScale(stockProfile, { name: "Assassin", size: "med" }) !== 1.35) throw new Error("Assassin lootScale should be 1.35");
+if (resolveLootScale(stockProfile, { name: "Gladiator", size: "med" }) !== 1.3) throw new Error("Gladiator lootScale should be 1.3");
+
+const hobLoot = await generateCreatureLoot({
+  context: { name: "Hobgoblin", creatureType: "humanoid", creatureSubtype: "hobgoblin", size: "med", challengeRating: 0.5, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (hobLoot.profileId !== "hobgoblin") throw new Error("Hobgoblin generation used wrong profile");
+if (!hobLoot.items.some((i) => String(i.definitionId || "").startsWith("hobgoblin-"))) {
+  throw new Error("Hobgoblin loot missing hobgoblin parts");
+}
+
+const assassinLoot = await generateCreatureLoot({
+  context: { name: "Assassin", creatureType: "humanoid", creatureSubtype: "", size: "med", challengeRating: 8, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (assassinLoot.profileId !== "stock-humanoid") throw new Error("Assassin generation used wrong profile");
+if (!assassinLoot.items.some((i) => /mercenary|calloused|bandit-mask|cult-brand|mage-component|assassin|thugs-brass|guard-watch|veteran|noble-signet|priest-prayer|gladiator|berserker|bounty|cult-cell|barracks|letter-of-marque|captains-purse|scout-trail/.test(String(i.definitionId || "")))) {
+  throw new Error("Assassin loot missing stock-humanoid parts");
+}
+
+let cultSum = 0;
+let assassinSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Cultist", creatureType: "humanoid", creatureSubtype: "", size: "med", challengeRating: 0.125, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Assassin", creatureType: "humanoid", creatureSubtype: "", size: "med", challengeRating: 8, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /mercenary|calloused|bandit-mask|cult-brand|mage-component|assassin|thugs-brass|guard-watch|veteran|noble-signet|priest-prayer|gladiator|berserker|bounty|cult-cell|barracks|letter-of-marque|captains-purse|scout-trail/;
+  cultSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  assassinSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const cultAvg = cultSum / 40;
+const assassinAvg = assassinSum / 40;
+if (assassinAvg <= cultAvg * 1.25) {
+  throw new Error(`Assassin should average more scaled parts than Cultist (assassin=${assassinAvg}, cultist=${cultAvg})`);
+}
 
 
 console.log("Offline pack verification passed.");

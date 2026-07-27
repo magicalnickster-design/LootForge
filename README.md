@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.20** |
+| Version | **0.5.21** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Bosses** (Ancient Red Dragon, Kraken, Tarrasque, Demon Lord, Archmage, Lich King), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Hobgoblin**, **Bugbear**, **Stock Humanoids** (Bandit–Berserker), **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Bosses** (Ancient Red Dragon, Kraken, Tarrasque, Demon Lord, Archmage, Lich King), **Chest / Container** |
 
 ## Flow (v0.4+)
 

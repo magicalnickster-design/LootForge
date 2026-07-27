@@ -1,0 +1,52 @@
+{
+  "_id": "LFCultBrandMark0",
+  "name": "Cult Brand Mark",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cult-brand-mark.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of flesh or leather bearing a cult brand. Best not to stare.</p>",
+      "chat": "A scrap of flesh or leather bearing a cult brand. Best not to stare."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cult-brand-mark",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "cultist",
+        "trophy"
+      ],
+      "stackingKey": "cult-brand-mark",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCultBrandMark0"
+}

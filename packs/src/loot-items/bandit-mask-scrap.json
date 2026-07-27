@@ -1,0 +1,52 @@
+{
+  "_id": "LFBanditMaskScrp",
+  "name": "Bandit Mask Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/bandit-mask-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A scrap of cloth from a bandit's mask. Still smells of road dust.</p>",
+      "chat": "A scrap of cloth from a bandit's mask. Still smells of road dust."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "bandit-mask-scrap",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "bandit",
+        "trophy"
+      ],
+      "stackingKey": "bandit-mask-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBanditMaskScrp"
+}

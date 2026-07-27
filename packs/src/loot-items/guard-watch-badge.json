@@ -1,0 +1,52 @@
+{
+  "_id": "LFGuardWatchBadg",
+  "name": "Guard Watch Badge",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/guard-watch-badge.svg",
+  "system": {
+    "description": {
+      "value": "<p>A town watch badge. The town's name is scratched out.</p>",
+      "chat": "A town watch badge. The town's name is scratched out."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "guard-watch-badge",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "guard",
+        "trinket"
+      ],
+      "stackingKey": "guard-watch-badge",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGuardWatchBadg"
+}

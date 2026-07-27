@@ -1,0 +1,52 @@
+{
+  "_id": "LFScoutTrailChlk",
+  "name": "Scout Trail Chalk",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/scout-trail-chalk.svg",
+  "system": {
+    "description": {
+      "value": "<p>Colored chalk used to mark trails. Half used on secret paths.</p>",
+      "chat": "Colored chalk used to mark trails. Half used on secret paths."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "scout-trail-chalk",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "scout",
+        "junk"
+      ],
+      "stackingKey": "scout-trail-chalk",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFScoutTrailChlk"
+}

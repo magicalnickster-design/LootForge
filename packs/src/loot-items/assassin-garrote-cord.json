@@ -1,0 +1,53 @@
+{
+  "_id": "LFAssassinGarrot",
+  "name": "Assassin Garrote Cord",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/assassin-garrote-cord.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thin garrote cord, silk over wire. Extremely illegal in three cities.</p>",
+      "chat": "A thin garrote cord, silk over wire. Extremely illegal in three cities."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "assassin-garrote-cord",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "assassin",
+        "trophy",
+        "weapon"
+      ],
+      "stackingKey": "assassin-garrote-cord",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAssassinGarrot"
+}

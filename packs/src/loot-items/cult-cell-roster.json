@@ -1,0 +1,53 @@
+{
+  "_id": "LFCultCellRoster",
+  "name": "Cult Cell Roster",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cult-cell-roster.svg",
+  "system": {
+    "description": {
+      "value": "<p>A roster of cult cell members. One name is circled thrice.</p>",
+      "chat": "A roster of cult cell members. One name is circled thrice."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cult-cell-roster",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "cultist",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "cult-cell-roster",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCultCellRoster"
+}

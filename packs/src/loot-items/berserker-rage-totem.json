@@ -1,0 +1,52 @@
+{
+  "_id": "LFBerserkerTotem",
+  "name": "Berserker Rage Totem",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/berserker-rage-totem.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bone totem bitten during battle-rage. Tooth marks everywhere.</p>",
+      "chat": "A bone totem bitten during battle-rage. Tooth marks everywhere."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "berserker-rage-totem",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "berserker",
+        "trinket"
+      ],
+      "stackingKey": "berserker-rage-totem",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBerserkerTotem"
+}

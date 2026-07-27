@@ -1,0 +1,52 @@
+{
+  "_id": "LFHobgoblinOrder",
+  "name": "Hobgoblin Marching Orders",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hobgoblin-marching-orders.svg",
+  "system": {
+    "description": {
+      "value": "<p>Marching orders in Goblin script: villages marked for \"pacification.\"</p>",
+      "chat": "Marching orders in Goblin script: villages marked for \"pacification.\""
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hobgoblin-marching-orders",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "hobgoblin",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "hobgoblin-marching-orders",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHobgoblinOrder"
+}

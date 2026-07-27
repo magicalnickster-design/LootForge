@@ -26,6 +26,8 @@ import { feyProfile } from "./fey.js";
 import { fiendProfile } from "./fiend.js";
 import { giantProfile } from "./giant.js";
 import { goblinProfile } from "./goblin.js";
+import { hobgoblinProfile } from "./hobgoblin.js";
+import { stockHumanoidProfile } from "./stock-humanoid.js";
 import { halflingProfile } from "./halfling.js";
 import { humanProfile } from "./human.js";
 import { lichProfile } from "./lich.js";
@@ -57,6 +59,8 @@ export const PROFILE_ORDER = [
   "celestial",
   "bugbear",
   "goblin",
+  "hobgoblin",
+  "stockHumanoid",
   "elf",
   "dwarf",
   "halfling",
@@ -92,6 +96,8 @@ export const CREATURE_PROFILES = {
   plant: plantProfile,
   celestial: celestialProfile,
   goblin: goblinProfile,
+  hobgoblin: hobgoblinProfile,
+  stockHumanoid: stockHumanoidProfile,
   bugbear: bugbearProfile,
   elf: elfProfile,
   dwarf: dwarfProfile,

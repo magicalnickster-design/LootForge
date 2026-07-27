@@ -1,0 +1,52 @@
+{
+  "_id": "LFVeteranServPin",
+  "name": "Veteran's Service Pin",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/veterans-service-pin.svg",
+  "system": {
+    "description": {
+      "value": "<p>A service pin from a forgotten war. Polished out of habit.</p>",
+      "chat": "A service pin from a forgotten war. Polished out of habit."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "veterans-service-pin",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "veteran",
+        "trinket"
+      ],
+      "stackingKey": "veterans-service-pin",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFVeteranServPin"
+}

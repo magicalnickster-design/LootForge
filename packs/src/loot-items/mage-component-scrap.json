@@ -1,0 +1,52 @@
+{
+  "_id": "LFMageCompScrap0",
+  "name": "Mage Component Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/mage-component-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>Leftover spell components in a scorched pouch scrap. Still faintly charged.</p>",
+      "chat": "Leftover spell components in a scorched pouch scrap. Still faintly charged."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "mage-component-scrap",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "mage",
+        "alchemy"
+      ],
+      "stackingKey": "mage-component-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMageCompScrap0"
+}

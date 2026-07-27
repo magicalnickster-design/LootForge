@@ -1,0 +1,51 @@
+{
+  "_id": "LFHobgoblinEar00",
+  "name": "Hobgoblin Ear",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hobgoblin-ear.svg",
+  "system": {
+    "description": {
+      "value": "<p>A pointed hobgoblin ear, pierced for a legion ring.</p>",
+      "chat": "A pointed hobgoblin ear, pierced for a legion ring."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hobgoblin-ear",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "hobgoblin",
+        "trophy"
+      ],
+      "stackingKey": "hobgoblin-ear",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHobgoblinEar00"
+}

@@ -1,0 +1,54 @@
+{
+  "_id": "LFBarracksRoster",
+  "name": "Barracks Roster",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/barracks-roster.svg",
+  "system": {
+    "description": {
+      "value": "<p>A barracks duty roster. Half the names never reported back.</p>",
+      "chat": "A barracks duty roster. Half the names never reported back."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "barracks-roster",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "humanoid",
+        "guard",
+        "veteran",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "barracks-roster",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBarracksRoster"
+}

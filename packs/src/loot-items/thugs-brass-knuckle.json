@@ -1,0 +1,53 @@
+{
+  "_id": "LFThugBrassKnuck",
+  "name": "Thug's Brass Knuckle",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/thugs-brass-knuckle.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dented brass knuckle. The dents are not from forging.</p>",
+      "chat": "A dented brass knuckle. The dents are not from forging."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "thugs-brass-knuckle",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "humanoid",
+        "thug",
+        "trophy",
+        "weapon"
+      ],
+      "stackingKey": "thugs-brass-knuckle",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFThugBrassKnuck"
+}

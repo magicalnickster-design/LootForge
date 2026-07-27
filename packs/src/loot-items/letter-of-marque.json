@@ -1,0 +1,52 @@
+{
+  "_id": "LFLetterOfMarque",
+  "name": "Letter of Marque",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/letter-of-marque.svg",
+  "system": {
+    "description": {
+      "value": "<p>A letter authorizing private war \u2014 or a convincing forgery.</p>",
+      "chat": "A letter authorizing private war \u2014 or a convincing forgery."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "letter-of-marque",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "humanoid",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "letter-of-marque",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLetterOfMarque"
+}
