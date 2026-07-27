@@ -1,0 +1,52 @@
+{
+  "_id": "LFMimicAdhesiv00",
+  "name": "Mimic Adhesive",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/mimic-adhesive.svg",
+  "system": {
+    "description": {
+      "value": "<p>A jar of sticky grey goo that never quite dries. Glue-makers and trapwrights bid for it.</p>",
+      "chat": "A jar of mimic adhesive."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "mimic-adhesive",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "mimic",
+        "alchemy"
+      ],
+      "stackingKey": "mimic-adhesive",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMimicAdhesiv00"
+}

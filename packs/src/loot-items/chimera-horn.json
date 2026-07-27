@@ -1,0 +1,53 @@
+{
+  "_id": "LFChimeraHorn000",
+  "name": "Chimera Horn",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/chimera-horn.svg",
+  "system": {
+    "description": {
+      "value": "<p>A goat-head horn from a chimera, scorched along one edge. Three heads, one trophy.</p>",
+      "chat": "A chimera horn."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "chimera-horn",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "monstrosity",
+        "chimera",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "chimera-horn",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFChimeraHorn000"
+}

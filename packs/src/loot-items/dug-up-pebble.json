@@ -1,0 +1,51 @@
+{
+  "_id": "LFDugUpPebble000",
+  "name": "Dug-Up Pebble",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dug-up-pebble.svg",
+  "system": {
+    "description": {
+      "value": "<p>A pebble pushed up by something burrowing below. Ordinary — until you notice the tooth marks.</p>",
+      "chat": "A dug-up pebble."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dug-up-pebble",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "monstrosity",
+        "junk"
+      ],
+      "stackingKey": "dug-up-pebble",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDugUpPebble000"
+}

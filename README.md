@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.11** |
+| Version | **0.5.12** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Monstrosity** — multi-pool profile for owlbears, basilisks, chimerae, hydras, purple worms, mimics, ropers, and kin:
+  - Parts (hide, fang, creature-specific trophies, rare basilisk eye / purple worm tooth)
+  - Nest/gullet currency and **sheet equipment** when present (prey gear)
+  - Shed scales / sticky residue, petrified chips, hunter warnings & nest maps
+  - **Name scaling:** Cockatrice drops less; Purple Worm drops more (`lootScale`)
 - **Fey** — multi-pool profile for pixies, dryads, satyrs, redcaps, and hags:
   - Parts (fey dust, blood, pixie wing, dryad bark, satyr horn, redcap tooth, hag hair, rare hag eye)
   - Pocket currency and **sheet equipment** when present

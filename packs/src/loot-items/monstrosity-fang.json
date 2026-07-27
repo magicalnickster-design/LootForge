@@ -1,0 +1,52 @@
+{
+  "_id": "LFMonstroFang000",
+  "name": "Monstrosity Fang",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/monstrosity-fang.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thick fang, still notched from bone. Trophy hunters love these; alchemists grind them.</p>",
+      "chat": "A monstrosity fang."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "monstrosity-fang",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "monstrosity-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMonstroFang000"
+}

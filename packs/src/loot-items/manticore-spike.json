@@ -1,0 +1,52 @@
+{
+  "_id": "LFManticoreSpk00",
+  "name": "Manticore Spike",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/manticore-spike.svg",
+  "system": {
+    "description": {
+      "value": "<p>A barbed tail spike. Still sticky. Manticores launch these like quarrels.</p>",
+      "chat": "A manticore spike."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "manticore-spike",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "manticore",
+        "trophy"
+      ],
+      "stackingKey": "manticore-spike",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFManticoreSpk00"
+}

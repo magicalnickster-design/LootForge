@@ -1,0 +1,53 @@
+{
+  "_id": "LFWormTunnelCh00",
+  "name": "Worm Tunnel Chart",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/worm-tunnel-chart.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chart of underdark tunnels marked with purple ink. Several routes end in \"GONE.\"</p>",
+      "chat": "A worm tunnel chart."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "worm-tunnel-chart",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "monstrosity",
+        "purple-worm",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "worm-tunnel-chart",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFWormTunnelCh00"
+}

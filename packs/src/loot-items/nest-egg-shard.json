@@ -1,0 +1,51 @@
+{
+  "_id": "LFNestEggShard00",
+  "name": "Nest Egg Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/nest-egg-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fragment of a thick, mottled eggshell from a monstrosity nest.</p>",
+      "chat": "A nest egg shard."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 12,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "nest-egg-shard",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "trinket"
+      ],
+      "stackingKey": "nest-egg-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFNestEggShard00"
+}

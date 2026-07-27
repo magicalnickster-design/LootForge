@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.11") {
-  throw new Error(`Expected module version 0.5.11, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.12") {
+  throw new Error(`Expected module version 0.5.12, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -239,7 +239,32 @@ const expectedNames = new Set([
   "Fey Bargain Scrap",
   "Court Invitation",
   "Hag Coven Note",
-  "Stolen Name List"
+  "Stolen Name List",
+  "Monstrosity Hide Scrap",
+  "Monstrosity Fang",
+  "Owlbear Feather",
+  "Owlbear Claw",
+  "Basilisk Eye",
+  "Basilisk Scale",
+  "Cockatrice Feather",
+  "Chimera Horn",
+  "Griffon Feather",
+  "Manticore Spike",
+  "Hydra Tooth",
+  "Bulette Plate",
+  "Ankheg Chitin",
+  "Ankheg Acid Sac",
+  "Purple Worm Tooth",
+  "Mimic Adhesive",
+  "Roper Tendril",
+  "Petrified Chip",
+  "Nest Egg Shard",
+  "Shed Scale",
+  "Sticky Residue",
+  "Dug-Up Pebble",
+  "Hunter Warning",
+  "Nest Map Scrap",
+  "Worm Tunnel Chart"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -454,7 +479,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 190) {
+if (listLootDefinitions().length < 210) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -1203,6 +1228,71 @@ const pixieAvg = pixiePartSum / 40;
 const nightAvg = nightPartSum / 40;
 if (nightAvg <= pixieAvg * 1.25) {
   throw new Error(`Night Hag should average more scaled parts than Pixie (night=${nightAvg}, pixie=${pixieAvg})`);
+}
+
+
+
+const monstrosity = resolveCreatureProfile({ name: "Owlbear", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
+const cockatrice = resolveCreatureProfile({ name: "Cockatrice", creatureType: "monstrosity", creatureSubtype: "", size: "sm" });
+const griffon = resolveCreatureProfile({ name: "Griffon", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
+const griffin = resolveCreatureProfile({ name: "Griffin", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
+const hydra = resolveCreatureProfile({ name: "Hydra", creatureType: "monstrosity", creatureSubtype: "", size: "huge" });
+const purpleWorm = resolveCreatureProfile({ name: "Purple Worm", creatureType: "monstrosity", creatureSubtype: "", size: "gargantuan" });
+const mimic = resolveCreatureProfile({ name: "Mimic", creatureType: "monstrosity", creatureSubtype: "", size: "med" });
+const roper = resolveCreatureProfile({ name: "Roper", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
+if (monstrosity?.id !== "monstrosity") throw new Error(`Expected monstrosity for Owlbear, got ${monstrosity?.id}`);
+if (cockatrice?.id !== "monstrosity") throw new Error(`Expected monstrosity for Cockatrice, got ${cockatrice?.id}`);
+if (griffon?.id !== "monstrosity") throw new Error(`Expected monstrosity for Griffon, got ${griffon?.id}`);
+if (griffin?.id !== "monstrosity") throw new Error(`Expected monstrosity for Griffin, got ${griffin?.id}`);
+if (hydra?.id !== "monstrosity") throw new Error(`Expected monstrosity for Hydra, got ${hydra?.id}`);
+if (purpleWorm?.id !== "monstrosity") throw new Error(`Expected monstrosity for Purple Worm, got ${purpleWorm?.id}`);
+if (mimic?.id !== "monstrosity") throw new Error(`Expected monstrosity for Mimic, got ${mimic?.id}`);
+if (roper?.id !== "monstrosity") throw new Error(`Expected monstrosity for Roper, got ${roper?.id}`);
+
+if (resolveLootScale(monstrosity, { name: "Cockatrice", size: "sm" }) !== 0.4) throw new Error("Cockatrice lootScale should be 0.4");
+if (resolveLootScale(monstrosity, { name: "Owlbear", size: "lg" }) !== 0.8) throw new Error("Owlbear lootScale should be 0.8");
+if (resolveLootScale(monstrosity, { name: "Basilisk", size: "med" }) !== 0.85) throw new Error("Basilisk lootScale should be 0.85");
+if (resolveLootScale(monstrosity, { name: "Chimera", size: "lg" }) !== 1.3) throw new Error("Chimera lootScale should be 1.3");
+if (resolveLootScale(monstrosity, { name: "Hydra", size: "huge" }) !== 1.5) throw new Error("Hydra lootScale should be 1.5");
+if (resolveLootScale(monstrosity, { name: "Bulette", size: "lg" }) !== 1.15) throw new Error("Bulette lootScale should be 1.15");
+if (resolveLootScale(monstrosity, { name: "Ankheg", size: "lg" }) !== 0.65) throw new Error("Ankheg lootScale should be 0.65");
+if (resolveLootScale(monstrosity, { name: "Purple Worm", size: "grg" }) !== 1.9) throw new Error("Purple Worm lootScale should be 1.9");
+if (resolveLootScale(monstrosity, { name: "Manticore", size: "lg" }) !== 0.95) throw new Error("Manticore lootScale should be 0.95");
+
+const owlbearLoot = await generateCreatureLoot({
+  context: { name: "Owlbear", creatureType: "monstrosity", creatureSubtype: "", size: "lg", challengeRating: 3, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+});
+if (owlbearLoot.profileId !== "monstrosity") throw new Error("Owlbear generation used wrong profile");
+if (!owlbearLoot.items.some((i) => ["monstrosity-hide","monstrosity-fang","owlbear-feather","owlbear-claw"].includes(String(i.definitionId || "")))) {
+  throw new Error("Owlbear loot missing monstrosity parts");
+}
+
+const purpleLoot = await generateCreatureLoot({
+  context: { name: "Purple Worm", creatureType: "monstrosity", creatureSubtype: "", size: "grg", challengeRating: 15, isWolf: false, isBoss: true, isNamed: false },
+  survivalTotal: 22, naturalDie: 18, isNatural20: false, actor: null
+});
+if (purpleLoot.profileId !== "monstrosity") throw new Error("Purple Worm generation used wrong profile");
+
+let cockSum = 0;
+let wormSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Cockatrice", creatureType: "monstrosity", creatureSubtype: "", size: "sm", challengeRating: 0.5, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Purple Worm", creatureType: "monstrosity", creatureSubtype: "", size: "grg", challengeRating: 15, isWolf: false, isBoss: true, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /monstrosity|owlbear|basilisk|cockatrice|chimera|griffon|manticore|hydra|bulette|ankheg|purple-worm|mimic|roper/;
+  cockSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  wormSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const cockAvg = cockSum / 40;
+const wormAvg = wormSum / 40;
+if (wormAvg <= cockAvg * 1.3) {
+  throw new Error(`Purple Worm should average more scaled parts than Cockatrice (worm=${wormAvg}, cockatrice=${cockAvg})`);
 }
 
 

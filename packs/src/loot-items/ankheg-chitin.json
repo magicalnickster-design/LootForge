@@ -1,0 +1,52 @@
+{
+  "_id": "LFAnkhegChitin00",
+  "name": "Ankheg Chitin",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/ankheg-chitin.svg",
+  "system": {
+    "description": {
+      "value": "<p>A curved plate of brown-green chitin, acid-pitted along the edges.</p>",
+      "chat": "A plate of ankheg chitin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "ankheg-chitin",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "ankheg",
+        "chitin"
+      ],
+      "stackingKey": "ankheg-chitin",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAnkhegChitin00"
+}

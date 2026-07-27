@@ -1,0 +1,52 @@
+{
+  "_id": "LFHunterWarnin00",
+  "name": "Hunter Warning",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hunter-warning.svg",
+  "system": {
+    "description": {
+      "value": "<p>A nail-stuck scrap: \"NEST AHEAD — THREE HEADS. DO NOT WHISTLE.\" Signed in blood.</p>",
+      "chat": "A hunter's warning."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hunter-warning",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "hunter-warning",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHunterWarnin00"
+}

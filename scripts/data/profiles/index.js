@@ -17,6 +17,7 @@ import { goblinProfile } from "./goblin.js";
 import { halflingProfile } from "./halfling.js";
 import { humanProfile } from "./human.js";
 import { lichProfile } from "./lich.js";
+import { monstrosityProfile } from "./monstrosity.js";
 import { mummyProfile } from "./mummy.js";
 import { orcProfile } from "./orc.js";
 import { skeletonProfile } from "./skeleton.js";
@@ -39,6 +40,7 @@ export const PROFILE_ORDER = [
   "halfling",
   "human",
   "orc",
+  "monstrosity",
   "fey",
   "fiend",
   "dragon",
@@ -61,6 +63,7 @@ export const CREATURE_PROFILES = {
   halfling: halflingProfile,
   human: humanProfile,
   orc: orcProfile,
+  monstrosity: monstrosityProfile,
   fey: feyProfile,
   fiend: fiendProfile,
   dragon: dragonProfile,

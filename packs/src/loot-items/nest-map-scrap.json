@@ -1,0 +1,52 @@
+{
+  "_id": "LFNestMapScrap00",
+  "name": "Nest Map Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/nest-map-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A torn map marking a cliff nest and a note: \"Eggs still warm. Bring rope.\"</p>",
+      "chat": "A nest map scrap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "nest-map-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "nest-map-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFNestMapScrap00"
+}

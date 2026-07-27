@@ -1,0 +1,52 @@
+{
+  "_id": "LFRoperTendril00",
+  "name": "Roper Tendril",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/roper-tendril.svg",
+  "system": {
+    "description": {
+      "value": "<p>A rubbery tendril tip, still twitching. Sticky enough to hang a lantern.</p>",
+      "chat": "A roper tendril."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "roper-tendril",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "roper",
+        "trophy"
+      ],
+      "stackingKey": "roper-tendril",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFRoperTendril00"
+}

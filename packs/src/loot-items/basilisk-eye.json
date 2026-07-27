@@ -1,0 +1,53 @@
+{
+  "_id": "LFBasiliskEye000",
+  "name": "Basilisk Eye",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/basilisk-eye.svg",
+  "system": {
+    "description": {
+      "value": "<p>A cloudy eye that never quite looks away. Alchemists warn: don't meet its gaze even dead.</p>",
+      "chat": "A basilisk eye."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.25,
+      "units": "lb"
+    },
+    "price": {
+      "value": 40,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "basilisk-eye",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "monstrosity",
+        "basilisk",
+        "alchemy",
+        "rare"
+      ],
+      "stackingKey": "basilisk-eye",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBasiliskEye000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFPetrifiedChp00",
+  "name": "Petrified Chip",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/petrified-chip.svg",
+  "system": {
+    "description": {
+      "value": "<p>A chip of flesh turned to stone. Basilisks and cockatrices leave these in their wake.</p>",
+      "chat": "A petrified chip."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "petrified-chip",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "trinket",
+        "stone"
+      ],
+      "stackingKey": "petrified-chip",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPetrifiedChp00"
+}

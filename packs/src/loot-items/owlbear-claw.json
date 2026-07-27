@@ -1,0 +1,53 @@
+{
+  "_id": "LFOwlbearClaw000",
+  "name": "Owlbear Claw",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/owlbear-claw.svg",
+  "system": {
+    "description": {
+      "value": "<p>A curved black claw longer than a dagger. Still hooked with bark and fur.</p>",
+      "chat": "An owlbear claw."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "owlbear-claw",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "owlbear",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "owlbear-claw",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFOwlbearClaw000"
+}

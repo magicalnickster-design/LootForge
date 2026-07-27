@@ -1,0 +1,53 @@
+{
+  "_id": "LFHydraTooth0000",
+  "name": "Hydra Tooth",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hydra-tooth.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dagger-length tooth from a hydra jaw. If you plant it, locals swear something grows.</p>",
+      "chat": "A hydra tooth."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 20,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hydra-tooth",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "monstrosity",
+        "hydra",
+        "trophy",
+        "bone"
+      ],
+      "stackingKey": "hydra-tooth",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHydraTooth0000"
+}

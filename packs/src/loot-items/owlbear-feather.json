@@ -1,0 +1,52 @@
+{
+  "_id": "LFOwlbearFeath00",
+  "name": "Owlbear Feather",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/owlbear-feather.svg",
+  "system": {
+    "description": {
+      "value": "<p>A stiff feather from an owlbear's crest. Smells like wet dog and pine.</p>",
+      "chat": "An owlbear feather."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "owlbear-feather",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "monstrosity",
+        "owlbear",
+        "trophy"
+      ],
+      "stackingKey": "owlbear-feather",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFOwlbearFeath00"
+}

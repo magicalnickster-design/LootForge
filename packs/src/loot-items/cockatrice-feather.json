@@ -1,0 +1,52 @@
+{
+  "_id": "LFCockatriceFt00",
+  "name": "Cockatrice Feather",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/cockatrice-feather.svg",
+  "system": {
+    "description": {
+      "value": "<p>A mottled feather that leaves a chalky dust on your fingers. Don't lick them.</p>",
+      "chat": "A cockatrice feather."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 15,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "cockatrice-feather",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "cockatrice",
+        "alchemy"
+      ],
+      "stackingKey": "cockatrice-feather",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCockatriceFt00"
+}

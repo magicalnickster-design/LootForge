@@ -1,0 +1,53 @@
+{
+  "_id": "LFAnkhegAcidSa00",
+  "name": "Ankheg Acid Sac",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/ankheg-acid-sac.svg",
+  "system": {
+    "description": {
+      "value": "<p>A sealed gland of green-black acid. Handle with tongs. Or better: don't.</p>",
+      "chat": "An ankheg acid sac."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "ankheg-acid-sac",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "monstrosity",
+        "ankheg",
+        "alchemy",
+        "acid"
+      ],
+      "stackingKey": "ankheg-acid-sac",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAnkhegAcidSa00"
+}
