@@ -28,7 +28,7 @@ LootForge requires an active **Gambits Forge Tier 1 or higher** subscription.
 
 - The **GM** must be signed in with an entitled Gambits Forge account.
 - **Players do not need** their own LootForge subscription to loot in that GM’s world.
-- Loot generation stays local inside Foundry. LootForge does not use AI and does not consume generation credits.
+- Loot generation stays local inside Foundry. LootForge does not consume generation credits.
 - Entitlements refresh on startup (when online), after login, when fewer than 7 days remain, or via **Check Subscription**.
 - A cached entitlement remains usable offline until the **server-issued** expiration (maximum 30 days from cache fetch). Expiration is never extended locally.
 
