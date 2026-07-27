@@ -22,6 +22,7 @@ import { humanProfile } from "./human.js";
 import { lichProfile } from "./lich.js";
 import { monstrosityProfile } from "./monstrosity.js";
 import { mummyProfile } from "./mummy.js";
+import { oozeProfile } from "./ooze.js";
 import { orcProfile } from "./orc.js";
 import { skeletonProfile } from "./skeleton.js";
 import { spiderProfile } from "./spider.js";
@@ -43,6 +44,7 @@ export const PROFILE_ORDER = [
   "halfling",
   "human",
   "orc",
+  "ooze",
   "aberration",
   "elemental",
   "giant",
@@ -69,6 +71,7 @@ export const CREATURE_PROFILES = {
   halfling: halflingProfile,
   human: humanProfile,
   orc: orcProfile,
+  ooze: oozeProfile,
   aberration: aberrationProfile,
   elemental: elementalProfile,
   giant: giantProfile,

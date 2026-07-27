@@ -1,0 +1,52 @@
+{
+  "_id": "LFBlackPudding00",
+  "name": "Black Pudding Blob",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/black-pudding-blob.svg",
+  "system": {
+    "description": {
+      "value": "<p>A tar-black blob that splits if struck. Keep it cold and far from metal.</p>",
+      "chat": "A black pudding blob."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 10,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "black-pudding-blob",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "ooze",
+        "black-pudding",
+        "alchemy"
+      ],
+      "stackingKey": "black-pudding-blob",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBlackPudding00"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFOchreJelly0000",
+  "name": "Ochre Jelly Blob",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/ochre-jelly-blob.svg",
+  "system": {
+    "description": {
+      "value": "<p>A yellow-brown jelly that creeps toward warmth. Smells like vinegar and wet stone.</p>",
+      "chat": "An ochre jelly blob."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "ochre-jelly-blob",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "ooze",
+        "ochre-jelly",
+        "alchemy"
+      ],
+      "stackingKey": "ochre-jelly-blob",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFOchreJelly0000"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFProtoplasmCor0",
+  "name": "Protoplasm Core",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/protoplasm-core.svg",
+  "system": {
+    "description": {
+      "value": "<p>A denser nucleus of ooze matter. Alchemists say it remembers every meal.</p>",
+      "chat": "A protoplasm core."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "protoplasm-core",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "ooze",
+        "alchemy",
+        "rare"
+      ],
+      "stackingKey": "protoplasm-core",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFProtoplasmCor0"
+}

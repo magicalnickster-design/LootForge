@@ -1,0 +1,52 @@
+{
+  "_id": "LFAcidScarCoin00",
+  "name": "Acid-Scarred Coin",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/acid-scarred-coin.svg",
+  "system": {
+    "description": {
+      "value": "<p>A coin half-eaten by acid. Face gone; value mostly sentimental.</p>",
+      "chat": "An acid-scarred coin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "acid-scarred-coin",
+      "category": "trinket",
+      "rarity": "common",
+      "tags": [
+        "ooze",
+        "trinket",
+        "currency"
+      ],
+      "stackingKey": "acid-scarred-coin",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAcidScarCoin00"
+}

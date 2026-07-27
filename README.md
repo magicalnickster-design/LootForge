@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.15** |
+| Version | **0.5.16** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -59,6 +59,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Better equipment odds & quality from the sheet
   - High-value foci / soul-gem chips / phylactery notes / lichdom formula
   - Demilich scales down; archlich scales up
+- **Ooze** — multi-pool profile for gray ooze, gelatinous cube, black pudding, and ochre jelly:
+  - Parts (ooze residue, corrosive enzyme, type samples, rare protoplasm core)
+  - Undigested coin and **sheet equipment** (gullet loot) with acid-worn quality bias
+  - Dissolved boots / etched metal, slime-coated gems, dungeon warnings & lair maps
+  - **Name scaling:** Gray Ooze drops less; Black Pudding drops more (`lootScale`)
 - **Aberration** — multi-pool profile for mind flayers, beholders, aboleths, and kin:
   - Parts (ichor, tentacles, illithid/beholder/aboleth trophies, rare central eye lens / elder brain matter)
   - Lair/colony currency and **sheet equipment** (thrall gear) when present

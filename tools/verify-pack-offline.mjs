@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.15") {
-  throw new Error(`Expected module version 0.5.15, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.16") {
+  throw new Error(`Expected module version 0.5.16, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -325,7 +325,23 @@ const expectedNames = new Set([
   "Broken Thrall Collar",
   "Colony Orders",
   "Underdark Chart",
-  "Stolen Memory Fragment"
+  "Stolen Memory Fragment",
+  "Ooze Residue",
+  "Corrosive Enzyme",
+  "Gray Ooze Sample",
+  "Cube Jelly",
+  "Black Pudding Blob",
+  "Ochre Jelly Blob",
+  "Protoplasm Core",
+  "Acid-Scarred Coin",
+  "Undigested Ring",
+  "Slime-Coated Gem",
+  "Dissolved Boot Sole",
+  "Etched Metal Scrap",
+  "Sticky Film",
+  "Partially Digested Note",
+  "Dungeon Warning Scrap",
+  "Ooze Lair Map"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -540,7 +556,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 270) {
+if (listLootDefinitions().length < 290) {
   throw new Error("Expected expanded definition registry");
 }
 
@@ -1552,6 +1568,63 @@ const lowAvg = lowSum / 40;
 const highAvg = highSum / 40;
 if (highAvg <= lowAvg * 1.3) {
   throw new Error(`Beholder should average more scaled parts than Intellect Devourer (beholder=${highAvg}, devourer=${lowAvg})`);
+}
+
+
+
+const grayOoze = resolveCreatureProfile({ name: "Gray Ooze", creatureType: "ooze", creatureSubtype: "", size: "med" });
+const greyOoze = resolveCreatureProfile({ name: "Grey Ooze", creatureType: "ooze", creatureSubtype: "", size: "med" });
+const cube = resolveCreatureProfile({ name: "Gelatinous Cube", creatureType: "ooze", creatureSubtype: "", size: "lg" });
+const pudding = resolveCreatureProfile({ name: "Black Pudding", creatureType: "ooze", creatureSubtype: "", size: "lg" });
+const jelly = resolveCreatureProfile({ name: "Ochre Jelly", creatureType: "ooze", creatureSubtype: "", size: "lg" });
+if (grayOoze?.id !== "ooze") throw new Error(`Expected ooze for Gray Ooze, got ${grayOoze?.id}`);
+if (greyOoze?.id !== "ooze") throw new Error(`Expected ooze for Grey Ooze, got ${greyOoze?.id}`);
+if (cube?.id !== "ooze") throw new Error(`Expected ooze for Gelatinous Cube, got ${cube?.id}`);
+if (pudding?.id !== "ooze") throw new Error(`Expected ooze for Black Pudding, got ${pudding?.id}`);
+if (jelly?.id !== "ooze") throw new Error(`Expected ooze for Ochre Jelly, got ${jelly?.id}`);
+
+if (resolveLootScale(grayOoze, { name: "Gray Ooze", size: "med" }) !== 0.45) throw new Error("Gray Ooze lootScale should be 0.45");
+if (resolveLootScale(jelly, { name: "Ochre Jelly", size: "lg" }) !== 0.8) throw new Error("Ochre Jelly lootScale should be 0.8");
+if (resolveLootScale(cube, { name: "Gelatinous Cube", size: "lg" }) !== 0.85) throw new Error("Gelatinous Cube lootScale should be 0.85");
+if (resolveLootScale(pudding, { name: "Black Pudding", size: "lg" }) !== 1.25) throw new Error("Black Pudding lootScale should be 1.25");
+
+const cubeLoot = await generateCreatureLoot({
+  context: { name: "Gelatinous Cube", creatureType: "ooze", creatureSubtype: "", size: "lg", challengeRating: 2, isWolf: false, isBoss: false, isNamed: false },
+  survivalTotal: 18, naturalDie: 12, isNatural20: false,
+  actor: {
+    id: "cube1", name: "Gelatinous Cube",
+    items: { contents: [{
+      id: "w1", name: "Longsword", type: "weapon", img: "icons/svg/sword.svg",
+      system: { quantity: 1, type: { value: "martialM" }, price: { value: 15, denomination: "gp" }, description: { value: "<p>Sword.</p>" }, rarity: "common" },
+      flags: {},
+      toObject() { return { name: this.name, type: this.type, img: this.img, system: structuredClone(this.system), flags: {} }; }
+    }] }
+  }
+});
+if (cubeLoot.profileId !== "ooze") throw new Error("Gelatinous Cube generation used wrong profile");
+if (!cubeLoot.items.some((i) => /ooze|corrosive|gray-ooze|cube-jelly|black-pudding|ochre-jelly|protoplasm/.test(String(i.definitionId || "")))) {
+  throw new Error("Gelatinous Cube loot missing ooze parts");
+}
+
+let graySum = 0;
+let pudSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: { name: "Gray Ooze", creatureType: "ooze", creatureSubtype: "", size: "med", challengeRating: 0.5, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: { name: "Black Pudding", creatureType: "ooze", creatureSubtype: "", size: "lg", challengeRating: 4, isWolf: false, isBoss: false, isNamed: false },
+    survivalTotal: 18, naturalDie: 12, isNatural20: false, actor: null
+  });
+  const partRe = /ooze|corrosive|gray-ooze|cube-jelly|black-pudding|ochre-jelly|protoplasm/;
+  graySum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  pudSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const grayAvg = graySum / 40;
+const pudAvg = pudSum / 40;
+if (pudAvg <= grayAvg * 1.3) {
+  throw new Error(`Black Pudding should average more scaled parts than Gray Ooze (pudding=${pudAvg}, gray=${grayAvg})`);
 }
 
 

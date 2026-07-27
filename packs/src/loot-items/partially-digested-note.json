@@ -1,0 +1,52 @@
+{
+  "_id": "LFPartDigestNt00",
+  "name": "Partially Digested Note",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/partially-digested-note.svg",
+  "system": {
+    "description": {
+      "value": "<p>A note half-dissolved: \"…cube in the east hall — don't touch the walls…\" The rest is mush.</p>",
+      "chat": "A partially digested note."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "partially-digested-note",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "ooze",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "partially-digested-note",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPartDigestNt00"
+}

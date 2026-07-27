@@ -1,0 +1,51 @@
+{
+  "_id": "LFOozeResidue000",
+  "name": "Ooze Residue",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/ooze-residue.svg",
+  "system": {
+    "description": {
+      "value": "<p>A jar of generic ooze residue. Corrosive, sticky, and somehow always slightly warm.</p>",
+      "chat": "A jar of ooze residue."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "ooze-residue",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "ooze",
+        "alchemy"
+      ],
+      "stackingKey": "ooze-residue",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFOozeResidue000"
+}

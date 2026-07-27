@@ -1,0 +1,51 @@
+{
+  "_id": "LFDissolvedBoot0",
+  "name": "Dissolved Boot Sole",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/dissolved-boot.svg",
+  "system": {
+    "description": {
+      "value": "<p>What's left of a boot after an ooze finished lunch. The sole put up a fight.</p>",
+      "chat": "A dissolved boot sole."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "dissolved-boot",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "ooze",
+        "junk"
+      ],
+      "stackingKey": "dissolved-boot",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDissolvedBoot0"
+}

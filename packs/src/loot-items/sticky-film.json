@@ -1,0 +1,51 @@
+{
+  "_id": "LFStickyFilm0000",
+  "name": "Sticky Film",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/sticky-film.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dried film of ooze that peels off stone in sheets. Useless — and everywhere.</p>",
+      "chat": "Sticky film."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "sticky-film",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "ooze",
+        "junk"
+      ],
+      "stackingKey": "sticky-film",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFStickyFilm0000"
+}
