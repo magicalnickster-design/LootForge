@@ -131,6 +131,7 @@
         "Hint": "Print detailed LootForge logs to the console."
       },
       "Auth": {
+        "PanelLabel": "Gambits Forge Authentication",
         "MenuName": "Gambits Forge Account",
         "MenuLabel": "Manage Account",
         "Hint": "Sign in with your Gambits Forge account. LootForge requires Tier 1 or higher. Players do not need their own subscription when the GM is entitled.",
@@ -159,9 +160,12 @@
       "Account": "Account",
       "Plan": "Plan",
       "Expires": "Entitlement expires",
-      "NoAccount": "Not signed in",
+      "NoAccount": "Not Signed In",
       "SignIn": "Sign In",
-      "CheckSubscription": "Check Subscription",
+      "SyncSubscription": "Sync Subscription",
+      "CheckSubscription": "Sync Subscription",
+      "ForgotPassword": "Forgot Password",
+      "CreateAccount": "Create Account",
       "OpenWebsite": "Open Gambits Forge Website",
       "OpenAccount": "Open Account Page",
       "LogOut": "Log Out"

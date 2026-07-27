@@ -11,6 +11,7 @@ import {
   stateMessage,
   syncEntitlement
 } from "./entitlement-service.js";
+import { resolveAccountIdentity, resolveSignedInLabel, isSignedIn } from "./account-identity.js";
 import * as SessionStore from "./session-store.js";
 
 export function registerWorldAccessSettings() {
@@ -103,7 +104,8 @@ export function canHandleAuthoritativeLoot() {
 export function getAccessStatus() {
   const entitledLocal = isLocallyEntitled();
   const world = getWorldAccess();
-  const session = SessionStore.getSession();
+  const entitlement = getEntitlementSnapshot();
+  const identity = resolveAccountIdentity({ entitlement });
   return {
     canUse: canUse(),
     isGM: Boolean(game.user?.isGM),
@@ -112,14 +114,12 @@ export function getAccessStatus() {
     authState: getState(),
     lockReason: getLastLockReason() || getState(),
     message: resolveAccessMessage(),
-    accountEmail: String(
-      getEntitlementSnapshot()?.accountEmail
-      ?? session?.user?.email
-      ?? world?.accountEmail
-      ?? ""
-    ),
-    plan: String(getEntitlementSnapshot()?.plan ?? world?.plan ?? ""),
-    expiresAt: String(getEntitlementSnapshot()?.expiresAt ?? world?.expiresAt ?? "")
+    signedIn: isSignedIn(),
+    accountLabel: resolveSignedInLabel(identity, getState()),
+    accountEmail: String(identity.email || world?.accountEmail || ""),
+    accountName: String(identity.name || ""),
+    plan: String(entitlement?.plan ?? world?.plan ?? ""),
+    expiresAt: String(entitlement?.expiresAt ?? world?.expiresAt ?? "")
   };
 }
 

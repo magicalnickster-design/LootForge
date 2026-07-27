@@ -6,7 +6,6 @@ import {
   openLoginWindow
 } from "../auth/login-window.js";
 import { checkSubscription } from "../auth/entitlement-service.js";
-import * as SessionStore from "../auth/session-store.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -38,14 +37,13 @@ export class LootForgeAccessWindow extends HandlebarsApplicationMixin(Applicatio
 
   async _prepareContext() {
     const status = getAccessStatus();
-    const signedIn = Boolean(SessionStore.getAccessToken() || SessionStore.getRefreshToken() || status.accountEmail);
     return {
       brand: game.i18n.localize("LOOTFORGE.Title"),
       message: status.message || game.i18n.localize("LOOTFORGE.Access.Required"),
-      accountEmail: status.accountEmail || game.i18n.localize("LOOTFORGE.Access.NoAccount"),
+      accountEmail: status.accountLabel || game.i18n.localize("LOOTFORGE.Access.NoAccount"),
       plan: status.plan || "—",
       expiresAt: status.expiresAt || "—",
-      signedIn,
+      signedIn: status.signedIn,
       isGM: Boolean(game.user?.isGM)
     };
   }

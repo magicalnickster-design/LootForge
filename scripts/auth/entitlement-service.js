@@ -11,6 +11,7 @@ import {
 import * as AuthClient from "./auth-client.js";
 import { refreshWithLock } from "./authenticated-fetch.js";
 import * as SessionStore from "./session-store.js";
+import { resolveAccountIdentity } from "./account-identity.js";
 
 let currentState = AUTH_STATES.SIGNED_OUT;
 let currentEntitlement = null;
@@ -117,7 +118,16 @@ export async function clearEntitlementCache() {
   currentEntitlement = null;
 }
 
-function normalizeEntitlement(normalized = {}, sourcePayload = {}) {
+function normalizeEntitlement(normalized = {}, sourcePayload = {}, userProfile = null) {
+  const identity = resolveAccountIdentity({
+    session: SessionStore.getSession(),
+    entitlement: {
+      accountId: normalized?.user?.id,
+      accountEmail: normalized?.user?.email,
+      accountName: normalized?.user?.displayName,
+      user: userProfile ?? normalized?.user ?? null
+    }
+  });
   const plan = String(
     normalized?.subscription?.plan
     ?? sourcePayload?.plan
@@ -152,9 +162,10 @@ function normalizeEntitlement(normalized = {}, sourcePayload = {}) {
     expiresAt,
     fetchedAt: new Date().toISOString(),
     signature: String(normalized?.entitlement?.signature ?? sourcePayload?.signature ?? ""),
-    user: normalized?.user ?? null,
-    accountId: String(normalized?.user?.id ?? ""),
-    accountEmail: String(normalized?.user?.email ?? "")
+    user: userProfile ?? normalized?.user ?? null,
+    accountId: identity.accountId,
+    accountEmail: identity.email,
+    accountName: identity.name || identity.email
   };
 }
 
@@ -262,7 +273,15 @@ export async function syncEntitlement({ notify = false, force = false } = {}) {
   }
 
   const normalized = AuthClient.normalizeSessionPayload(SessionStore.getSession(), snapshot.payload ?? {});
-  const entitlement = normalizeEntitlement(normalized, snapshot.payload ?? {});
+  let userProfile = normalized?.user?.email ? normalized.user : null;
+  if (!userProfile?.email && accessToken) {
+    const profileResult = await AuthClient.getCurrentUser(accessToken);
+    if (profileResult.ok && profileResult.payload?.email) {
+      userProfile = profileResult.payload;
+      await SessionStore.setSession({ user: userProfile });
+    }
+  }
+  const entitlement = normalizeEntitlement(normalized, snapshot.payload ?? {}, userProfile);
 
   if (!entitlement.allowed) {
     await setCachedEntitlement({});
@@ -316,7 +335,8 @@ export async function restoreSessionOnStartup({ notify = false } = {}) {
 export async function checkSubscription({ notify = true } = {}) {
   const result = await syncEntitlement({ notify, force: true });
   if (result.ok && notify) {
-    ui.notifications.info("LootForge: Subscription verified.");
+    const plan = String(result.entitlement?.plan ?? "none");
+    ui.notifications.info(`LootForge: Account synced. Plan: ${plan}.`);
   }
   return result;
 }

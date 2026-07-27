@@ -1,16 +1,13 @@
 import { MODULE_ID } from "../modules/constants.js";
 import { getAccessStatus, refreshAccessAndPublish } from "../auth/access.js";
 import {
-  checkSubscription,
-  getDiagnostics,
-  getEntitlementSnapshot
+  checkSubscription
 } from "../auth/entitlement-service.js";
 import {
   logoutLootForge,
   openAccountPage,
   openLoginWindow
 } from "../auth/login-window.js";
-import * as SessionStore from "../auth/session-store.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -42,18 +39,15 @@ export class LootForgeAuthSettings extends HandlebarsApplicationMixin(Applicatio
 
   async _prepareContext() {
     const status = getAccessStatus();
-    const entitlement = getEntitlementSnapshot();
-    const diagnostics = getDiagnostics();
-    const signedIn = Boolean(SessionStore.getAccessToken() || SessionStore.getRefreshToken() || status.accountEmail);
     return {
-      signedIn,
-      accountEmail: status.accountEmail || game.i18n.localize("LOOTFORGE.Access.NoAccount"),
+      signedIn: status.signedIn,
+      accountEmail: status.accountLabel || game.i18n.localize("LOOTFORGE.Access.NoAccount"),
       plan: status.plan || "—",
       accessLabel: status.canUse
         ? game.i18n.localize("LOOTFORGE.Settings.Auth.AccessGranted")
         : game.i18n.localize("LOOTFORGE.Settings.Auth.AccessLocked"),
       expiresAt: status.expiresAt || "—",
-      authState: diagnostics.authState,
+      authState: status.authState,
       worldActive: status.worldActive,
       message: status.message
     };

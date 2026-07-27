@@ -79,13 +79,28 @@ export async function importSceneForgeSessionIfEmpty() {
     const accessToken = String(sf.accessToken ?? "").trim();
     const refreshToken = String(sf.refreshToken ?? "").trim();
     if (!accessToken && !refreshToken) return false;
+    let user = sf.user ?? null;
+    if (!user?.email) {
+      try {
+        const sfState = game.settings?.get?.("sceneforge-ai", "subscriptionAccountState");
+        if (sfState && typeof sfState === "object") {
+          user = {
+            id: String(sfState.accountId ?? user?.id ?? ""),
+            email: String(sfState.accountEmail ?? user?.email ?? ""),
+            displayName: String(sfState.accountName ?? user?.displayName ?? sfState.accountEmail ?? "")
+          };
+        }
+      } catch {
+        // ignore
+      }
+    }
     await setSession({
       accessToken,
       refreshToken,
       tokenType: String(sf.tokenType ?? "Bearer"),
       expiresAt: String(sf.expiresAt ?? ""),
       rememberMe: Boolean(sf.rememberMe),
-      user: sf.user ?? null
+      user
     });
     return true;
   } catch {

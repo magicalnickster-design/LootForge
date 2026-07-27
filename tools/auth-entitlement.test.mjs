@@ -256,3 +256,24 @@ test("404 non-JSON then 401 from /api/subscription is handled cleanly", async ()
     globalThis.fetch = originalFetch;
   }
 });
+
+test("account identity resolves SceneForge subscription state when LootForge session has no email", async () => {
+  const { resolveAccountIdentity, resolveSignedInLabel } = await import("../scripts/auth/account-identity.js");
+  const identity = resolveAccountIdentity({
+    session: { accessToken: "token", user: null },
+    entitlement: { plan: "dungeon-master", allowed: true, accountEmail: "", accountName: "" },
+    sceneForgeAccount: {
+      accountEmail: "gm@example.com",
+      accountName: "Nick",
+      accountId: "u-1"
+    }
+  });
+  assert.equal(identity.email, "gm@example.com");
+  assert.equal(identity.label, "Nick (gm@example.com)");
+  assert.equal(resolveSignedInLabel(identity, "authenticated", { hasTokens: true }), "Nick (gm@example.com)");
+});
+
+test("signed in without email shows Signed In instead of Not Signed In", async () => {
+  const { resolveSignedInLabel } = await import("../scripts/auth/account-identity.js");
+  assert.equal(resolveSignedInLabel({ label: "" }, "authenticated", { hasTokens: true }), "Signed In");
+});

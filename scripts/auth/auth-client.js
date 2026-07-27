@@ -145,6 +145,24 @@ export async function logout(refreshToken) {
   });
 }
 
+export async function getCurrentUser(accessToken) {
+  const result = await jsonRequest("/api/auth/me", {
+    method: "GET",
+    accessToken
+  });
+  if (!result.ok) return result;
+  const raw = result.payload?.user ?? result.payload ?? {};
+  const user = {
+    id: String(raw.id ?? raw.userId ?? ""),
+    email: String(raw.email ?? ""),
+    displayName: String(raw.displayName ?? raw.name ?? raw.email ?? "")
+  };
+  return {
+    ...result,
+    payload: user
+  };
+}
+
 export async function getEntitlement(accessToken) {
   const direct = await jsonRequest(`/api/entitlements/${PRODUCT_ID}`, {
     method: "GET",
