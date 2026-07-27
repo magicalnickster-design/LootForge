@@ -28,6 +28,7 @@ export const fiendProfile = {
   matchWholeWords: true,
   matchTypes: ["fiend"],
   matchSubtypes: ["devil", "demon", "yugoloth"],
+  excludeNames: ["demon lord", "demon prince", "demogorgon", "orcus", "graz'zt", "grazzt", "juiblex", "baphomet", "yeenoghu", "zuggtmoy"],
   lootScale: {
     // Longest token wins (see resolveLootScale). CR-ish tiers for the MM forms.
     nameTokens: {

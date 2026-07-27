@@ -1,0 +1,53 @@
+{
+  "_id": "LFAncRedDragScal",
+  "name": "Ancient Red Dragon Scale",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/ancient-red-dragon-scale.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shield-sized crimson scale from an ancient red. Still radiates furnace heat.</p>",
+      "chat": "A shield-sized crimson scale from an ancient red. Still radiates furnace heat."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 75,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "ancient-red-dragon-scale",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "dragon",
+        "ancient-red-dragon",
+        "trophy"
+      ],
+      "stackingKey": "ancient-red-dragon-scale",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAncRedDragScal"
+}

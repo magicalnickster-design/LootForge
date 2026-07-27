@@ -1,0 +1,53 @@
+{
+  "_id": "LFCrownBonesShrd",
+  "name": "Crown of Bones Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/crown-of-bones-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shard from the lich king's bone crown. It yearns to sit on a brow again.</p>",
+      "chat": "A shard from the lich king's bone crown. It yearns to sit on a brow again."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 140,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "crown-of-bones-shard",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "lich-king",
+        "collectible",
+        "trophy"
+      ],
+      "stackingKey": "crown-of-bones-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFCrownBonesShrd"
+}

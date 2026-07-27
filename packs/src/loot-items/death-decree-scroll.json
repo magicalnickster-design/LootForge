@@ -1,0 +1,53 @@
+{
+  "_id": "LFDeathDecreeScr",
+  "name": "Death Decree Scroll",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/death-decree-scroll.svg",
+  "system": {
+    "description": {
+      "value": "<p>A royal decree of undeath for an entire bloodline. The seal is unbroken.</p>",
+      "chat": "A royal decree of undeath for an entire bloodline. The seal is unbroken."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 75,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "death-decree-scroll",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "lich-king",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "death-decree-scroll",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDeathDecreeScr"
+}

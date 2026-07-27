@@ -1,0 +1,53 @@
+{
+  "_id": "LFLichKingPhylac",
+  "name": "Lich King Phylactery Core",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/lich-king-phylactery-core.svg",
+  "system": {
+    "description": {
+      "value": "<p>The core of a lich king's phylactery. Binding runes crawl across its surface.</p>",
+      "chat": "The core of a lich king's phylactery. Binding runes crawl across its surface."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 250,
+      "denomination": "gp"
+    },
+    "rarity": "legendary",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "lich-king-phylactery-core",
+      "category": "monster-part",
+      "rarity": "legendary",
+      "tags": [
+        "boss",
+        "lich-king",
+        "trophy",
+        "rare"
+      ],
+      "stackingKey": "lich-king-phylactery-core",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLichKingPhylac"
+}

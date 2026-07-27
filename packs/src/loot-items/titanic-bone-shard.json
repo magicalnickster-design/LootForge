@@ -1,0 +1,52 @@
+{
+  "_id": "LFTitanicBoneShr",
+  "name": "Titanic Bone Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/titanic-bone-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bone shard the size of a shield. Carvers weep; smiths grin.</p>",
+      "chat": "A bone shard the size of a shield. Carvers weep; smiths grin."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 65,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "titanic-bone-shard",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "tarrasque",
+        "crafting"
+      ],
+      "stackingKey": "titanic-bone-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTitanicBoneShr"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFTowerWardSchem",
+  "name": "Tower Ward Schematic",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/tower-ward-schematic.svg",
+  "system": {
+    "description": {
+      "value": "<p>Schematics for the archmage's tower wards. Several layers are labeled \"do not touch\".</p>",
+      "chat": "Schematics for the archmage's tower wards. Several layers are labeled \"do not touch\"."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 60,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "tower-ward-schematic",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "archmage",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "tower-ward-schematic",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTowerWardSchem"
+}

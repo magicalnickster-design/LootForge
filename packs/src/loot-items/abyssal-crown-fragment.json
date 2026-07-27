@@ -1,0 +1,53 @@
+{
+  "_id": "LFAbyssCrownFrag",
+  "name": "Abyssal Crown Fragment",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/abyssal-crown-fragment.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fragment of a demon lord's crown. Mortals who wear it dream in Abyssal.</p>",
+      "chat": "A fragment of a demon lord's crown. Mortals who wear it dream in Abyssal."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 150,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "abyssal-crown-fragment",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "fiend",
+        "demon-lord",
+        "collectible"
+      ],
+      "stackingKey": "abyssal-crown-fragment",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAbyssCrownFrag"
+}

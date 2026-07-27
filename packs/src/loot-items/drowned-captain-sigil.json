@@ -1,0 +1,52 @@
+{
+  "_id": "LFDrownCaptSigil",
+  "name": "Drowned Captain Sigil",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/drowned-captain-sigil.svg",
+  "system": {
+    "description": {
+      "value": "<p>A captain's sigil found in the kraken's gullet. Barnacles cover the name.</p>",
+      "chat": "A captain's sigil found in the kraken's gullet. Barnacles cover the name."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 45,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "drowned-captain-sigil",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "kraken",
+        "collectible"
+      ],
+      "stackingKey": "drowned-captain-sigil",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDrownCaptSigil"
+}

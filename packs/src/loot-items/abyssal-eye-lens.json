@@ -1,0 +1,53 @@
+{
+  "_id": "LFAbyssalEyeLens",
+  "name": "Abyssal Eye Lens",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/abyssal-eye-lens.svg",
+  "system": {
+    "description": {
+      "value": "<p>A lens from a kraken's eye. Distorts the horizon even when dry.</p>",
+      "chat": "A lens from a kraken's eye. Distorts the horizon even when dry."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 110,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "abyssal-eye-lens",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "kraken",
+        "collectible",
+        "trophy"
+      ],
+      "stackingKey": "abyssal-eye-lens",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAbyssalEyeLens"
+}

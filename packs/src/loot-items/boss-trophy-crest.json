@@ -1,0 +1,52 @@
+{
+  "_id": "LFBossTrophyCres",
+  "name": "Boss Trophy Crest",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/boss-trophy-crest.svg",
+  "system": {
+    "description": {
+      "value": "<p>A crest torn from a legendary foe. Proof you faced something that ends campaigns.</p>",
+      "chat": "A crest torn from a legendary foe. Proof you faced something that ends campaigns."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "boss-trophy-crest",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "trophy",
+        "collectible"
+      ],
+      "stackingKey": "boss-trophy-crest",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBossTrophyCres"
+}

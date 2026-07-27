@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.19** |
+| Version | **0.5.20** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Celestial** (Pegasus–Solar), **Bosses** (Ancient Red Dragon, Kraken, Tarrasque, Demon Lord, Archmage, Lich King), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -52,6 +52,12 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Temple/tribute currency and **sheet equipment** (angelic gear) when present
   - Shed down / prayer ribbons, dawn pearls, heavenly mandates & solar edicts
   - **Name scaling:** Pegasus drops less; Planetar / Solar drop more (`lootScale`)
+- **Bosses (Tier 5)** — unique profiles matched before family generics:
+  - **Ancient Red Dragon**, **Kraken**, **Tarrasque**, **Demon Lord**, **Archmage**, **Lich King**
+  - Multiple **guaranteed** trophies / collectibles per kill
+  - Rare crafting materials (heartfire, ink, world-eater bile, ichor, arcane thread, royal lich dust)
+  - Story artifacts (throne edicts, sunken charts, death decrees, soul contracts)
+  - Rich boss currency and high-quality sheet equipment
 - **Goblin** — multi-pool humanoid profile:
   - Monster parts (ear, tooth, finger bone, blood vial)
   - Pocket currency (cp / sp / rare gp; CR-scaled)

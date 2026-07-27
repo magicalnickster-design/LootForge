@@ -61,7 +61,7 @@ export function buildCreatureContext(actor, token, scene = null) {
   const isWolf = isActualWolf(nameLower, creatureSubtype);
   const isBeast = !isContainer && (creatureType === "beast" || isWolf);
   const isNamed = looksNamed(name, creatureType);
-  const isBoss = Boolean(details.legendary?.value) || /alpha|elder|ancient|dire/i.test(name);
+  const isBoss = Boolean(details.legendary?.value) || /alpha|elder|ancient|dire|tarrasque|tarasque|kraken|demon lord|demon prince|archmage|arch-mage|lich king|demogorgon|orcus|baphomet|yeenoghu|juiblex|zuggtmoy/i.test(name);
 
   const context = {
     actorId: resolvedActor?.id ?? null,
@@ -194,6 +194,13 @@ function looksNamed(name, creatureType) {
     "couatl",
     "planetar",
     "solar",
+    "kraken",
+    "tarrasque",
+    "archmage",
+    "lich king",
+    "demon lord",
+    "demogorgon",
+    "orcus",
     "goblin",
     "bugbear",
     "orc",

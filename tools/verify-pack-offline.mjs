@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.19") {
-  throw new Error(`Expected module version 0.5.19, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.20") {
+  throw new Error(`Expected module version 0.5.20, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -397,7 +397,40 @@ const expectedNames = new Set([
   "Silvered Holy Chip",
   "Heavenly Mandate Scrap",
   "Planar Gate Chart",
-  "Solar Edict Fragment"
+  "Solar Edict Fragment",
+  "Boss Trophy Crest",
+  "Legendary Craft Essence",
+  "Boss Chronicle Page",
+  "Ancient Red Dragon Scale",
+  "Ancient Dragon Heartfire",
+  "Crimson Wyrm Fang",
+  "Hoard Crown Shard",
+  "Scorched Throne Edict",
+  "Kraken Tentacle",
+  "Kraken Ink Sac",
+  "Abyssal Eye Lens",
+  "Drowned Captain Sigil",
+  "Sunken Empire Chart",
+  "Tarrasque Carapace Plate",
+  "Tarrasque Fang",
+  "World-Eater Bile",
+  "Titanic Bone Shard",
+  "Apocalypse Scar Map",
+  "Demon Lord Horn",
+  "Abyssal Crown Fragment",
+  "Demonic Ichor Concentrate",
+  "Soul Contract Vellum",
+  "Abyss Gate Key Shard",
+  "Archmage Spellbook Page",
+  "Archmage Focus Crystal",
+  "Woven Arcane Thread",
+  "Planar Seal Ring",
+  "Tower Ward Schematic",
+  "Lich King Phylactery Core",
+  "Crown of Bones Shard",
+  "Royal Lich Dust",
+  "Death Decree Scroll",
+  "Soul Throne Fragment"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -612,7 +645,7 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 350) {
+if (listLootDefinitions().length < 380) {
   throw new Error("Expected expanded definition registry");
 }
 if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plate") || !getLootDefinition("golem-manual-page")) {
@@ -624,6 +657,10 @@ if (!getLootDefinition("plant-fiber") || !getLootDefinition("treant-bark-plate")
 if (!getLootDefinition("celestial-feather") || !getLootDefinition("solar-wing-feather") || !getLootDefinition("solar-halo-shard")) {
   throw new Error("Missing celestial loot definitions");
 }
+if (!getLootDefinition("boss-trophy-crest") || !getLootDefinition("legendary-craft-essence") || !getLootDefinition("lich-king-phylactery-core")) {
+  throw new Error("Missing boss loot definitions");
+}
+
 
 if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
   throw new Error("Wyrmling lootScale should be 0.45");
@@ -634,8 +671,8 @@ if (resolveLootScale(dragon, { name: "Young Red Dragon", size: "lg" }) !== 0.75)
 if (resolveLootScale(dragon, { name: "Adult Red Dragon", size: "huge" }) !== 1.35) {
   throw new Error("Adult dragon lootScale should be 1.35");
 }
-if (resolveLootScale(dragon, { name: "Ancient Red Dragon", size: "grg" }) !== 1.85) {
-  throw new Error("Ancient dragon lootScale should be 1.85");
+if (resolveLootScale(dragon, { name: "Ancient Blue Dragon", size: "grg" }) !== 1.85) {
+  throw new Error("Ancient (non-red) dragon lootScale should be 1.85");
 }
 
 // Wolf legacy generation still returns only definition-based items (no currency).
@@ -1019,7 +1056,7 @@ async function sampleDragonParts(name, size, cr, isBoss, runs = 8) {
 }
 
 const wyrmAvg = await sampleDragonParts("Red Dragon Wyrmling", "med", 4, false);
-const ancientAvg = await sampleDragonParts("Ancient Red Dragon", "grg", 24, true);
+const ancientAvg = await sampleDragonParts("Ancient Blue Dragon", "grg", 23, true);
 if (!(ancientAvg > wyrmAvg * 1.5)) {
   throw new Error(
     `Ancient dragons should average far more parts than wyrmlings (ancient=${ancientAvg}, wyrmling=${wyrmAvg})`
@@ -1028,11 +1065,11 @@ if (!(ancientAvg > wyrmAvg * 1.5)) {
 
 const ancientLoot = await generateCreatureLoot({
   context: {
-    name: "Ancient Red Dragon",
+    name: "Adult Red Dragon",
     creatureType: "dragon",
     creatureSubtype: "",
-    size: "grg",
-    challengeRating: 24,
+    size: "huge",
+    challengeRating: 17,
     isWolf: false,
     isBoss: true,
     isNamed: false
@@ -1042,7 +1079,7 @@ const ancientLoot = await generateCreatureLoot({
   isNatural20: false,
   actor: {
     id: "dr1",
-    name: "Ancient Red Dragon",
+    name: "Adult Red Dragon",
     items: {
       contents: [
         {
@@ -1072,7 +1109,7 @@ const ancientLoot = await generateCreatureLoot({
     }
   }
 });
-if (ancientLoot.profileId !== "dragon") throw new Error("Ancient dragon used wrong profile");
+if (ancientLoot.profileId !== "dragon") throw new Error("Adult dragon used wrong profile");
 if (!ancientLoot.items.length) throw new Error("Ancient dragon generation produced no items");
 const hasDragonPart = ancientLoot.items.some((i) => String(i.definitionId || "").startsWith("dragon-"));
 if (!hasDragonPart) throw new Error("Dragon loot missing monster parts");
@@ -2101,6 +2138,64 @@ const solAvg = solSum / 40;
 if (solAvg <= pegAvg * 1.3) {
   throw new Error(`Solar should average more scaled parts than Pegasus (solar=${solAvg}, pegasus=${pegAvg})`);
 }
+
+
+
+const ancientRed = resolveCreatureProfile({ name: "Ancient Red Dragon", creatureType: "dragon", creatureSubtype: "", size: "grg" });
+const adultRed = resolveCreatureProfile({ name: "Adult Red Dragon", creatureType: "dragon", creatureSubtype: "", size: "huge" });
+const krakenBoss = resolveCreatureProfile({ name: "Kraken", creatureType: "monstrosity", creatureSubtype: "", size: "grg" });
+const tarrasqueBoss = resolveCreatureProfile({ name: "Tarrasque", creatureType: "monstrosity", creatureSubtype: "", size: "grg" });
+const demonLordBoss = resolveCreatureProfile({ name: "Demon Lord", creatureType: "fiend", creatureSubtype: "demon", size: "huge" });
+const orcusBoss = resolveCreatureProfile({ name: "Orcus", creatureType: "fiend", creatureSubtype: "demon", size: "huge" });
+const balorStill = resolveCreatureProfile({ name: "Balor", creatureType: "fiend", creatureSubtype: "demon", size: "huge" });
+const archmageBoss = resolveCreatureProfile({ name: "Archmage", creatureType: "humanoid", creatureSubtype: "human", size: "med" });
+const lichKingBoss = resolveCreatureProfile({ name: "Lich King", creatureType: "undead", creatureSubtype: "lich", size: "med" });
+const plainLich = resolveCreatureProfile({ name: "Lich", creatureType: "undead", creatureSubtype: "lich", size: "med" });
+if (ancientRed?.id !== "ancient-red-dragon") throw new Error(`Expected ancient-red-dragon, got ${ancientRed?.id}`);
+if (adultRed?.id !== "dragon") throw new Error(`Expected dragon for Adult Red Dragon, got ${adultRed?.id}`);
+if (krakenBoss?.id !== "kraken") throw new Error(`Expected kraken, got ${krakenBoss?.id}`);
+if (tarrasqueBoss?.id !== "tarrasque") throw new Error(`Expected tarrasque, got ${tarrasqueBoss?.id}`);
+if (demonLordBoss?.id !== "demon-lord") throw new Error(`Expected demon-lord, got ${demonLordBoss?.id}`);
+if (orcusBoss?.id !== "demon-lord") throw new Error(`Expected demon-lord for Orcus, got ${orcusBoss?.id}`);
+if (balorStill?.id !== "fiend") throw new Error(`Expected fiend for Balor, got ${balorStill?.id}`);
+if (archmageBoss?.id !== "archmage") throw new Error(`Expected archmage, got ${archmageBoss?.id}`);
+if (lichKingBoss?.id !== "lich-king") throw new Error(`Expected lich-king, got ${lichKingBoss?.id}`);
+if (plainLich?.id !== "lich") throw new Error(`Expected lich for plain Lich, got ${plainLich?.id}`);
+
+async function assertBossGuarantees(name, type, subtype, size, cr, profileId, requiredIds) {
+  const loot = await generateCreatureLoot({
+    context: {
+      name, creatureType: type, creatureSubtype: subtype, size,
+      challengeRating: cr, isWolf: false, isBoss: true, isNamed: false
+    },
+    survivalTotal: 20, naturalDie: 15, isNatural20: false, actor: null
+  });
+  if (loot.profileId !== profileId) throw new Error(`${name} used wrong profile ${loot.profileId}`);
+  const ids = new Set(loot.items.map((i) => String(i.definitionId || "")));
+  for (const req of requiredIds) {
+    if (!ids.has(req)) throw new Error(`${name} missing guaranteed drop ${req}; got ${[...ids].join(", ")}`);
+  }
+  if (loot.items.length < 5) throw new Error(`${name} should drop multiple items, got ${loot.items.length}`);
+}
+
+await assertBossGuarantees("Ancient Red Dragon", "dragon", "", "grg", 24, "ancient-red-dragon", [
+  "ancient-red-dragon-scale", "ancient-dragon-heartfire", "crimson-wyrm-fang"
+]);
+await assertBossGuarantees("Kraken", "monstrosity", "", "grg", 23, "kraken", [
+  "kraken-tentacle", "kraken-ink-sac", "abyssal-eye-lens"
+]);
+await assertBossGuarantees("Tarrasque", "monstrosity", "", "grg", 30, "tarrasque", [
+  "tarrasque-carapace-plate", "tarrasque-fang", "world-eater-bile", "titanic-bone-shard"
+]);
+await assertBossGuarantees("Demon Lord", "fiend", "demon", "huge", 26, "demon-lord", [
+  "demon-lord-horn", "demonic-ichor-concentrate", "abyssal-crown-fragment"
+]);
+await assertBossGuarantees("Archmage", "humanoid", "human", "med", 12, "archmage", [
+  "archmage-focus-crystal", "woven-arcane-thread", "archmage-spellbook-page"
+]);
+await assertBossGuarantees("Lich King", "undead", "lich", "med", 21, "lich-king", [
+  "lich-king-phylactery-core", "crown-of-bones-shard", "royal-lich-dust", "soul-throne-fragment"
+]);
 
 
 console.log("Offline pack verification passed.");

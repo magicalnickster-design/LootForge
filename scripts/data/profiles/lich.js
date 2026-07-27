@@ -12,6 +12,7 @@ export const lichProfile = {
   matchWholeWords: true,
   matchTypes: ["undead"],
   matchSubtypes: ["lich"],
+  excludeNames: ["lich king", "lich-king", "king of liches"],
   lootScale: {
     nameTokens: {
       demilich: 0.65,

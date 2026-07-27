@@ -1,0 +1,53 @@
+{
+  "_id": "LFApocalypseScar",
+  "name": "Apocalypse Scar Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/apocalypse-scar-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A map of continents scarred by the tarrasque's last wake. New rifts inked in red.</p>",
+      "chat": "A map of continents scarred by the tarrasque's last wake. New rifts inked in red."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 70,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "apocalypse-scar-map",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "tarrasque",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "apocalypse-scar-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFApocalypseScar"
+}

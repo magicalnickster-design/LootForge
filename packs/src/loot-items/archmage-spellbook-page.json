@@ -1,0 +1,53 @@
+{
+  "_id": "LFArchmageSpellP",
+  "name": "Archmage Spellbook Page",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/archmage-spellbook-page.svg",
+  "system": {
+    "description": {
+      "value": "<p>A page of high-arcana notation. Incomplete \u2014 which is why you're still alive.</p>",
+      "chat": "A page of high-arcana notation. Incomplete \u2014 which is why you're still alive."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 100,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "archmage-spellbook-page",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "archmage",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "archmage-spellbook-page",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFArchmageSpellP"
+}

@@ -1,0 +1,54 @@
+{
+  "_id": "LFSoulContractVl",
+  "name": "Soul Contract Vellum",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/soul-contract-vellum.svg",
+  "system": {
+    "description": {
+      "value": "<p>A contract for a soul \u2014 half signed. The blank line waits.</p>",
+      "chat": "A contract for a soul \u2014 half signed. The blank line waits."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 80,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "soul-contract-vellum",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "fiend",
+        "demon-lord",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "soul-contract-vellum",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSoulContractVl"
+}

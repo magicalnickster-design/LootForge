@@ -1,0 +1,52 @@
+{
+  "_id": "LFSoulThroneFrag",
+  "name": "Soul Throne Fragment",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/soul-throne-fragment.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fragment of the lich king's soul-throne. Whispers when midnight arrives.</p>",
+      "chat": "A fragment of the lich king's soul-throne. Whispers when midnight arrives."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 160,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "soul-throne-fragment",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "lich-king",
+        "collectible"
+      ],
+      "stackingKey": "soul-throne-fragment",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSoulThroneFrag"
+}

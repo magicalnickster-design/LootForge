@@ -5,6 +5,12 @@
  * Do not put creature-specific branching in the loot generator.
  */
 
+import { ancientRedDragonProfile } from "./ancient-red-dragon.js";
+import { krakenProfile } from "./kraken.js";
+import { tarrasqueProfile } from "./tarrasque.js";
+import { demonLordProfile } from "./demon-lord.js";
+import { archmageProfile } from "./archmage.js";
+import { lichKingProfile } from "./lich-king.js";
 import { aberrationProfile } from "./aberration.js";
 import { animatedArmorProfile } from "./animated-armor.js";
 import { constructProfile } from "./construct.js";
@@ -38,6 +44,12 @@ import { zombieProfile } from "./zombie.js";
  */
 export const PROFILE_ORDER = [
   "container",
+  "ancientRedDragon",
+  "kraken",
+  "tarrasque",
+  "demonLord",
+  "lichKing",
+  "archmage",
   "spider",
   "animatedArmor",
   "construct",
@@ -68,6 +80,12 @@ export const PROFILE_ORDER = [
 /** @type {Record<string, import("../creature-profiles.js").CreatureProfile>} */
 export const CREATURE_PROFILES = {
   container: containerProfile,
+  ancientRedDragon: ancientRedDragonProfile,
+  kraken: krakenProfile,
+  tarrasque: tarrasqueProfile,
+  demonLord: demonLordProfile,
+  lichKing: lichKingProfile,
+  archmage: archmageProfile,
   spider: spiderProfile,
   animatedArmor: animatedArmorProfile,
   construct: constructProfile,

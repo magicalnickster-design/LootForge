@@ -1,0 +1,52 @@
+{
+  "_id": "LFPlanarSealRing",
+  "name": "Planar Seal Ring",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/planar-seal-ring.svg",
+  "system": {
+    "description": {
+      "value": "<p>A ring engraved with seals for three planes. One seal is broken.</p>",
+      "chat": "A ring engraved with seals for three planes. One seal is broken."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 85,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "planar-seal-ring",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "archmage",
+        "collectible"
+      ],
+      "stackingKey": "planar-seal-ring",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPlanarSealRing"
+}

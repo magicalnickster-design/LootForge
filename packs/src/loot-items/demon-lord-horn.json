@@ -1,0 +1,53 @@
+{
+  "_id": "LFDemonLordHorn0",
+  "name": "Demon Lord Horn",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/demon-lord-horn.svg",
+  "system": {
+    "description": {
+      "value": "<p>A spiral horn from a demon lord. It whispers offers. Do not answer.</p>",
+      "chat": "A spiral horn from a demon lord. It whispers offers. Do not answer."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 130,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "demon-lord-horn",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "fiend",
+        "demon-lord",
+        "trophy"
+      ],
+      "stackingKey": "demon-lord-horn",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDemonLordHorn0"
+}

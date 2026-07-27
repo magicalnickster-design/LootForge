@@ -1,0 +1,53 @@
+{
+  "_id": "LFTarrasqCarapac",
+  "name": "Tarrasque Carapace Plate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/tarrasque-carapace-plate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A plate of tarrasque carapace. Weapons bounce; the plate does not care.</p>",
+      "chat": "A plate of tarrasque carapace. Weapons bounce; the plate does not care."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 12,
+      "units": "lb"
+    },
+    "price": {
+      "value": 120,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "tarrasque-carapace-plate",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "tarrasque",
+        "trophy",
+        "armor"
+      ],
+      "stackingKey": "tarrasque-carapace-plate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTarrasqCarapac"
+}

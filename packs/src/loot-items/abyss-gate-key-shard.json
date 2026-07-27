@@ -1,0 +1,53 @@
+{
+  "_id": "LFAbyssGateKeySh",
+  "name": "Abyss Gate Key Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/abyss-gate-key-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A shard of a key that opens gates best left shut. Still warm.</p>",
+      "chat": "A shard of a key that opens gates best left shut. Still warm."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 95,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "abyss-gate-key-shard",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "fiend",
+        "demon-lord",
+        "collectible"
+      ],
+      "stackingKey": "abyss-gate-key-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAbyssGateKeySh"
+}

@@ -1,0 +1,52 @@
+{
+  "_id": "LFHoardCrownShrd",
+  "name": "Hoard Crown Shard",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/hoard-crown-shard.svg",
+  "system": {
+    "description": {
+      "value": "<p>A jeweled shard from a crown buried in an ancient hoard. The gems refuse to dull.</p>",
+      "chat": "A jeweled shard from a crown buried in an ancient hoard. The gems refuse to dull."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 80,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "hoard-crown-shard",
+      "category": "trinket",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "dragon",
+        "collectible"
+      ],
+      "stackingKey": "hoard-crown-shard",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHoardCrownShrd"
+}

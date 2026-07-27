@@ -1,0 +1,52 @@
+{
+  "_id": "LFBossChronicleP",
+  "name": "Boss Chronicle Page",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/boss-chronicle-page.svg",
+  "system": {
+    "description": {
+      "value": "<p>A page from a chronicle naming the fallen legend \u2014 and who dared to loot them.</p>",
+      "chat": "A page from a chronicle naming the fallen legend \u2014 and who dared to loot them."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "boss-chronicle-page",
+      "category": "story",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "boss-chronicle-page",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBossChronicleP"
+}

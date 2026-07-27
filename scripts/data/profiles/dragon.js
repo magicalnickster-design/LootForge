@@ -12,7 +12,7 @@ export const dragonProfile = {
   matchWholeWords: true,
   matchTypes: ["dragon"],
   matchSubtypes: ["dragon"],
-  excludeNames: ["dragonborn", "half-dragon", "pseudodragon"],
+  excludeNames: ["ancient red dragon", "dragonborn", "half-dragon", "pseudodragon"],
   lootScale: {
     // Age category from the creature name (5e MM forms).
     nameTokens: {

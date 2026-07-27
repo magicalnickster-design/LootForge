@@ -1,0 +1,52 @@
+{
+  "_id": "LFTarrasqueFang0",
+  "name": "Tarrasque Fang",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/tarrasque-fang.svg",
+  "system": {
+    "description": {
+      "value": "<p>A fang that can punch through castle stone. Still wet with something's last day.</p>",
+      "chat": "A fang that can punch through castle stone. Still wet with something's last day."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 100,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "tarrasque-fang",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "tarrasque",
+        "trophy"
+      ],
+      "stackingKey": "tarrasque-fang",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTarrasqueFang0"
+}

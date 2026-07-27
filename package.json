@@ -1,6 +1,6 @@
 {
   "name": "lootforge",
-  "version": "0.5.19",
+  "version": "0.5.20",
   "private": true,
   "description": "LootForge Foundry VTT module — interactive creature looting for Gambits Forge.",
   "type": "module",

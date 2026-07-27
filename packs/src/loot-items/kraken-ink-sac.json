@@ -1,0 +1,53 @@
+{
+  "_id": "LFKrakenInkSac00",
+  "name": "Kraken Ink Sac",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/kraken-ink-sac.svg",
+  "system": {
+    "description": {
+      "value": "<p>An ink sac that writes runes which only appear underwater \u2014 or in nightmares.</p>",
+      "chat": "An ink sac that writes runes which only appear underwater \u2014 or in nightmares."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 90,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "kraken-ink-sac",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "kraken",
+        "crafting",
+        "alchemy"
+      ],
+      "stackingKey": "kraken-ink-sac",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFKrakenInkSac00"
+}

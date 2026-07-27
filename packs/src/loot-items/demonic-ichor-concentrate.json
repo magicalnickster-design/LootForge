@@ -1,0 +1,53 @@
+{
+  "_id": "LFDemonIchorConc",
+  "name": "Demonic Ichor Concentrate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/demonic-ichor-concentrate.svg",
+  "system": {
+    "description": {
+      "value": "<p>Ichor boiled down until it stains reality. Crafts cursed masterworks.</p>",
+      "chat": "Ichor boiled down until it stains reality. Crafts cursed masterworks."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 110,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "demonic-ichor-concentrate",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "boss",
+        "fiend",
+        "crafting",
+        "alchemy"
+      ],
+      "stackingKey": "demonic-ichor-concentrate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFDemonIchorConc"
+}
