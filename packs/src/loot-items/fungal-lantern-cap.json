@@ -1,0 +1,52 @@
+{
+  "_id": "LFFungalLantern0",
+  "name": "Fungal Lantern Cap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/fungal-lantern-cap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A myconid cap that glows faintly in the dark. Soft as wet leather.</p>",
+      "chat": "A myconid cap that glows faintly in the dark. Soft as wet leather."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "fungal-lantern-cap",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "myconid",
+        "trinket"
+      ],
+      "stackingKey": "fungal-lantern-cap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFFungalLantern0"
+}

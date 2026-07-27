@@ -1,0 +1,52 @@
+{
+  "_id": "LFAmberSapBead00",
+  "name": "Amber Sap Bead",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/amber-sap-bead.svg",
+  "system": {
+    "description": {
+      "value": "<p>A polished bead of hardened amber sap with a trapped insect inside.</p>",
+      "chat": "A polished bead of hardened amber sap with a trapped insect inside."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "amber-sap-bead",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "trinket",
+        "alchemy"
+      ],
+      "stackingKey": "amber-sap-bead",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFAmberSapBead00"
+}

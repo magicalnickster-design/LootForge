@@ -1,0 +1,51 @@
+{
+  "_id": "LFLivingSapVial0",
+  "name": "Living Sap Vial",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/living-sap-vial.svg",
+  "system": {
+    "description": {
+      "value": "<p>A vial of sap that slowly crawls up the glass when warmed.</p>",
+      "chat": "A vial of sap that slowly crawls up the glass when warmed."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.2,
+      "units": "lb"
+    },
+    "price": {
+      "value": 6,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "living-sap-vial",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "alchemy"
+      ],
+      "stackingKey": "living-sap-vial",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFLivingSapVial0"
+}

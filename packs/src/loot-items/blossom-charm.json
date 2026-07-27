@@ -1,0 +1,51 @@
+{
+  "_id": "LFBlossomCharm00",
+  "name": "Blossom Charm",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/blossom-charm.svg",
+  "system": {
+    "description": {
+      "value": "<p>A dried blossom wired into a charm. It never fully wilts.</p>",
+      "chat": "A dried blossom wired into a charm. It never fully wilts."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "blossom-charm",
+      "category": "trinket",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "trinket"
+      ],
+      "stackingKey": "blossom-charm",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBlossomCharm00"
+}

@@ -1,0 +1,53 @@
+{
+  "_id": "LFBlightCircleM0",
+  "name": "Blight Circle Map",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/blight-circle-map.svg",
+  "system": {
+    "description": {
+      "value": "<p>A crude map of blight circles spreading through a forest. Several trees are crossed out.</p>",
+      "chat": "A crude map of blight circles spreading through a forest. Several trees are crossed out."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "blight-circle-map",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "blight",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "blight-circle-map",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFBlightCircleM0"
+}

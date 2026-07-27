@@ -1,0 +1,52 @@
+{
+  "_id": "LFMyconidSpore00",
+  "name": "Myconid Spore Sac",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/myconid-spore-sac.svg",
+  "system": {
+    "description": {
+      "value": "<p>A soft sac of myconid spores. Do not shake near open flame \u2014 or open mouths.</p>",
+      "chat": "A soft sac of myconid spores. Do not shake near open flame \u2014 or open mouths."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.25,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "myconid-spore-sac",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "myconid",
+        "alchemy"
+      ],
+      "stackingKey": "myconid-spore-sac",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMyconidSpore00"
+}

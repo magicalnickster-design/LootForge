@@ -6,10 +6,10 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
 
 | Item | Value |
 | --- | --- |
-| Version | **0.5.17** |
+| Version | **0.5.18** |
 | Foundry | 13–14 (verified **14**) |
 | System | dnd5e 4.0+ (verified **5.3.3**) |
-| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Chest / Container** |
+| Scope | **Wolf**, **Spider**, **Animated Armor**, **Goblin**, **Bugbear**, **Human**, **Elf**, **Dwarf**, **Halfling**, **Orc**, **Dragon**, **Zombie**, **Skeleton**, **Mummy**, **Lich**, **Fiend** (Imp–Balor), **Fey** (Pixie–Night Hag), **Monstrosity** (Owlbear–Purple Worm), **Giant** (Hill–Storm), **Elemental** (Fire–Air + Myrmidons), **Aberration** (Mind Flayer–Aboleth), **Ooze** (Gray–Black Pudding), **Construct** (Flying Sword–Shield Guardian; Animated Armor salvage), **Plant** (Twig Blight–Treant), **Chest / Container** |
 
 ## Flow (v0.4+)
 
@@ -42,6 +42,11 @@ Interactive looting and harvesting for defeated creatures in Foundry VTT. Built 
   - Rivets / scorched wiring junk, clockwork springs, creator schematics & golem manual pages
   - **Name scaling:** Flying Sword drops less; Iron Golem / Shield Guardian drop more (`lootScale`)
   - Animated Armor stays on its salvage-only profile (matched first)
+- **Plant** — multi-pool profile for blights, myconids, shambling mounds, and treants:
+  - Parts (plant fiber, living sap, form trophies, rare heartwood cores)
+  - Sparse grove coin and **sheet equipment** tangled in vines when present
+  - Dry leaves / thorns / moldy roots, blossom charms, grove warnings & blight maps
+  - **Name scaling:** Twig Blight drops less; Shambling Mound / Treant drop more (`lootScale`)
 - **Goblin** — multi-pool humanoid profile:
   - Monster parts (ear, tooth, finger bone, blood vial)
   - Pocket currency (cp / sp / rare gp; CR-scaled)

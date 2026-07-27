@@ -1,0 +1,53 @@
+{
+  "_id": "LFVineBlightTen0",
+  "name": "Vine Blight Tendril",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/vine-blight-tendril.svg",
+  "system": {
+    "description": {
+      "value": "<p>A constricting vine tendril, still sticky with sap. It slowly curls when left alone.</p>",
+      "chat": "A constricting vine tendril, still sticky with sap. It slowly curls when left alone."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 3,
+      "denomination": "gp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "vine-blight-tendril",
+      "category": "monster-part",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "blight",
+        "vine-blight",
+        "trophy"
+      ],
+      "stackingKey": "vine-blight-tendril",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFVineBlightTen0"
+}

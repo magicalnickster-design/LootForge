@@ -1,0 +1,52 @@
+{
+  "_id": "LFGroveWarnScrp0",
+  "name": "Grove Warning Scrap",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/grove-warning-scrap.svg",
+  "system": {
+    "description": {
+      "value": "<p>A bark scrap etched: \"TURN BACK \u2014 THE GROVE WATCHES.\" Sap has filled the letters.</p>",
+      "chat": "A bark scrap etched: \"TURN BACK \u2014 THE GROVE WATCHES.\" Sap has filled the letters."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 2,
+      "denomination": "sp"
+    },
+    "rarity": "uncommon",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "grove-warning-scrap",
+      "category": "story",
+      "rarity": "uncommon",
+      "tags": [
+        "plant",
+        "story",
+        "readable"
+      ],
+      "stackingKey": "grove-warning-scrap",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFGroveWarnScrp0"
+}

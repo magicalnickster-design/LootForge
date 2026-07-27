@@ -1,0 +1,53 @@
+{
+  "_id": "LFHeartwoodCore0",
+  "name": "Heartwood Core",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/heartwood-core.svg",
+  "system": {
+    "description": {
+      "value": "<p>The living heartwood of an ancient plant creature. Warm to the touch.</p>",
+      "chat": "The living heartwood of an ancient plant creature. Warm to the touch."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 1.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 40,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "heartwood-core",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "plant",
+        "treant",
+        "alchemy",
+        "rare"
+      ],
+      "stackingKey": "heartwood-core",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFHeartwoodCore0"
+}

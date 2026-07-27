@@ -12,8 +12,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.17") {
-  throw new Error(`Expected module version 0.5.17, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.18") {
+  throw new Error(`Expected module version 0.5.18, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -359,7 +359,26 @@ const expectedNames = new Set([
   "Bent Armor Joint",
   "Creator Schematic Scrap",
   "Activation Phrase Note",
-  "Golem Manual Page"
+  "Golem Manual Page",
+  "Plant Fiber",
+  "Living Sap Vial",
+  "Twig Blight Twig",
+  "Needle Blight Needle",
+  "Vine Blight Tendril",
+  "Myconid Spore Sac",
+  "Shambling Vine Mass",
+  "Treant Bark Plate",
+  "Heartwood Core",
+  "Dry Leaf Clump",
+  "Thorn Cluster",
+  "Moldy Root",
+  "Spore Dust Pouch",
+  "Blossom Charm",
+  "Amber Sap Bead",
+  "Fungal Lantern Cap",
+  "Grove Warning Scrap",
+  "Blight Circle Map",
+  "Treant Oath Bark"
 ]);
 
 const tempPack = mkdtempSync(path.join(tmpdir(), "lootforge-pack-"));
@@ -574,11 +593,14 @@ if (!getLootDefinition("bugbear-ear") || !getLootDefinition("zombie-hand") || !g
 if (!getLootDefinition("human-blood-vial") || !getLootDefinition("elf-blood-vial") || !getLootDefinition("dwarf-beard-braid") || !getLootDefinition("halfling-pipe")) {
   throw new Error("Missing PC race loot definitions");
 }
-if (listLootDefinitions().length < 310) {
+if (listLootDefinitions().length < 330) {
   throw new Error("Expected expanded definition registry");
 }
 if (!getLootDefinition("construct-gears") || !getLootDefinition("iron-golem-plate") || !getLootDefinition("golem-manual-page")) {
   throw new Error("Missing construct loot definitions");
+}
+if (!getLootDefinition("plant-fiber") || !getLootDefinition("treant-bark-plate") || !getLootDefinition("heartwood-core")) {
+  throw new Error("Missing plant loot definitions");
 }
 
 if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
@@ -1803,6 +1825,134 @@ const swordAvg = swordSum / 40;
 const ironAvg = ironSum / 40;
 if (ironAvg <= swordAvg * 1.3) {
   throw new Error(`Iron Golem should average more scaled parts than Flying Sword (iron=${ironAvg}, sword=${swordAvg})`);
+}
+
+const twigBlight = resolveCreatureProfile({
+  name: "Twig Blight",
+  creatureType: "plant",
+  creatureSubtype: "",
+  size: "sm"
+});
+const needleBlight = resolveCreatureProfile({
+  name: "Needle Blight",
+  creatureType: "plant",
+  creatureSubtype: "",
+  size: "med"
+});
+const vineBlight = resolveCreatureProfile({
+  name: "Vine Blight",
+  creatureType: "plant",
+  creatureSubtype: "",
+  size: "med"
+});
+const myconid = resolveCreatureProfile({
+  name: "Myconid Adult",
+  creatureType: "plant",
+  creatureSubtype: "",
+  size: "med"
+});
+const shambling = resolveCreatureProfile({
+  name: "Shambling Mound",
+  creatureType: "plant",
+  creatureSubtype: "",
+  size: "lg"
+});
+const treant = resolveCreatureProfile({
+  name: "Treant",
+  creatureType: "plant",
+  creatureSubtype: "",
+  size: "huge"
+});
+if (twigBlight?.id !== "plant") throw new Error(`Expected plant for Twig Blight, got ${twigBlight?.id}`);
+if (needleBlight?.id !== "plant") throw new Error(`Expected plant for Needle Blight, got ${needleBlight?.id}`);
+if (vineBlight?.id !== "plant") throw new Error(`Expected plant for Vine Blight, got ${vineBlight?.id}`);
+if (myconid?.id !== "plant") throw new Error(`Expected plant for Myconid Adult, got ${myconid?.id}`);
+if (shambling?.id !== "plant") throw new Error(`Expected plant for Shambling Mound, got ${shambling?.id}`);
+if (treant?.id !== "plant") throw new Error(`Expected plant for Treant, got ${treant?.id}`);
+
+if (resolveLootScale(twigBlight, { name: "Twig Blight", size: "sm" }) !== 0.35) {
+  throw new Error("Twig Blight lootScale should be 0.35");
+}
+if (resolveLootScale(needleBlight, { name: "Needle Blight", size: "med" }) !== 0.55) {
+  throw new Error("Needle Blight lootScale should be 0.55");
+}
+if (resolveLootScale(vineBlight, { name: "Vine Blight", size: "med" }) !== 0.7) {
+  throw new Error("Vine Blight lootScale should be 0.7");
+}
+if (resolveLootScale(myconid, { name: "Myconid Adult", size: "med" }) !== 0.75) {
+  throw new Error("Myconid lootScale should be 0.75");
+}
+if (resolveLootScale(shambling, { name: "Shambling Mound", size: "lg" }) !== 1.35) {
+  throw new Error("Shambling Mound lootScale should be 1.35");
+}
+if (resolveLootScale(treant, { name: "Treant", size: "huge" }) !== 1.7) {
+  throw new Error("Treant lootScale should be 1.7");
+}
+
+const treantLoot = await generateCreatureLoot({
+  context: {
+    name: "Treant",
+    creatureType: "plant",
+    creatureSubtype: "",
+    size: "huge",
+    challengeRating: 9,
+    isWolf: false,
+    isBoss: true,
+    isNamed: false
+  },
+  survivalTotal: 18,
+  naturalDie: 12,
+  isNatural20: false,
+  actor: null
+});
+if (treantLoot.profileId !== "plant") throw new Error("Treant generation used wrong profile");
+if (!treantLoot.items.some((i) => /plant|sap|blight|myconid|shambling|treant|heartwood|leaf|thorn|moldy|spore|blossom|amber|fungal|grove/.test(String(i.definitionId || "")))) {
+  throw new Error("Treant loot missing plant parts");
+}
+
+let twigSum = 0;
+let treantSum = 0;
+for (let i = 0; i < 40; i++) {
+  const a = await generateCreatureLoot({
+    context: {
+      name: "Twig Blight",
+      creatureType: "plant",
+      creatureSubtype: "",
+      size: "sm",
+      challengeRating: 0.125,
+      isWolf: false,
+      isBoss: false,
+      isNamed: false
+    },
+    survivalTotal: 18,
+    naturalDie: 12,
+    isNatural20: false,
+    actor: null
+  });
+  const b = await generateCreatureLoot({
+    context: {
+      name: "Treant",
+      creatureType: "plant",
+      creatureSubtype: "",
+      size: "huge",
+      challengeRating: 9,
+      isWolf: false,
+      isBoss: true,
+      isNamed: false
+    },
+    survivalTotal: 18,
+    naturalDie: 12,
+    isNatural20: false,
+    actor: null
+  });
+  const partRe = /plant|sap|blight|myconid|shambling|treant|heartwood|leaf|thorn|moldy|spore|blossom|amber|fungal|grove/;
+  twigSum += a.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+  treantSum += b.items.filter((it) => partRe.test(String(it.definitionId || ""))).reduce((s, it) => s + Number(it.quantity || 1), 0);
+}
+const twigAvg = twigSum / 40;
+const treantAvg = treantSum / 40;
+if (treantAvg <= twigAvg * 1.3) {
+  throw new Error(`Treant should average more scaled parts than Twig Blight (treant=${treantAvg}, twig=${twigAvg})`);
 }
 
 

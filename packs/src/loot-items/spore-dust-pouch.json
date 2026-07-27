@@ -1,0 +1,52 @@
+{
+  "_id": "LFSporeDustPch00",
+  "name": "Spore Dust Pouch",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/spore-dust-pouch.svg",
+  "system": {
+    "description": {
+      "value": "<p>A small pouch of luminous spore dust. It stains everything yellow-green.</p>",
+      "chat": "A small pouch of luminous spore dust. It stains everything yellow-green."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 5,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "spore-dust-pouch",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "plant",
+        "junk",
+        "myconid"
+      ],
+      "stackingKey": "spore-dust-pouch",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFSporeDustPch00"
+}

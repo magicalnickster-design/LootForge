@@ -1,0 +1,53 @@
+{
+  "_id": "LFTwigBlightTwg0",
+  "name": "Twig Blight Twig",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/twig-blight-twig.svg",
+  "system": {
+    "description": {
+      "value": "<p>A knobby twig that once formed a blight's arm. It twitches when near fire.</p>",
+      "chat": "A knobby twig that once formed a blight's arm. It twitches when near fire."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.15,
+      "units": "lb"
+    },
+    "price": {
+      "value": 8,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "twig-blight-twig",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "plant",
+        "blight",
+        "twig-blight",
+        "trophy"
+      ],
+      "stackingKey": "twig-blight-twig",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTwigBlightTwg0"
+}

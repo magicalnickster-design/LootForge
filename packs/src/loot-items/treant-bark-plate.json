@@ -1,0 +1,53 @@
+{
+  "_id": "LFTreantBarkPl00",
+  "name": "Treant Bark Plate",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/treant-bark-plate.svg",
+  "system": {
+    "description": {
+      "value": "<p>A thick plate of treant bark, carved with old growth rings. Harder than oak.</p>",
+      "chat": "A thick plate of treant bark, carved with old growth rings. Harder than oak."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "treant-bark-plate",
+      "category": "monster-part",
+      "rarity": "rare",
+      "tags": [
+        "plant",
+        "treant",
+        "armor",
+        "trophy"
+      ],
+      "stackingKey": "treant-bark-plate",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFTreantBarkPl00"
+}

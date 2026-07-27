@@ -1,0 +1,51 @@
+{
+  "_id": "LFPlantFiber0000",
+  "name": "Plant Fiber",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/plant-fiber.svg",
+  "system": {
+    "description": {
+      "value": "<p>Tough fibrous strands from a living plant creature. Still damp with sap.</p>",
+      "chat": "Tough fibrous strands from a living plant creature. Still damp with sap."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "sp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "plant-fiber",
+      "category": "monster-part",
+      "rarity": "common",
+      "tags": [
+        "plant",
+        "trophy"
+      ],
+      "stackingKey": "plant-fiber",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFPlantFiber0000"
+}

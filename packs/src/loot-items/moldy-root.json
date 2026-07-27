@@ -1,0 +1,52 @@
+{
+  "_id": "LFMoldyRoot00000",
+  "name": "Moldy Root",
+  "type": "loot",
+  "img": "modules/lootforge/assets/items/moldy-root.svg",
+  "system": {
+    "description": {
+      "value": "<p>A root chunk furred with pale mold. Smells of cellar and rain.</p>",
+      "chat": "A root chunk furred with pale mold. Smells of cellar and rain."
+    },
+    "quantity": 1,
+    "weight": {
+      "value": 0.4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "cp"
+    },
+    "rarity": "common",
+    "identified": true
+  },
+  "flags": {
+    "lootforge": {
+      "definitionId": "moldy-root",
+      "category": "junk",
+      "rarity": "common",
+      "tags": [
+        "plant",
+        "junk",
+        "myconid"
+      ],
+      "stackingKey": "moldy-root",
+      "generatedByLootForge": true
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "systemId": "dnd5e",
+    "systemVersion": "5.3.3",
+    "coreVersion": "13.341",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!LFMoldyRoot00000"
+}
