@@ -1,7 +1,3 @@
-/**
- * Offline release checks (no Foundry runtime required).
- * Copies the LevelDB pack before opening so verification cannot mutate shipped files.
- */
 import { ClassicLevel } from "classic-level";
 import { cpSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -12,8 +8,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packDir = path.join(root, "packs/loot-items");
 const moduleJson = JSON.parse(readFileSync(path.join(root, "module.json"), "utf8"));
 
-if (moduleJson.version !== "0.5.24") {
-  throw new Error(`Expected module version 0.5.24, got ${moduleJson.version}`);
+if (moduleJson.version !== "0.5.25") {
+  throw new Error(`Expected module version 0.5.25, got ${moduleJson.version}`);
 }
 
 const packDecl = moduleJson.packs?.find((p) => p.name === "loot-items");
@@ -528,7 +524,6 @@ try {
   rmSync(tempPack, { recursive: true, force: true });
 }
 
-// Minimal Foundry stubs for generator smoke tests.
 globalThis.foundry = {
   utils: {
     randomID: (n = 16) => `id${Math.random().toString(36).slice(2, 2 + n)}`,
@@ -718,9 +713,6 @@ if (!getLootDefinition("beast-hide") || !getLootDefinition("scorpion-stinger") |
   throw new Error("Missing beast loot definitions");
 }
 
-
-
-
 if (resolveLootScale(dragon, { name: "Red Dragon Wyrmling", size: "med" }) !== 0.45) {
   throw new Error("Wyrmling lootScale should be 0.45");
 }
@@ -734,7 +726,6 @@ if (resolveLootScale(dragon, { name: "Ancient Blue Dragon", size: "grg" }) !== 1
   throw new Error("Ancient (non-red) dragon lootScale should be 1.85");
 }
 
-// Wolf legacy generation still returns only definition-based items (no currency).
 const wolfLoot = await generateCreatureLoot({
   context: {
     name: "Wolf",
@@ -760,7 +751,6 @@ if (wolfLoot.items.some((i) => String(i.definitionId || "").includes("goblin")))
   throw new Error("Wolf generation leaked goblin definitions");
 }
 
-// Goblin multi-pool smoke test with fake inventory.
 const fakeActor = {
   id: "gob1",
   name: "Goblin",
@@ -866,8 +856,6 @@ const currencyTotal = aggregateCurrencyFromItems(goblinLoot.items);
 const currencySum = Object.values(currencyTotal).reduce((a, b) => a + b, 0);
 if (currencySum <= 0) throw new Error("Goblin loot should usually include some currency at total 18");
 const hasEquip = goblinLoot.items.some((i) => i.kind === "equipment");
-// Equipment is chance-based; with three items and high chances it should often drop, but not guaranteed.
-// Force-check that equipment entries, when present, carry itemData + quality.
 for (const entry of goblinLoot.items.filter((i) => i.kind === "equipment")) {
   if (!entry.itemData) throw new Error("Equipment entry missing itemData snapshot");
   if (!entry.equipmentQuality) throw new Error("Equipment entry missing quality");
@@ -1176,7 +1164,6 @@ const ancientCurrency = aggregateCurrencyFromItems(ancientLoot.items);
 const ancientCurrencySum = Object.values(ancientCurrency).reduce((a, b) => a + b, 0);
 if (ancientCurrencySum <= 0) throw new Error("Ancient dragon should usually include hoard currency");
 
-
 const bugbear = resolveCreatureProfile({ name: "Bugbear", creatureType: "humanoid", creatureSubtype: "goblinoid" });
 const zombie = resolveCreatureProfile({ name: "Zombie", creatureType: "undead", creatureSubtype: "" });
 const skeleton = resolveCreatureProfile({ name: "Skeleton", creatureType: "undead", creatureSubtype: "" });
@@ -1255,8 +1242,6 @@ if (lichGp <= zombieGp) {
   throw new Error(`Lich coin should exceed zombie coin (lich=${lichGp}, zombie=${zombieGp})`);
 }
 
-
-
 const human = resolveCreatureProfile({ name: "Human Commoner", creatureType: "humanoid", creatureSubtype: "human" });
 const elf = resolveCreatureProfile({ name: "Wood Elf", creatureType: "humanoid", creatureSubtype: "elf" });
 const drow = resolveCreatureProfile({ name: "Drow", creatureType: "humanoid", creatureSubtype: "elf" });
@@ -1301,8 +1286,6 @@ const halflingLoot = await generateCreatureLoot({
   survivalTotal: 16, naturalDie: 10, isNatural20: false, actor: null
 });
 if (halflingLoot.profileId !== "halfling") throw new Error("Halfling generation used wrong profile");
-
-
 
 const fiend = resolveCreatureProfile({ name: "Barbed Devil", creatureType: "fiend", creatureSubtype: "devil", size: "med" });
 const imp = resolveCreatureProfile({ name: "Imp", creatureType: "fiend", creatureSubtype: "devil", size: "tiny" });
@@ -1395,8 +1378,6 @@ if (balorAvg <= impAvg * 1.3) {
   throw new Error(`Balor should average more scaled parts than Imp (balor=${balorAvg}, imp=${impAvg})`);
 }
 
-
-
 const fey = resolveCreatureProfile({ name: "Dryad", creatureType: "fey", creatureSubtype: "", size: "med" });
 const pixie = resolveCreatureProfile({ name: "Pixie", creatureType: "fey", creatureSubtype: "", size: "tiny" });
 const satyr = resolveCreatureProfile({ name: "Satyr", creatureType: "fey", creatureSubtype: "", size: "med" });
@@ -1468,8 +1449,6 @@ if (nightAvg <= pixieAvg * 1.25) {
   throw new Error(`Night Hag should average more scaled parts than Pixie (night=${nightAvg}, pixie=${pixieAvg})`);
 }
 
-
-
 const monstrosity = resolveCreatureProfile({ name: "Owlbear", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
 const cockatrice = resolveCreatureProfile({ name: "Cockatrice", creatureType: "monstrosity", creatureSubtype: "", size: "sm" });
 const griffon = resolveCreatureProfile({ name: "Griffon", creatureType: "monstrosity", creatureSubtype: "", size: "lg" });
@@ -1532,8 +1511,6 @@ const wormAvg = wormSum / 40;
 if (wormAvg <= cockAvg * 1.3) {
   throw new Error(`Purple Worm should average more scaled parts than Cockatrice (worm=${wormAvg}, cockatrice=${cockAvg})`);
 }
-
-
 
 const hillGiant = resolveCreatureProfile({ name: "Hill Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
 const stoneGiant = resolveCreatureProfile({ name: "Stone Giant", creatureType: "giant", creatureSubtype: "", size: "huge" });
@@ -1603,8 +1580,6 @@ if (stormAvg <= hillAvg * 1.2) {
   throw new Error(`Storm Giant should average more scaled parts than Hill Giant (storm=${stormAvg}, hill=${hillAvg})`);
 }
 
-
-
 const fireEl = resolveCreatureProfile({ name: "Fire Elemental", creatureType: "elemental", creatureSubtype: "fire", size: "lg" });
 const waterEl = resolveCreatureProfile({ name: "Water Elemental", creatureType: "elemental", creatureSubtype: "water", size: "lg" });
 const earthEl = resolveCreatureProfile({ name: "Earth Elemental", creatureType: "elemental", creatureSubtype: "earth", size: "lg" });
@@ -1667,8 +1642,6 @@ if (myrAvg <= elAvg * 1.15) {
   throw new Error(`Myrmidon should average more scaled parts than base elemental (myrmidon=${myrAvg}, elemental=${elAvg})`);
 }
 
-
-
 const mindFlayer = resolveCreatureProfile({ name: "Mind Flayer", creatureType: "aberration", creatureSubtype: "", size: "med" });
 const intellect = resolveCreatureProfile({ name: "Intellect Devourer", creatureType: "aberration", creatureSubtype: "", size: "tiny" });
 const beholder = resolveCreatureProfile({ name: "Beholder", creatureType: "aberration", creatureSubtype: "", size: "lg" });
@@ -1730,8 +1703,6 @@ const highAvg = highSum / 40;
 if (highAvg <= lowAvg * 1.3) {
   throw new Error(`Beholder should average more scaled parts than Intellect Devourer (beholder=${highAvg}, devourer=${lowAvg})`);
 }
-
-
 
 const grayOoze = resolveCreatureProfile({ name: "Gray Ooze", creatureType: "ooze", creatureSubtype: "", size: "med" });
 const greyOoze = resolveCreatureProfile({ name: "Grey Ooze", creatureType: "ooze", creatureSubtype: "", size: "med" });
@@ -2198,8 +2169,6 @@ if (solAvg <= pegAvg * 1.3) {
   throw new Error(`Solar should average more scaled parts than Pegasus (solar=${solAvg}, pegasus=${pegAvg})`);
 }
 
-
-
 const ancientRed = resolveCreatureProfile({ name: "Ancient Red Dragon", creatureType: "dragon", creatureSubtype: "", size: "grg" });
 const adultRed = resolveCreatureProfile({ name: "Adult Red Dragon", creatureType: "dragon", creatureSubtype: "", size: "huge" });
 const krakenBoss = resolveCreatureProfile({ name: "Kraken", creatureType: "monstrosity", creatureSubtype: "", size: "grg" });
@@ -2255,8 +2224,6 @@ await assertBossGuarantees("Archmage", "humanoid", "human", "med", 12, "archmage
 await assertBossGuarantees("Lich King", "undead", "lich", "med", 21, "lich-king", [
   "lich-king-phylactery-core", "crown-of-bones-shard", "royal-lich-dust", "soul-throne-fragment"
 ]);
-
-
 
 const hobgoblinStock = resolveCreatureProfile({ name: "Hobgoblin", creatureType: "humanoid", creatureSubtype: "goblinoid", size: "med" });
 if (hobgoblinStock?.id !== "hobgoblin") throw new Error(`Expected hobgoblin, got ${hobgoblinStock?.id}`);
@@ -2324,8 +2291,6 @@ if (assassinAvg <= cultAvg * 1.25) {
   throw new Error(`Assassin should average more scaled parts than Cultist (assassin=${assassinAvg}, cultist=${cultAvg})`);
 }
 
-
-
 const beastBoar = resolveCreatureProfile({ name: "Boar", creatureType: "beast", creatureSubtype: "", size: "med" });
 const beastBear = resolveCreatureProfile({ name: "Brown Bear", creatureType: "beast", creatureSubtype: "", size: "lg" });
 const beastTiger = resolveCreatureProfile({ name: "Tiger", creatureType: "beast", creatureSubtype: "", size: "lg" });
@@ -2384,7 +2349,6 @@ if (sharkAvg <= ratAvg * 1.3) {
   throw new Error(`Giant Shark should average more scaled parts than Giant Rat (shark=${sharkAvg}, rat=${ratAvg})`);
 }
 
-// Type fallbacks: unknown names use creature type family loot; specifics still win.
 const blinkDog = resolveCreatureProfile({ name: "Blink Dog", creatureType: "fey", creatureSubtype: "", size: "med" });
 const unknownBeast = resolveCreatureProfile({ name: "Unknown Beast", creatureType: "beast", creatureSubtype: "", size: "med" });
 const weirdThing = resolveCreatureProfile({ name: "Weird Thing", creatureType: "aberration", creatureSubtype: "", size: "med" });
@@ -2457,7 +2421,6 @@ if (!unknownHasCoin) throw new Error("Unidentified creature loot missing money")
 if (unknownLoot.items.some((i) => /fang|claw|hide|blood-vial|scale|tooth|ichor|heart/.test(String(i.definitionId || "")))) {
   throw new Error("Unidentified creature should not drop monster parts");
 }
-
 
 console.log("Offline pack verification passed.");
 console.log(`module.json version: ${moduleJson.version}`);

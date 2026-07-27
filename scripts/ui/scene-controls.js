@@ -1,7 +1,3 @@
-/**
- * Token toolbar — Loot Targeted Body (player-visible).
- */
-
 import { lootBody } from "../modules/loot-workflow.js";
 import { resolveLootTargetToken } from "./token-context.js";
 

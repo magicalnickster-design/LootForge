@@ -1,8 +1,3 @@
-/**
- * Hobgoblin — goblinoid multi-pool profile (distinct from goblin / bugbear).
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const hobgoblinProfile = {
   id: "hobgoblin",
   matchNames: ["hobgoblin"],

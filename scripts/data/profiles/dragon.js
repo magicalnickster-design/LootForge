@@ -1,11 +1,3 @@
-/**
- * Dragon — multi-pool profile for true dragons (chromatic / metallic / etc.).
- *
- * Quantities scale by age category via `lootScale` (wyrmling/young smaller,
- * adult/ancient larger). Equipment comes from the NPC inventory when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const dragonProfile = {
   id: "dragon",
   matchNames: ["dragon"],
@@ -14,14 +6,12 @@ export const dragonProfile = {
   matchSubtypes: ["dragon"],
   excludeNames: ["ancient red dragon", "dragonborn", "half-dragon", "pseudodragon"],
   lootScale: {
-    // Age category from the creature name (5e MM forms).
     nameTokens: {
       wyrmling: 0.45,
       young: 0.75,
       adult: 1.35,
       ancient: 1.85
     },
-    // Fallback when the name has no age word (custom dragons, dragon turtles, etc.).
     bySize: {
       tiny: 0.35,
       sm: 0.5,
@@ -163,7 +153,6 @@ export const dragonProfile = {
 
     currency: {
       type: "currency",
-      // Hoard scraps on the body / nest — CR and lootScale push ancient hoards up hard.
       denominations: {
         cp: { min: 0, max: 40, chance: 0.55 },
         sp: { min: 2, max: 30, chance: 0.9 },
@@ -187,7 +176,6 @@ export const dragonProfile = {
 
     equipment: {
       type: "equipment",
-      // Hoard gear the DM put on the dragon's sheet, if any.
       chances: {
         weapon: 0.7,
         armor: 0.55,

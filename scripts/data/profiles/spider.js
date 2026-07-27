@@ -1,11 +1,3 @@
-/**
- * Spider — beast/monstrosity multi-pool profile.
- *
- * Harvestable parts stay LootForge customs. Any gear on the NPC sheet
- * (victim loot stuffed into inventory) can drop via the equipment pool.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const spiderProfile = {
   id: "spider",
   matchNames: ["spider"],
@@ -126,7 +118,6 @@ export const spiderProfile = {
 
     currency: {
       type: "currency",
-      // Coins snagged in webbing — uncommon, not pocket change.
       denominations: {
         cp: { min: 0, max: 14, chance: 0.4 },
         sp: { min: 0, max: 5, chance: 0.22 },
@@ -148,7 +139,6 @@ export const spiderProfile = {
 
     equipment: {
       type: "equipment",
-      // Victim gear the DM put on the spider's sheet, if any.
       chances: {
         weapon: 0.55,
         armor: 0.35,

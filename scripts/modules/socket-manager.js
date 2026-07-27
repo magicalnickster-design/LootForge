@@ -1,7 +1,3 @@
-/**
- * GM-authoritative socket layer for shared corpse loot takes.
- */
-
 import { CORPSE_FLAG, MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
 import { log } from "./logger.js";
 import { canUserLootCorpse } from "./ownership.js";
@@ -26,17 +22,10 @@ import { refreshLootWindows } from "../applications/window-registry.js";
 
 let registered = false;
 
-/** @type {Map<string, number>} tokenUuid → last auto-open ms */
 const recentAutoOpens = new Map();
 
-/** @type {Set<string>} dedupe socket + chat take handoffs */
 const processedTakeKeys = new Set();
 
-/**
- * Primary connected GM who should handle authoritative socket ops.
- * Falls back when Foundry's activeGM getter is null (common on some hosts).
- * @returns {boolean}
- */
 function isResponsibleGm() {
   if (!game.user?.isGM) return false;
   const activeGms = game.users.filter((u) => u.isGM && u.active);
@@ -46,10 +35,6 @@ function isResponsibleGm() {
   return elected.id === game.user.id;
 }
 
-/**
- * Socket + whispered chat flag so GM-side ops are not dropped.
- * @param {object} payload
- */
 function emitGmHandoff(payload) {
   const full = emitLootForge(payload);
   const gmIds = game.users.filter((u) => u.isGM).map((u) => u.id);
@@ -71,9 +56,6 @@ function emitGmHandoff(payload) {
   return full;
 }
 
-/**
- * Register socket listeners (ready).
- */
 export function registerSocketManager() {
   if (registered) return;
   registered = true;
@@ -86,7 +68,6 @@ export function registerSocketManager() {
     }
   });
 
-  // Live-sync open loot windows whenever corpse flags change (multi-client).
   Hooks.on("updateToken", (tokenDoc, changes) => {
     const flagPath = `flags.${MODULE_ID}.${CORPSE_FLAG}`;
     if (!foundry.utils.hasProperty(changes, flagPath)
@@ -94,12 +75,10 @@ export function registerSocketManager() {
       return;
     }
 
-    // Keep local one-roll guards in sync with authoritative corpse flags.
     const state = getCorpseState(tokenDoc);
     if (!state.generated && !state.pendingInvestigation) {
       releaseInvestigationClaim(tokenDoc.uuid);
     } else if (isInvestigationPending(state) || (state.generated && state.pendingReview)) {
-      // Only lock Investigation while waiting on the DM — not after release.
       markInvestigationClaimed(tokenDoc.uuid);
     }
 
@@ -107,7 +86,6 @@ export function registerSocketManager() {
     void refreshIndicatorsSafe(tokenDoc.uuid);
   });
 
-  // Chat backup for take ops (deleted after handling so GM chat stays clean).
   Hooks.on("createChatMessage", async (message) => {
     if (!game.user.isGM) return;
     const flag = message.flags?.[MODULE_ID];
@@ -132,9 +110,6 @@ export function registerSocketManager() {
   log.debug("Socket manager registered");
 }
 
-/**
- * @param {object} payload
- */
 export function emitLootForge(payload) {
   const full = {
     ...payload,
@@ -145,19 +120,12 @@ export function emitLootForge(payload) {
   return full;
 }
 
-/**
- * @param {string} tokenUuid
- */
 export function broadcastStateUpdated(tokenUuid) {
   emitLootForge({ op: OPS.STATE_UPDATED, tokenUuid });
   refreshLootWindows(tokenUuid);
   void refreshIndicatorsSafe(tokenUuid);
 }
 
-/**
- * Remote clients: wait briefly for flag replication, then refresh open loot UIs.
- * @param {object} payload
- */
 async function onStateUpdated(payload) {
   if (payload.error && payload.targetUserId === game.user.id) {
     ui.notifications.warn(payload.error);
@@ -179,9 +147,6 @@ async function onStateUpdated(payload) {
   await refreshIndicatorsSafe(tokenUuid);
 }
 
-/**
- * @param {string} [tokenUuid]
- */
 async function refreshIndicatorsSafe(tokenUuid) {
   try {
     const { refreshLootIndicators } = await import("./loot-indicator.js");
@@ -191,9 +156,6 @@ async function refreshIndicatorsSafe(tokenUuid) {
   }
 }
 
-/**
- * @param {object} payload
- */
 async function handleSocketPayload(payload) {
   if (!payload || payload.moduleId !== MODULE_ID) return;
   const op = payload.op;
@@ -254,9 +216,6 @@ async function handleSocketPayload(payload) {
   }
 }
 
-/**
- * @param {object} payload
- */
 async function onPlayerStartLoot(payload) {
   const { handlePlayerStartLoot } = await import("./loot-workflow.js");
   const result = await handlePlayerStartLoot(payload, {
@@ -272,13 +231,6 @@ async function onPlayerStartLoot(payload) {
   }
 }
 
-/**
- * @param {object} payload
- */
-/**
- * @param {object} payload
- * @param {string} error
- */
 function rejectTake(payload, error) {
   log.warn("Take request rejected", { op: payload.op, error, tokenUuid: payload.tokenUuid });
   if (payload.fromUserId) {
@@ -387,12 +339,6 @@ async function handleTakeRequest(payload) {
   broadcastStateUpdated(tokenDoc.uuid);
 }
 
-/**
- * Wait briefly for a token UUID / flag sync (Foundry may deliver sockets before flags).
- * @param {string} tokenUuid
- * @param {number} [attempts]
- * @returns {Promise<TokenDocument|null>}
- */
 async function resolveTokenDocSoon(tokenUuid, attempts = 8) {
   for (let i = 0; i < attempts; i++) {
     const doc = await fromUuid(tokenUuid);
@@ -402,9 +348,6 @@ async function resolveTokenDocSoon(tokenUuid, attempts = 8) {
   return null;
 }
 
-/**
- * @param {object} payload
- */
 async function openPlayerWindowFromPayload(payload) {
   if (payload.targetUserId && payload.targetUserId !== game.user.id) {
     log.info("Socket open ignored: not target user", {
@@ -423,7 +366,6 @@ async function openPlayerWindowFromPayload(payload) {
     return;
   }
 
-  // Trusted opens (post-release) may arrive before flags replicate.
   if (trustedTarget) {
     for (let i = 0; i < 12; i++) {
       const state = getCorpseState(tokenDoc);
@@ -475,12 +417,6 @@ async function openPlayerWindowFromPayload(payload) {
   await refreshIndicatorsSafe(tokenDoc.uuid);
 }
 
-/**
- * Player → GM: claim / open shared loot session.
- * @param {TokenDocument} tokenDoc
- * @param {Actor} actor
- * @param {{ claimOnly?: boolean, investigationRoll?: object|null }} [options]
- */
 export async function requestPlayerStartLoot(tokenDoc, actor, {
   claimOnly = false,
   investigationRoll = null
@@ -525,10 +461,6 @@ export async function requestPlayerStartLoot(tokenDoc, actor, {
   return { ok: true, pending: true };
 }
 
-/**
- * @param {string} tokenUuid
- * @returns {boolean} true if this client should auto-open now
- */
 function beginAutoOpen(tokenUuid) {
   if (!tokenUuid) return false;
   const now = Date.now();
@@ -538,10 +470,6 @@ function beginAutoOpen(tokenUuid) {
   return true;
 }
 
-/**
- * Players: DM released loot — open the Items window (with a short flag-sync wait).
- * @param {object} payload
- */
 async function onLootReleased(payload) {
   if (game.user.isGM) return;
   const tokenUuid = payload.tokenUuid;
@@ -558,7 +486,6 @@ async function onLootReleased(payload) {
     return;
   }
 
-  // Wait briefly for dmApproved / items to replicate to this client.
   for (let i = 0; i < 12; i++) {
     const state = getCorpseState(tokenDoc);
     if ((state.dmApproved || state.freeForAll) && hasRemainingLoot(tokenDoc)) break;
@@ -574,11 +501,6 @@ async function onLootReleased(payload) {
   );
 }
 
-/**
- * GM finished reviewing — release corpse loot for every player (shared free-for-all).
- * Auto-opens the player Items window on connected player clients.
- * @param {TokenDocument} tokenDoc
- */
 export async function releaseLootForEveryone(tokenDoc) {
   if (!game.user.isGM) {
     throw new Error("Only a GM may release loot");
@@ -610,7 +532,6 @@ export async function releaseLootForEveryone(tokenDoc) {
 
   broadcastStateUpdated(tokenDoc.uuid);
 
-  // Reliable handoff: every active player should see the loot window now.
   emitLootForge({
     op: OPS.LOOT_RELEASED,
     tokenUuid: tokenDoc.uuid
@@ -634,11 +555,6 @@ export async function releaseLootForEveryone(tokenDoc) {
   return { ok: true, freeForAll: true };
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @param {Actor} actor
- * @param {string} entryId
- */
 export async function requestTakeItem(tokenDoc, actor, entryId) {
   if (game.user.isGM || canUserModifyToken(tokenDoc)) {
     const result = await takeCorpseItem(tokenDoc, actor, entryId);
@@ -655,10 +571,6 @@ export async function requestTakeItem(tokenDoc, actor, entryId) {
   return { ok: true, pending: true };
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @param {Actor} actor
- */
 export async function requestTakeAll(tokenDoc, actor) {
   if (game.user.isGM || canUserModifyToken(tokenDoc)) {
     const result = await takeAllCorpseItems(tokenDoc, actor);
@@ -674,10 +586,6 @@ export async function requestTakeAll(tokenDoc, actor) {
   return { ok: true, pending: true };
 }
 
-/**
- * Close loot window and deposit remaining items onto the corpse actor inventory.
- * @param {TokenDocument} tokenDoc
- */
 export async function requestDoneLoot(tokenDoc) {
   if (game.user.isGM || canUserModifyToken(tokenDoc)) {
     const result = await depositRemainingToCorpse(tokenDoc, game.user);

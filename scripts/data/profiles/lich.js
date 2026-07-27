@@ -1,11 +1,3 @@
-/**
- * Lich — high-tier undead multi-pool profile.
- *
- * Richer currency, rarer parts (phylactery shard), better equipment odds/quality,
- * and high-value story/trinket drops vs zombies/skeletons/mummies.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const lichProfile = {
   id: "lich",
   matchNames: ["lich", "demilich", "archlich"],
@@ -122,7 +114,6 @@ export const lichProfile = {
 
     currency: {
       type: "currency",
-      // Liches carry (or nest near) serious wealth.
       denominations: {
         cp: { min: 0, max: 20, chance: 0.25 },
         sp: { min: 5, max: 40, chance: 0.7 },
@@ -145,7 +136,6 @@ export const lichProfile = {
 
     equipment: {
       type: "equipment",
-      // Staffs, robes, rings, spell components on the sheet.
       chances: {
         weapon: 0.85,
         armor: 0.55,

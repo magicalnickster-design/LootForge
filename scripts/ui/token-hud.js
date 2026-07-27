@@ -1,7 +1,3 @@
-/**
- * Token HUD — Generate / View Loot button on defeated tokens.
- */
-
 import { isLootableTarget } from "../modules/creature-context.js";
 import {
   hasRemainingLoot,

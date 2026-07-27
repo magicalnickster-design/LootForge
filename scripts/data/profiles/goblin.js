@@ -1,11 +1,3 @@
-/**
- * Goblin — first humanoid multi-pool profile.
- *
- * Generation is driven entirely by `pools`; the loot generator stays generic.
- * Future humanoids (orc, bandit, etc.) should follow this shape.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const goblinProfile = {
   id: "goblin",
   matchNames: ["goblin"],
@@ -91,14 +83,12 @@ export const goblinProfile = {
 
     currency: {
       type: "currency",
-      // Believable pocket change; CR nudges the upper end slightly.
       denominations: {
         cp: { min: 2, max: 18, chance: 1 },
         sp: { min: 0, max: 5, chance: 0.85 },
         gp: { min: 0, max: 2, chance: 0.12 }
       },
       crScale: {
-        // Per CR point above 0, add this many to the max (floored).
         cp: 2,
         sp: 0.5,
         gp: 0.25

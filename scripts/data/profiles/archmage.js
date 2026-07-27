@@ -1,8 +1,3 @@
-/**
- * Tier 5 boss — Archmage.
- * Guaranteed spellbook page / focus crystal, arcane crafting thread, tower lore.
- */
-
 import {
   BOSS_CURRENCY,
   BOSS_EQUIPMENT,
@@ -11,7 +6,6 @@ import {
   bossPoolPick
 } from "./_boss-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const archmageProfile = {
   id: "archmage",
   matchNames: ["archmage", "arch-mage", "arch mage"],

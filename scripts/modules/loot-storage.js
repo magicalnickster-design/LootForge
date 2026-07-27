@@ -1,59 +1,7 @@
-/**
- * Authoritative corpse loot state on TokenDocument flags.lootforge.corpse
- */
-
 import { CORPSE_FLAG, LEGACY_LOOTED_FLAG, MODULE_ID } from "./constants.js";
 import { isLootableTarget } from "./creature-context.js";
 import { log } from "./logger.js";
 
-/**
- * @typedef {object} CorpseLootItem
- * @property {string} entryId
- * @property {string} definitionId
- * @property {"item"|"currency"|"equipment"} [kind]
- * @property {string} [itemUuid]
- * @property {object} [itemData]
- * @property {object} [baseItemData]
- * @property {object} [currency]
- * @property {string} [equipmentQuality]
- * @property {string} [sourceItemId]
- * @property {string} name
- * @property {number} quantity
- * @property {string} img
- * @property {string} rarity
- * @property {string} valueText
- * @property {string} description
- */
-
-/**
- * @typedef {object} CorpseLootState
- * @property {boolean} generated
- * @property {number|null} generatedAt
- * @property {string|null} generatedBy
- * @property {object|null} creatureContext
- * @property {number|null} survivalTotal
- * @property {number|null} naturalDie
- * @property {string|null} lootSkill  dnd5e skill id used for the roll (inv / sur)
- * @property {string|null} rollQuality
- * @property {string|null} assignedActorId
- * @property {string|null} assignedUserId
- * @property {string|null} activeLooterUserId
- * @property {string|null} activeLooterActorId
- * @property {string|null} activeLooterName
- * @property {boolean} pendingReview  Loot generated; waiting for DM Save & Close
- * @property {boolean} dmApproved     DM released loot to players
- * @property {boolean} freeForAll     After first looter closes — anyone may loot leftovers together
- * @property {string|null} pendingLooterActorId
- * @property {string|null} pendingLooterUserId
- * @property {object|null} pendingInvestigation  Chat-flow Investigation result awaiting GM Generate
- * @property {CorpseLootItem[]} items
- * @property {object} currency
- * @property {boolean} looted
- * @property {number|null} lootedAt
- * @property {string|null} profileId
- */
-
-/** @returns {CorpseLootState} */
 export function emptyCorpseState() {
   return {
     generated: false,
@@ -83,12 +31,6 @@ export function emptyCorpseState() {
   };
 }
 
-/**
- * True once Investigation has a roll total, or a fresh in-flight claim.
- * Stale claim-only locks from older versions expire after 20s.
- * @param {CorpseLootState|object} state
- * @returns {boolean}
- */
 export function isInvestigationPending(state) {
   const pending = state?.pendingInvestigation;
   if (!pending || typeof pending !== "object") return false;
@@ -100,10 +42,6 @@ export function isInvestigationPending(state) {
   return false;
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @returns {CorpseLootState}
- */
 export function getCorpseState(tokenDoc) {
   if (!tokenDoc) return emptyCorpseState();
 
@@ -123,10 +61,6 @@ export function getCorpseState(tokenDoc) {
   return emptyCorpseState();
 }
 
-/**
- * @param {Item} item
- * @returns {boolean}
- */
 export function isLootForgeItem(item) {
   if (!item) return false;
   const flags = item.flags?.lootforge ?? {};
@@ -141,42 +75,23 @@ export function isLootForgeItem(item) {
   return false;
 }
 
-/**
- * Leftover loot sitting on the dead creature's actor inventory (WoW-style).
- * @param {TokenDocument} tokenDoc
- * @returns {Item[]}
- */
 export function getCorpseInventoryLootItems(tokenDoc) {
   const actor = tokenDoc?.actor;
   if (!actor?.items) return [];
   return actor.items.filter((item) => isLootForgeItem(item));
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @returns {boolean}
- */
 export function corpseHasInventoryLoot(tokenDoc) {
   return getCorpseInventoryLootItems(tokenDoc).length > 0;
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @returns {boolean}
- */
 export function isLootGenerated(tokenDoc) {
   const state = getCorpseState(tokenDoc);
   if (state.generated) return true;
-  // Inventory leftovers only count on lootable targets — never living PCs who took loot.
   if (!isLootableTarget(tokenDoc, tokenDoc?.actor)) return false;
   return corpseHasInventoryLoot(tokenDoc);
 }
 
-/**
- * True when there is nothing left in the loot window pool or corpse inventory.
- * @param {TokenDocument} tokenDoc
- * @returns {boolean}
- */
 export function isCorpseLooted(tokenDoc) {
   if (hasRemainingLoot(tokenDoc)) return false;
   const state = getCorpseState(tokenDoc);
@@ -185,44 +100,23 @@ export function isCorpseLooted(tokenDoc) {
   return false;
 }
 
-/**
- * Loot still available in the active window pool and/or corpse inventory.
- * Living characters with LootForge items in their bags are NOT lootable corpses.
- * @param {TokenDocument} tokenDoc
- * @returns {boolean}
- */
 export function hasRemainingLoot(tokenDoc) {
   const state = getCorpseState(tokenDoc);
   if (state.items?.some((i) => Number(i.quantity) > 0)) return true;
-  // Only lootable target inventories can hold leftover loot.
   if (!isLootableTarget(tokenDoc, tokenDoc?.actor)) return false;
   return corpseHasInventoryLoot(tokenDoc);
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @returns {boolean}
- */
 export function hasActiveLootWindowItems(tokenDoc) {
   const state = getCorpseState(tokenDoc);
   return state.items?.some((i) => Number(i.quantity) > 0) ?? false;
 }
 
-/**
- * @param {CorpseLootState} state
- * @returns {User|null}
- */
 export function getActiveLooterUser(state) {
   if (!state?.activeLooterUserId) return null;
   return game.users.get(state.activeLooterUserId) ?? null;
 }
 
-/**
- * Active looter lock is held by a still-connected user.
- * Free-for-all leftovers are never exclusive.
- * @param {CorpseLootState} state
- * @returns {boolean}
- */
 export function isLootSessionLocked(state) {
   if (state?.freeForAll) return false;
   if (state?.pendingReview && !state?.dmApproved) return false;
@@ -230,20 +124,10 @@ export function isLootSessionLocked(state) {
   return Boolean(user?.active);
 }
 
-/**
- * Loot exists but DM has not released it yet.
- * @param {CorpseLootState} state
- * @returns {boolean}
- */
 export function isAwaitingDmReview(state) {
   return Boolean(state?.pendingReview && !state?.dmApproved);
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @param {Partial<CorpseLootState>} patch
- * @returns {Promise<CorpseLootState>}
- */
 export async function updateCorpseState(tokenDoc, patch) {
   if (!tokenDoc) throw new Error("Missing TokenDocument");
 
@@ -260,27 +144,15 @@ export async function updateCorpseState(tokenDoc, patch) {
   return next;
 }
 
-/**
- * @param {CorpseLootState} state
- * @param {TokenDocument} tokenDoc
- */
 function hasRemainingLootItems(state, tokenDoc) {
   if (state.items?.some((i) => Number(i.quantity) > 0)) return true;
-  // Inventory loot checked after update may still be mid-flight; ignore here.
   return false;
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @param {CorpseLootState} state
- */
 export async function setCorpseState(tokenDoc, state) {
   return updateCorpseState(tokenDoc, foundry.utils.mergeObject(emptyCorpseState(), state, { inplace: false }));
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- */
 export async function clearCorpseState(tokenDoc) {
   await tokenDoc.unsetFlag(MODULE_ID, CORPSE_FLAG);
   await tokenDoc.unsetFlag(MODULE_ID, LEGACY_LOOTED_FLAG);
@@ -289,10 +161,6 @@ export async function clearCorpseState(tokenDoc) {
   return emptyCorpseState();
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @returns {boolean}
- */
 export function canUserModifyToken(tokenDoc) {
   if (!tokenDoc) return false;
   if (game.user.isGM) return true;

@@ -1,27 +1,6 @@
-/**
- * Skill rolls for loot generation.
- * Beasts / animals → Survival; everything else → Investigation.
- *
- * Critical rule: on the GM client, never open an interactive PC roll dialog.
- * Use silent formula rolls for GM-side fallbacks.
- */
-
 import { LOOT_SKILL_INV, LOOT_SKILL_SUR } from "./constants.js";
 import { log } from "./logger.js";
 
-/**
- * @typedef {object} LootRollResult
- * @property {number} total
- * @property {number} natural
- * @property {boolean} isNatural20
- * @property {string} skill
- * @property {object} [roll]
- */
-
-/**
- * @param {object|null} creatureContext
- * @returns {string} dnd5e skill id
- */
 export function resolveLootSkill(creatureContext = null) {
   if (creatureContext?.isBeast || creatureContext?.isWolf) return LOOT_SKILL_SUR;
   const type = String(creatureContext?.creatureType ?? "").toLowerCase();
@@ -29,10 +8,6 @@ export function resolveLootSkill(creatureContext = null) {
   return LOOT_SKILL_INV;
 }
 
-/**
- * @param {string} skillId
- * @returns {string}
- */
 export function lootSkillLabel(skillId) {
   if (skillId === LOOT_SKILL_SUR) {
     return game.i18n?.localize?.("LOOTFORGE.Skill.Survival") || "Survival";
@@ -40,11 +15,6 @@ export function lootSkillLabel(skillId) {
   return game.i18n?.localize?.("LOOTFORGE.Skill.Investigation") || "Investigation";
 }
 
-/**
- * @param {Actor} looter
- * @param {string} skillId
- * @returns {string}
- */
 export function buildLootSkillFormula(looter, skillId = LOOT_SKILL_INV) {
   const skills = looter?.system?.skills ?? {};
   const skill = skills[skillId]
@@ -54,17 +24,10 @@ export function buildLootSkillFormula(looter, skillId = LOOT_SKILL_INV) {
   return `1d20 + ${mod}`;
 }
 
-/** @deprecated Use buildLootSkillFormula */
 export function buildInvestigationFormula(looter) {
   return buildLootSkillFormula(looter, LOOT_SKILL_INV);
 }
 
-/**
- * Silent skill roll — never opens Foundry's roll config UI.
- * @param {Actor} looter
- * @param {{ createMessage?: boolean, flavor?: string, skill?: string }} [options]
- * @returns {Promise<LootRollResult|null>}
- */
 export async function rollLootSkillSilent(looter, {
   createMessage = true,
   flavor = null,
@@ -106,17 +69,10 @@ export async function rollLootSkillSilent(looter, {
   }
 }
 
-/** @deprecated Use rollLootSkillSilent */
 export async function rollInvestigationSilent(looter, options = {}) {
   return rollLootSkillSilent(looter, { ...options, skill: LOOT_SKILL_INV });
 }
 
-/**
- * Interactive skill roll for the local player who owns the character.
- * @param {Actor} looter
- * @param {string} [skill]
- * @returns {Promise<LootRollResult|null>}
- */
 export async function rollLootSkill(looter, skill = LOOT_SKILL_INV) {
   if (!looter) {
     log.error("Missing looter actor for loot skill roll");
@@ -125,7 +81,6 @@ export async function rollLootSkill(looter, skill = LOOT_SKILL_INV) {
 
   const skillId = skill === LOOT_SKILL_SUR ? LOOT_SKILL_SUR : LOOT_SKILL_INV;
 
-  // GM must never open interactive PC roll dialogs during loot flows.
   if (game.user.isGM) {
     log.info("GM loot skill → silent formula (no roll dialog)", {
       actorId: looter.id,
@@ -170,7 +125,6 @@ export async function rollLootSkill(looter, skill = LOOT_SKILL_INV) {
   return rollLootSkillSilent(looter, { skill: skillId });
 }
 
-/** @deprecated Use rollLootSkill */
 export async function rollInvestigation(looter) {
   return rollLootSkill(looter, LOOT_SKILL_INV);
 }

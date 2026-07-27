@@ -1,7 +1,3 @@
-/**
- * Elf — civilized humanoid multi-pool profile (includes drow / eladrin by name).
- */
-
 import {
   CIVILIZED_EQUIPMENT,
   civilizedCurrency,
@@ -10,7 +6,6 @@ import {
   trinketPool
 } from "./_humanoid-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const elfProfile = {
   id: "elf",
   matchNames: ["elf", "drow", "eladrin"],

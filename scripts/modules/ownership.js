@@ -1,7 +1,3 @@
-/**
- * Resolve which users own an assigned loot character / may loot a corpse.
- */
-
 import { getSetting } from "./settings.js";
 import {
   corpseHasInventoryLoot,
@@ -11,18 +7,10 @@ import {
   isLootSessionLocked
 } from "./loot-storage.js";
 
-/**
- * @returns {number}
- */
 function ownerLevel() {
   return CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3;
 }
 
-/**
- * @param {Actor} actor
- * @param {User} user
- * @returns {boolean}
- */
 export function userOwnsActor(actor, user) {
   if (!actor || !user || user.isGM) return false;
 
@@ -44,11 +32,6 @@ export function userOwnsActor(actor, user) {
   return false;
 }
 
-/**
- * @param {Actor} actor
- * @param {{ activeOnly?: boolean }} [options]
- * @returns {User[]}
- */
 export function resolveAssignedOwnerUsers(actor, { activeOnly = false } = {}) {
   if (!actor) return [];
   return game.users.filter((user) => {
@@ -59,11 +42,6 @@ export function resolveAssignedOwnerUsers(actor, { activeOnly = false } = {}) {
   });
 }
 
-/**
- * Can this user open loot for an assigned corpse (classic assign mode)?
- * @param {import("./loot-storage.js").CorpseLootState} state
- * @param {User} [user]
- */
 export function canUserAccessAssignedLoot(state, user = game.user) {
   if (!state || !user) return false;
   if (user.isGM) return true;
@@ -74,17 +52,6 @@ export function canUserAccessAssignedLoot(state, user = game.user) {
   return userOwnsActor(actor, user);
 }
 
-/**
- * WoW-style access: exclusive first looter, then free-for-all leftovers.
- * @param {TokenDocument} tokenDoc
- * @param {User} [user]
- */
-/**
- * Can this user receive loot into this actor?
- * @param {Actor} actor
- * @param {User} user
- * @returns {boolean}
- */
 export function canUserReceiveLootAs(actor, user = game.user) {
   if (!actor || !user) return false;
   if (user.isGM) return true;
@@ -107,24 +74,19 @@ export function canUserLootCorpse(tokenDoc, user = game.user) {
 
   const state = getCorpseState(tokenDoc);
 
-  // DM still editing / approving loot.
   if (isAwaitingDmReview(state)) return false;
 
-  // Shared loot after DM review — any player may open/take.
   if (state.freeForAll || state.dmApproved) return true;
 
   if (isLootSessionLocked(state) && state.activeLooterUserId !== user.id) {
     return false;
   }
 
-  // Allow-all worlds: after DM approval, any player may open when unlocked.
   if (getSetting("allowAllPlayersToLoot") && state.dmApproved) return true;
 
-  // Currently assigned / claimed session.
   if (state.activeLooterUserId === user.id) return true;
   if (canUserAccessAssignedLoot(state, user)) return true;
 
-  // Leftovers on corpse inventory with no exclusive lock.
   if (!state.assignedActorId && !state.activeLooterUserId && corpseHasInventoryLoot(tokenDoc)) {
     return true;
   }
@@ -132,11 +94,6 @@ export function canUserLootCorpse(tokenDoc, user = game.user) {
   return false;
 }
 
-/**
- * @param {import("./loot-storage.js").CorpseLootState} state
- * @param {User} [user]
- * @returns {string|null} localization key or null if free
- */
 export function getLootBusyReasonKey(state, user = game.user) {
   if (isAwaitingDmReview(state)) return "LOOTFORGE.Notify.WaitingForGM";
   if (state?.freeForAll) return null;

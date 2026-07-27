@@ -1,17 +1,4 @@
-/**
- * Dynamic equipment quality — applied at generation time via metadata.
- * No separate compendium entries per quality.
- */
 
-/** @typedef {"broken"|"worn"|"standard"|"fine"|"masterwork"} EquipmentQuality */
-
-/**
- * @type {Record<EquipmentQuality, {
- *   label: string|null,
- *   priceMult: number,
- *   blurb: string
- * }>}
- */
 export const EQUIPMENT_QUALITIES = {
   broken: {
     label: "Broken",
@@ -40,12 +27,6 @@ export const EQUIPMENT_QUALITIES = {
   }
 };
 
-/**
- * Weighted random quality pick.
- * @param {Record<string, number>} weights
- * @param {() => number} [rng]
- * @returns {EquipmentQuality}
- */
 export function pickEquipmentQuality(weights, rng = Math.random) {
   const entries = Object.entries(weights || {}).filter(([, w]) => Number(w) > 0);
   if (!entries.length) return "standard";
@@ -53,20 +34,11 @@ export function pickEquipmentQuality(weights, rng = Math.random) {
   let roll = rng() * total;
   for (const [key, weight] of entries) {
     roll -= Number(weight);
-    if (roll <= 0) return /** @type {EquipmentQuality} */ (key);
+    if (roll <= 0) return key;
   }
-  return /** @type {EquipmentQuality} */ (entries.at(-1)?.[0] ?? "standard");
+  return entries.at(-1)?.[0] ?? "standard";
 }
 
-/**
- * Apply quality to cloned item create-data (mutates a copy).
- *
- * @param {object} itemData  Item create-data (already cloned)
- * @param {EquipmentQuality} quality
- * @param {object} [meta]
- * @param {string} [meta.sourceCreature]
- * @returns {object}
- */
 export function applyEquipmentQuality(itemData, quality, { sourceCreature = "" } = {}) {
   const q = EQUIPMENT_QUALITIES[quality] ?? EQUIPMENT_QUALITIES.standard;
   const baseName = String(itemData.name ?? "Item");
@@ -102,18 +74,12 @@ export function applyEquipmentQuality(itemData, quality, { sourceCreature = "" }
     baseName,
     sourceCreature: sourceCreature || data.flags.lootforge?.sourceCreature || "",
     generatedByLootForge: true,
-    // Unique stacking key — equipment drops should not merge.
     stackingKey: `equip-${quality}-${baseName}-${foundry.utils.randomID?.(8) ?? Math.random().toString(36).slice(2, 10)}`
   };
 
   return data;
 }
 
-/**
- * Format a vendor value string from item data.
- * @param {object} itemData
- * @returns {string}
- */
 export function formatItemValueText(itemData) {
   const price = itemData?.system?.price;
   if (!price) return "—";

@@ -1,9 +1,3 @@
-/**
- * LootForge — module entry point.
- *
- * Initialization, hooks, controls, and public API registration only.
- */
-
 import { MODULE_ID } from "./modules/constants.js";
 import { log } from "./modules/logger.js";
 import { registerLootIndicatorHooks } from "./modules/loot-indicator.js";
@@ -44,10 +38,8 @@ Hooks.once("ready", () => {
   registerTokenDoubleClickLoot();
   registerContainerTokenHooks();
 
-  // Seed Chest + Container into the world Actors tab (GM only).
   void ensureWorldLootActors();
 
-  // Public API for macros / other modules.
   game.modules.get(MODULE_ID).api = {
     lootBody: async (token) => {
       const { lootBody } = await import("./modules/loot-workflow.js");
@@ -64,5 +56,5 @@ Hooks.once("ready", () => {
     ensureWorldLootActors
   };
 
-  log.info(`Ready v0.5.24 (dnd5e ${game.system.version}, Foundry ${game.version})`);
+  log.info(`Ready v0.5.25 (dnd5e ${game.system.version}, Foundry ${game.version})`);
 });

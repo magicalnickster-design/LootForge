@@ -1,5 +1,3 @@
-/** Auto-split legacy LootForge profile — keep drop tables stable. */
-
 export const wolfProfile = {
   "id": "wolf",
   "matchNames": [

@@ -1,8 +1,3 @@
-/**
- * Compile packs/src/loot-items/*.json into packs/loot-items LevelDB.
- *
- * Usage: node tools/pack-loot-items.mjs
- */
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 import { rm } from "node:fs/promises";
 import path from "node:path";

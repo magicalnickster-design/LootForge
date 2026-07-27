@@ -1,25 +1,11 @@
-/**
- * Catalog of official dnd5e system Items for chest/container loot.
- *
- * Sources (in priority order):
- *   - dnd5e.equipment24  (SRD 5.2 / modern PHB equipment as shipped by Foundry)
- *   - dnd5e.items        (SRD 5.1 items)
- *   - dnd5e.tradegoods   (SRD trade goods)
- *
- * LootForge does NOT redistribute Player's Handbook text. It clones live
- * documents from the system's licensed/SRD packs at generation time.
- */
-
 import { log } from "./logger.js";
 
-/** Preferred pack collection ids (module.packName). */
 export const DEFAULT_SYSTEM_ITEM_PACKS = Object.freeze([
   "dnd5e.equipment24",
   "dnd5e.items",
   "dnd5e.tradegoods"
 ]);
 
-/** Item document types suitable for chest loot. */
 export const CHEST_ITEM_TYPES = Object.freeze([
   "weapon",
   "equipment",
@@ -38,13 +24,8 @@ const RARITY_KEYS = Object.freeze([
   "artifact"
 ]);
 
-/** @type {null|{ byRarity: Record<string, object[]>, total: number, packs: string[] }} */
 let catalogCache = null;
 
-/**
- * @param {string|null|undefined} rarity
- * @returns {string}
- */
 export function normalizeItemRarity(rarity) {
   const raw = String(rarity ?? "").trim();
   if (!raw) return "common";
@@ -59,23 +40,11 @@ export function normalizeItemRarity(rarity) {
   return "common";
 }
 
-/**
- * @param {string} name
- * @returns {boolean}
- */
 function looksLikeNonLootable(name) {
   const n = String(name ?? "").toLowerCase();
-  // Skip class/feature-ish leftovers if a pack is unfiltered.
   return /\b(feature|fighting style|channel divinity|pact of)\b/.test(n);
 }
 
-/**
- * Build (and cache) an index of system items by rarity.
- * @param {object} [options]
- * @param {string[]} [options.packKeys]
- * @param {string[]} [options.itemTypes]
- * @param {boolean} [options.forceReload=false]
- */
 export async function getSystemItemCatalog({
   packKeys = DEFAULT_SYSTEM_ITEM_PACKS,
   itemTypes = CHEST_ITEM_TYPES,
@@ -84,7 +53,6 @@ export async function getSystemItemCatalog({
   if (catalogCache && !forceReload) return catalogCache;
 
   const typeSet = new Set(itemTypes);
-  /** @type {Record<string, object[]>} */
   const byRarity = Object.fromEntries(RARITY_KEYS.map((k) => [k, []]));
   const seen = new Set();
   const usedPacks = [];
@@ -94,7 +62,6 @@ export async function getSystemItemCatalog({
     if (!pack || pack.documentName !== "Item") continue;
 
     try {
-      // Prefer getIndex when available (Foundry 11+).
       const index = typeof pack.getIndex === "function"
         ? await pack.getIndex({ fields: ["name", "type", "img", "system.rarity", "system.type"] })
         : pack.index;
@@ -132,25 +99,14 @@ export async function getSystemItemCatalog({
   return catalogCache;
 }
 
-/**
- * Clear catalog cache (e.g. after packs reload).
- */
 export function clearSystemItemCatalog() {
   catalogCache = null;
 }
 
-/**
- * Weighted rarity pick, falling back to denser lower tiers if a bucket is empty.
- * @param {Record<string, number>} weights
- * @param {Record<string, object[]>} byRarity
- * @param {() => number} [rng]
- * @returns {string|null}
- */
 export function pickRarityBucket(weights, byRarity, rng = Math.random) {
   const entries = Object.entries(weights || {})
     .filter(([key, w]) => Number(w) > 0 && (byRarity[key]?.length ?? 0) > 0);
   if (!entries.length) {
-    // Fallback: densest available bucket in common→artifact order.
     for (const key of RARITY_KEYS) {
       if (byRarity[key]?.length) return key;
     }
@@ -165,11 +121,6 @@ export function pickRarityBucket(weights, byRarity, rng = Math.random) {
   return entries.at(-1)?.[0] ?? null;
 }
 
-/**
- * @param {object[]} list
- * @param {() => number} [rng]
- * @returns {object|null}
- */
 export function pickRandomEntry(list, rng = Math.random) {
   if (!list?.length) return null;
   return list[Math.floor(rng() * list.length)] ?? null;

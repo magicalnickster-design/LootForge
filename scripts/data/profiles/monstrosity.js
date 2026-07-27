@@ -1,12 +1,3 @@
-/**
- * Monstrosity — multi-pool profile for owlbears, basilisks, chimerae, hydras,
- * purple worms, mimics, ropers, and other named MM monstrosities.
- *
- * Quantities scale by creature name via `lootScale` (cockatrice smaller,
- * purple worm larger). Equipment comes from the NPC inventory when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const monstrosityProfile = {
   id: "monstrosity",
   matchNames: [
@@ -29,7 +20,6 @@ export const monstrosityProfile = {
   matchTypes: ["monstrosity"],
   matchSubtypes: ["monstrosity"],
   lootScale: {
-    // Longest token wins (see resolveLootScale). CR-ish tiers for the listed forms.
     nameTokens: {
       "purple worm": 1.9,
       cockatrice: 0.4,
@@ -358,7 +348,6 @@ export const monstrosityProfile = {
 
     currency: {
       type: "currency",
-      // Nest / gullet scraps — not civilized pockets.
       denominations: {
         cp: { min: 0, max: 12, chance: 0.35 },
         sp: { min: 0, max: 10, chance: 0.55 },
@@ -382,7 +371,6 @@ export const monstrosityProfile = {
 
     equipment: {
       type: "equipment",
-      // Prey gear / nest hoard on the sheet when present.
       chances: {
         weapon: 0.55,
         armor: 0.35,

@@ -1,12 +1,3 @@
-/**
- * Fiend — multi-pool profile for imps, quasits, hell hounds, and named
- * devil/demon forms (barbed → balor).
- *
- * Quantities scale by creature name via `lootScale` (lesser fiends smaller,
- * pit fiend / balor larger). Equipment comes from the NPC inventory when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const fiendProfile = {
   id: "fiend",
   matchNames: [
@@ -30,7 +21,6 @@ export const fiendProfile = {
   matchSubtypes: ["devil", "demon", "yugoloth"],
   excludeNames: ["demon lord", "demon prince", "demogorgon", "orcus", "graz'zt", "grazzt", "juiblex", "baphomet", "yeenoghu", "zuggtmoy"],
   lootScale: {
-    // Longest token wins (see resolveLootScale). CR-ish tiers for the MM forms.
     nameTokens: {
       "pit fiend": 1.85,
       "horned devil": 1.45,
@@ -295,7 +285,6 @@ export const fiendProfile = {
 
     equipment: {
       type: "equipment",
-      // Armed devils often carry weapons/armor on the sheet.
       chances: {
         weapon: 0.75,
         armor: 0.45,

@@ -1,11 +1,3 @@
-/**
- * Fey — multi-pool profile for pixies, dryads, satyrs, redcaps, and hags.
- *
- * Quantities scale by creature name via `lootScale` (pixie/satyr smaller,
- * night hag larger). Equipment comes from the NPC inventory when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const feyProfile = {
   id: "fey",
   matchNames: [
@@ -23,7 +15,6 @@ export const feyProfile = {
   matchTypes: ["fey"],
   matchSubtypes: ["fey", "hag"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "night hag": 1.4,
       "green hag": 1.1,

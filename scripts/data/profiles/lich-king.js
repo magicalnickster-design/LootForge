@@ -1,9 +1,3 @@
-/**
- * Tier 5 boss — Lich King.
- * Guaranteed phylactery core / bone crown, royal lich dust, death-decree lore.
- * Matched before the generic lich profile.
- */
-
 import {
   BOSS_CURRENCY,
   BOSS_EQUIPMENT,
@@ -12,7 +6,6 @@ import {
   bossPoolPick
 } from "./_boss-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const lichKingProfile = {
   id: "lich-king",
   matchNames: ["lich king", "lich-king", "king of liches"],

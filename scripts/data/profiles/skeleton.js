@@ -1,9 +1,3 @@
-/**
- * Skeleton — undead multi-pool profile.
- * Sheet equipment (ancient arms, mail scraps) drops when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const skeletonProfile = {
   id: "skeleton",
   matchNames: ["skeleton"],

@@ -1,9 +1,3 @@
-/**
- * Player-facing WoW-inspired loot window (modern D&D twist).
- * Double-click an item to take it. Loot All / Done.
- * Closing the window deposits leftovers onto the corpse for the next looter.
- */
-
 import { MODULE_ID } from "../modules/constants.js";
 import { log } from "../modules/logger.js";
 import {
@@ -21,13 +15,10 @@ import { registerLootWindow, unregisterLootWindow } from "./window-registry.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) {
-  /** @type {TokenDocument} */
   #tokenDoc;
 
-  /** @type {boolean} */
   #busy = false;
 
-  /** @type {boolean} */
   #sessionReleased = false;
 
   constructor(tokenDoc, options = {}) {
@@ -67,7 +58,6 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     return game.i18n.localize("LOOTFORGE.Player.WindowTitle");
   }
 
-  /** @returns {Actor|null} */
   #resolveActor() {
     const state = getCorpseState(this.#tokenDoc);
     if (state.activeLooterActorId) {
@@ -80,7 +70,6 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     }
     if (game.user.character) return game.user.character;
 
-    // Controlled character token (User.character may be unset).
     for (const token of canvas.tokens?.controlled ?? []) {
       const actor = token.actor;
       if (actor?.type === "character" && (game.user.isGM || userOwnsActor(actor, game.user))) {
@@ -132,14 +121,12 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
 
   async _onClose(options) {
     unregisterLootWindow(this.#tokenDoc.uuid, this);
-    // WoW: leaving the loot page drops leftovers onto the corpse for others.
     await this.#releaseSession();
     return super._onClose(options);
   }
 
   onCorpseStateChanged() {
     if (!hasActiveLootWindowItems(this.#tokenDoc)) {
-      // Either fully taken or deposited — close quietly.
       this.#sessionReleased = true;
       this.close({ animate: false });
       return;
@@ -153,7 +140,6 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
 
     const state = getCorpseState(this.#tokenDoc);
 
-    // Free-for-all viewers just leave — leftovers stay in the shared live pool.
     if (state.freeForAll) return;
 
     const isActive = game.user.isGM
@@ -199,7 +185,6 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
         ui.notifications.warn(result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
         return;
       }
-      // Pending takes refresh via corpse flag sync — avoid toast spam.
       log.info("Player took item", entryId, { pending: Boolean(result.pending) });
     });
   }
@@ -227,7 +212,6 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
         app.#sessionReleased = true;
         await app.close();
       }
-      // Pending: window stays open and syncs when the GM applies the take.
     });
   }
 
@@ -241,9 +225,6 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- */
 export async function openPlayerLootWindow(tokenDoc) {
   log.info("openPlayerLootWindow()", {
     tokenUuid: tokenDoc?.uuid,

@@ -1,9 +1,3 @@
-/**
- * Alt+L keybinding for LootForge.
- * Corpse looting itself is double-left-click only (Token patch / sparkles).
- * No right-click context menu entry — that was a single-action loot path.
- */
-
 import { isLootableTarget } from "../modules/creature-context.js";
 import { MODULE_ID } from "../modules/constants.js";
 import {
@@ -15,10 +9,6 @@ import {
 import { canUserLootCorpse } from "../modules/ownership.js";
 import { lootBody } from "../modules/loot-workflow.js";
 
-/**
- * Prefer targeted, then hovered, then single controlled token.
- * @returns {Token|null}
- */
 export function resolveLootTargetToken() {
   const targeted = [...(game.user.targets ?? [])];
   if (targeted.length === 1) return targeted[0];
@@ -28,10 +18,6 @@ export function resolveLootTargetToken() {
   return null;
 }
 
-/**
- * Nearest corpse on the current scene that this user may loot.
- * @returns {Token|null}
- */
 export function resolveNearestLootableCorpse() {
   const placeables = canvas.tokens?.placeables ?? [];
   const candidates = placeables.filter((token) => {
@@ -66,13 +52,8 @@ export function resolveNearestLootableCorpse() {
   return best;
 }
 
-/** @deprecated Use resolveNearestLootableCorpse */
 export const resolveNearestAssignedCorpse = resolveNearestLootableCorpse;
 
-/**
- * Targeted corpse, else nearest lootable corpse.
- * @returns {Token|null}
- */
 export function resolveLootHotkeyToken() {
   const targeted = resolveLootTargetToken();
   if (targeted) {
@@ -99,9 +80,5 @@ export function registerLootKeybinding() {
   });
 }
 
-/**
- * No-op — right-click context loot removed (double-left-click only).
- */
 export function registerTokenContext() {
-  // Intentionally empty.
 }

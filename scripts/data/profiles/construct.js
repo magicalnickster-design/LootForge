@@ -1,12 +1,3 @@
-/**
- * Construct — multi-pool profile for flying swords, helmed horrors, golems,
- * and shield guardians.
- *
- * Animated Armor stays on its legacy salvage-only profile (matched first).
- * Quantities scale by form via `lootScale` (flying sword smaller, iron golem larger).
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const constructProfile = {
   id: "construct",
   matchNames: [
@@ -25,7 +16,6 @@ export const constructProfile = {
   matchSubtypes: ["construct", "golem"],
   excludeNames: ["animated armor", "animated armour", "chest", "container"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "shield guardian": 1.2,
       "helmed horror": 1,
@@ -228,7 +218,6 @@ export const constructProfile = {
 
     currency: {
       type: "currency",
-      // Constructs rarely carry coin; lairs / creators may stash some.
       denominations: {
         cp: { min: 0, max: 8, chance: 0.2 },
         sp: { min: 0, max: 10, chance: 0.4 },
@@ -252,7 +241,6 @@ export const constructProfile = {
 
     equipment: {
       type: "equipment",
-      // Weapons/armor on the sheet (flying sword, helmed horror, guardians).
       chances: {
         weapon: 0.85,
         armor: 0.7,

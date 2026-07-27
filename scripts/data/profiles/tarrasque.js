@@ -1,8 +1,3 @@
-/**
- * Tier 5 boss — Tarrasque.
- * Guaranteed carapace / fang, world-eater crafting bile, apocalypse lore.
- */
-
 import {
   BOSS_CURRENCY,
   BOSS_EQUIPMENT,
@@ -11,7 +6,6 @@ import {
   bossPoolPick
 } from "./_boss-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const tarrasqueProfile = {
   id: "tarrasque",
   matchNames: ["tarrasque", "tarasque"],
@@ -32,7 +26,6 @@ export const tarrasqueProfile = {
     },
     currency: {
       ...BOSS_CURRENCY,
-      // The tarrasque does not hoard — victims' remnants only.
       denominations: {
         cp: { min: 0, max: 40, chance: 0.35 },
         sp: { min: 0, max: 60, chance: 0.45 },

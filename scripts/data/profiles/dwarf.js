@@ -1,7 +1,3 @@
-/**
- * Dwarf — civilized humanoid multi-pool profile.
- */
-
 import {
   CIVILIZED_EQUIPMENT,
   civilizedCurrency,
@@ -10,7 +6,6 @@ import {
   trinketPool
 } from "./_humanoid-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const dwarfProfile = {
   id: "dwarf",
   matchNames: ["dwarf"],

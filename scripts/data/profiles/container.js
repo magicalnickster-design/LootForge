@@ -1,17 +1,7 @@
-/**
- * Chest / Container — multi-pool profile for placeable loot containers.
- * Matched via flags.lootforge.isContainer (not by creature name).
- *
- * Official PHB/SRD gear is pulled live from dnd5e system packs
- * (`equipment24`, `items`, `tradegoods`) — not duplicated in LootForge.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const containerProfile = {
   id: "container",
   matchNames: [],
   matchTypes: [],
-  // Resolved explicitly when context.isContainer is true.
   pools: {
     currency: {
       type: "currency",
@@ -36,10 +26,6 @@ export const containerProfile = {
       }
     },
 
-    /**
-     * Official dnd5e / PHB equipment from system compendiums.
-     * Rarity weights respect Investigation quality.
-     */
     systemGear: {
       type: "systemItems",
       packKeys: ["dnd5e.equipment24", "dnd5e.items", "dnd5e.tradegoods"],
@@ -99,7 +85,6 @@ export const containerProfile = {
 
     equipment: {
       type: "equipment",
-      // If the DM stocked the Chest/Container actor inventory, those can drop.
       chances: {
         weapon: 0.85,
         armor: 0.55,

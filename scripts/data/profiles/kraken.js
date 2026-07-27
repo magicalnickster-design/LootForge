@@ -1,8 +1,3 @@
-/**
- * Tier 5 boss — Kraken.
- * Guaranteed tentacle / ink, abyssal eye collectible, drowned-lore artifacts.
- */
-
 import {
   BOSS_CURRENCY,
   BOSS_EQUIPMENT,
@@ -11,7 +6,6 @@ import {
   bossPoolPick
 } from "./_boss-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const krakenProfile = {
   id: "kraken",
   matchNames: ["kraken"],

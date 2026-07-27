@@ -1,10 +1,3 @@
-/**
- * Creature profile registry.
- *
- * Add a new creature by creating `profiles/<name>.js` and registering it here.
- * Do not put creature-specific branching in the loot generator.
- */
-
 import { ancientRedDragonProfile } from "./ancient-red-dragon.js";
 import { krakenProfile } from "./kraken.js";
 import { tarrasqueProfile } from "./tarrasque.js";
@@ -44,12 +37,6 @@ import { beastProfile } from "./beast.js";
 import { zombieProfile } from "./zombie.js";
 import { unknownCreatureProfile } from "./unknown.js";
 
-/**
- * Specific profiles first (elf before human, lich before undead, spider before wolf, etc.).
- * Registry key may differ from profile.id (animatedArmor → animated-armor).
- * Type-only fallbacks (genericHumanoid) are not name-matched; see TYPE_FALLBACKS.
- * `unknown` is never name-matched — only the final resolve fallback.
- */
 export const PROFILE_ORDER = [
   "container",
   "ancientRedDragon",
@@ -89,7 +76,6 @@ export const PROFILE_ORDER = [
   "wolf"
 ];
 
-/** @type {Record<string, import("../creature-profiles.js").CreatureProfile>} */
 export const CREATURE_PROFILES = {
   container: containerProfile,
   ancientRedDragon: ancientRedDragonProfile,
@@ -131,11 +117,6 @@ export const CREATURE_PROFILES = {
   unknown: unknownCreatureProfile
 };
 
-/**
- * When no name/subtype profile matches, fall back to family loot by creature type.
- * Specific profiles above always win first (Wolf, Goblin, Archmage, etc.).
- * @type {Record<string, import("../creature-profiles.js").CreatureProfile>}
- */
 export const TYPE_FALLBACKS = {
   aberration: aberrationProfile,
   beast: beastProfile,
@@ -151,15 +132,9 @@ export const TYPE_FALLBACKS = {
   ooze: oozeProfile,
   plant: plantProfile,
   undead: genericUndeadProfile,
-  // Swarms are usually beasts in 5e; treat as beast loot when typed as swarm.
   swarm: beastProfile
 };
 
-/**
- * @param {import("../creature-profiles.js").CreatureProfile} profile
- * @param {string} nameLower
- * @returns {boolean}
- */
 function nameHitsProfile(profile, nameLower) {
   if (profile.excludeNames?.some((ex) => nameLower.includes(ex))) return false;
 
@@ -173,15 +148,9 @@ function nameHitsProfile(profile, nameLower) {
   });
 }
 
-/**
- * Resolve a creature profile from normalized context / actor name.
- * @param {object} context  Result of buildCreatureContext
- * @returns {import("../creature-profiles.js").CreatureProfile|null}
- */
 export function resolveCreatureProfile(context) {
   if (!context) return null;
 
-  // Chests / blank containers always use the container multi-pool profile.
   if (context.isContainer) return CREATURE_PROFILES.container;
 
   const name = String(context.name ?? "").toLowerCase();
@@ -205,9 +174,7 @@ export function resolveCreatureProfile(context) {
     if (nameHit) return profile;
   }
 
-  // No dedicated name/subtype profile — use generic loot for the creature type.
   if (type && TYPE_FALLBACKS[type]) return TYPE_FALLBACKS[type];
 
-  // Still unidentified (no type, or unrecognized type) — pocket change + story scraps.
   return CREATURE_PROFILES.unknown;
 }

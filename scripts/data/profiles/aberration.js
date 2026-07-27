@@ -1,12 +1,3 @@
-/**
- * Aberration — multi-pool profile for mind flayers, beholders, aboleths,
- * intellect devourers, carrion crawlers, chuuls, gibbering mouthers, and kin.
- *
- * Quantities scale by creature name via `lootScale` (devourer/mouther smaller,
- * beholder / death tyrant / aboleth larger). Equipment from the sheet when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const aberrationProfile = {
   id: "aberration",
   matchNames: [
@@ -25,7 +16,6 @@ export const aberrationProfile = {
   matchTypes: ["aberration"],
   matchSubtypes: ["aberration"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "death tyrant": 1.65,
       "intellect devourer": 0.55,
@@ -281,7 +271,6 @@ export const aberrationProfile = {
 
     currency: {
       type: "currency",
-      // Colonies and lairs keep trophies/coin; wild crawlers less so.
       denominations: {
         cp: { min: 0, max: 10, chance: 0.25 },
         sp: { min: 0, max: 14, chance: 0.55 },
@@ -305,7 +294,6 @@ export const aberrationProfile = {
 
     equipment: {
       type: "equipment",
-      // Thrall gear / lair trophies on the sheet when present.
       chances: {
         weapon: 0.55,
         armor: 0.35,

@@ -1,9 +1,3 @@
-/**
- * Shared pool fragments for civilized humanoid profiles.
- * Keeps human / elf / dwarf / halfling profiles consistent without generator branching.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile["pools"]["equipment"]} */
 export const CIVILIZED_EQUIPMENT = {
   type: "equipment",
   chances: {
@@ -25,11 +19,6 @@ export const CIVILIZED_EQUIPMENT = {
   }
 };
 
-/**
- * @param {object} denominations
- * @param {object} [crScale]
- * @returns {object}
- */
 export function civilizedCurrency(denominations, crScale = { cp: 2, sp: 0.75, gp: 0.35 }) {
   return {
     type: "currency",
@@ -45,10 +34,6 @@ export function civilizedCurrency(denominations, crScale = { cp: 2, sp: 0.75, gp
   };
 }
 
-/**
- * @param {string[]} definitionIds
- * @param {object} [overrides]
- */
 export function junkPool(definitionIds, overrides = {}) {
   return {
     type: "poolPick",
@@ -70,10 +55,6 @@ export function junkPool(definitionIds, overrides = {}) {
   };
 }
 
-/**
- * @param {string[]} definitionIds
- * @param {object} [overrides]
- */
 export function trinketPool(definitionIds, overrides = {}) {
   return {
     type: "poolPick",
@@ -95,10 +76,6 @@ export function trinketPool(definitionIds, overrides = {}) {
   };
 }
 
-/**
- * @param {string[]} definitionIds
- * @param {object} [overrides]
- */
 export function storyPool(definitionIds, overrides = {}) {
   return {
     type: "poolPick",

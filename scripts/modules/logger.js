@@ -1,8 +1,5 @@
 import { MODULE_ID } from "./constants.js";
 
-/**
- * Prefixed logging. Detailed logs only when debug setting is enabled.
- */
 export const log = {
   info(...args) {
     console.log("LootForge |", ...args);

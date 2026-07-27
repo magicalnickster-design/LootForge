@@ -1,11 +1,3 @@
-/**
- * Generate corpse loot from creature profiles.
- *
- * Supports:
- * - Legacy `drops[]` profiles (wolf, animated armor) — unchanged behaviour
- * - Multi-pool `pools` profiles (goblin, orc, spider, …) — generic pool runners
- */
-
 import {
   buildItemSnapshot,
   formatDefinitionValue,
@@ -59,11 +51,6 @@ const CURRENCY_META = {
   }
 };
 
-/**
- * Map a skill total to roll quality.
- * @param {number} total
- * @returns {string}
- */
 export function qualityFromSurvivalTotal(total) {
   const n = Number(total) || 0;
   if (n >= 25) return "exceptional";
@@ -73,22 +60,12 @@ export function qualityFromSurvivalTotal(total) {
   return "poor";
 }
 
-/**
- * @param {string} quality
- * @param {number} [steps=1]
- * @returns {string}
- */
 function bumpQuality(quality, steps = 1) {
   const idx = QUALITY_ORDER.indexOf(quality);
   if (idx < 0) return quality;
   return QUALITY_ORDER[Math.min(idx + steps, QUALITY_ORDER.length - 1)];
 }
 
-/**
- * @param {object} drop
- * @param {string} rollQuality
- * @returns {string|null}
- */
 function resolveDropDefinitionId(drop, rollQuality) {
   if (drop?.definitionByQuality) {
     return drop.definitionByQuality[rollQuality]
@@ -130,13 +107,6 @@ function applyContextQuantityBonus(qty, context, { allowBonus = true, useSizeBon
   return Math.max(0, result);
 }
 
-/**
- * Profile-driven quantity multiplier (e.g. wyrmling vs ancient dragon).
- * Kept generic — profiles declare `lootScale`; the generator does not hardcode creatures.
- * @param {object|null} profile
- * @param {object|null} context
- * @returns {number}
- */
 export function resolveLootScale(profile, context) {
   const cfg = profile?.lootScale;
   if (!cfg) return 1;
@@ -156,11 +126,6 @@ export function resolveLootScale(profile, context) {
   return Math.max(0, Number(cfg.default ?? 1) || 1);
 }
 
-/**
- * @param {number} qty
- * @param {number} scale
- * @returns {number}
- */
 function scaleQuantity(qty, scale) {
   if (!Number.isFinite(scale) || scale === 1) return Math.max(0, qty);
   if (qty <= 0 || scale <= 0) return 0;
@@ -174,12 +139,6 @@ function emptyCurrency() {
   return { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 };
 }
 
-/**
- * Build a stored corpse loot entry from a definition + quantity.
- * @param {string} definitionId
- * @param {number} quantity
- * @returns {Promise<import("./loot-storage.js").CorpseLootItem|null>}
- */
 export async function buildLootEntry(definitionId, quantity) {
   const def = getLootDefinition(definitionId);
   if (!def || quantity <= 0) return null;
@@ -201,11 +160,6 @@ export async function buildLootEntry(definitionId, quantity) {
   };
 }
 
-/**
- * @param {string} denom
- * @param {number} amount
- * @returns {import("./loot-storage.js").CorpseLootItem|null}
- */
 export function buildCurrencyEntry(denom, amount) {
   const key = String(denom || "").toLowerCase();
   const qty = Math.floor(Number(amount) || 0);
@@ -229,11 +183,6 @@ export function buildCurrencyEntry(denom, amount) {
   };
 }
 
-/**
- * Aggregate currency from corpse entries.
- * @param {import("./loot-storage.js").CorpseLootItem[]} items
- * @returns {object}
- */
 export function aggregateCurrencyFromItems(items) {
   const total = emptyCurrency();
   for (const entry of items ?? []) {
@@ -245,16 +194,12 @@ export function aggregateCurrencyFromItems(items) {
   return total;
 }
 
-/**
- * Legacy flat `drops[]` generation (wolf / animated armor).
- */
 async function generateFromDrops(profile, {
   context,
   rollQuality,
   isNatural20
 }) {
   const enableRare = getSetting("enableRareDrops");
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   const fallbackDefs = [];
 
@@ -295,10 +240,6 @@ async function generateFromDrops(profile, {
   return { items, currency: emptyCurrency() };
 }
 
-/**
- * @param {object[]} drops
- * @param {object} options
- */
 async function runDefinitionsPool(drops, {
   context,
   rollQuality,
@@ -307,7 +248,6 @@ async function runDefinitionsPool(drops, {
   lootScale = 1,
   useSizeBonus = true
 }) {
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   const fallbackDefs = [];
 
@@ -338,12 +278,7 @@ async function runDefinitionsPool(drops, {
   return items;
 }
 
-/**
- * @param {object} pool
- * @param {object} options
- */
 function runCurrencyPool(pool, { context, rollQuality, lootScale = 1 }) {
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   const currency = emptyCurrency();
   const cr = Math.max(0, Number(context?.challengeRating) || 0);
@@ -370,24 +305,18 @@ function runCurrencyPool(pool, { context, rollQuality, lootScale = 1 }) {
   return { items, currency };
 }
 
-/**
- * @param {object} pool
- * @param {object} options
- */
 async function runEquipmentPool(pool, {
   actor,
   context,
   rollQuality,
   lootScale = 1
 }) {
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   if (!actor) return items;
 
   const scanned = scanActorEquipment(actor);
   if (!scanned.length) return items;
 
-  // Shuffle so maxDrops is not biased by sheet order.
   const shuffled = [...scanned].sort(() => (chanceSucceeds(0.5) ? -1 : 1));
   const baseMax = Math.max(0, Number(pool.maxDrops ?? 99));
   const maxDrops = Math.max(0, Math.round(baseMax * (lootScale || 1)));
@@ -411,7 +340,6 @@ async function runEquipmentPool(pool, {
     delete raw._stats;
     if (raw.ownership) delete raw.ownership;
 
-    // Drop a single unit even if the NPC stacked multiples.
     raw.system ??= {};
     raw.system.quantity = 1;
 
@@ -454,12 +382,7 @@ function EQUIPMENT_QUALITY_BLURB(quality) {
   }[quality] ?? "";
 }
 
-/**
- * @param {object} pool
- * @param {object} options
- */
 async function runPoolPick(pool, { rollQuality, enableRare, lootScale = 1 }) {
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   if (pool.rare && !enableRare) return items;
 
@@ -474,7 +397,6 @@ async function runPoolPick(pool, { rollQuality, enableRare, lootScale = 1 }) {
   const poolIds = [...(pool.definitionIds ?? [])].filter((id) => getLootDefinition(id));
   if (!poolIds.length) return items;
 
-  // Sample without replacement when possible.
   const picks = [];
   const available = [...poolIds];
   for (let i = 0; i < count && available.length; i += 1) {
@@ -489,12 +411,6 @@ async function runPoolPick(pool, { rollQuality, enableRare, lootScale = 1 }) {
   return items;
 }
 
-/**
- * Build a corpse entry by cloning an official system Item document.
- * @param {Item|object} doc
- * @param {number} [quantity=1]
- * @returns {Promise<import("./loot-storage.js").CorpseLootItem|null>}
- */
 export async function buildSystemItemEntry(doc, quantity = 1) {
   if (!doc) return null;
   const qty = Math.max(1, Math.floor(Number(quantity) || 1));
@@ -544,13 +460,7 @@ export async function buildSystemItemEntry(doc, quantity = 1) {
   };
 }
 
-/**
- * Pick official dnd5e/PHB-equipment items from system packs by rarity weights.
- * @param {object} pool
- * @param {object} options
- */
 async function runSystemItemPool(pool, { rollQuality, enableRare, lootScale = 1 }) {
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   if (pool.rare && !enableRare) return items;
 
@@ -589,7 +499,6 @@ async function runSystemItemPool(pool, { rollQuality, enableRare, lootScale = 1 
     try {
       const doc = typeof fromUuid === "function" ? await fromUuid(choice.uuid) : null;
       if (!doc) continue;
-      // Consumables / ammo often feel better as a small stack.
       let qty = 1;
       if (doc.type === "consumable") {
         const subtype = String(doc.system?.type?.value ?? "").toLowerCase();
@@ -606,9 +515,6 @@ async function runSystemItemPool(pool, { rollQuality, enableRare, lootScale = 1 
   return items;
 }
 
-/**
- * Multi-pool generation (goblin and future humanoids).
- */
 async function generateFromPools(profile, {
   context,
   actor,
@@ -616,14 +522,12 @@ async function generateFromPools(profile, {
   isNatural20
 }) {
   const enableRare = getSetting("enableRareDrops");
-  /** @type {import("./loot-storage.js").CorpseLootItem[]} */
   const items = [];
   let currency = emptyCurrency();
   const pools = profile.pools ?? {};
   const lootScale = resolveLootScale(profile, context);
   const useSizeBonus = !profile.lootScale;
 
-  // Stable pool order for handcrafted feel.
   const order = [
     "monsterParts",
     "currency",
@@ -676,7 +580,6 @@ async function generateFromPools(profile, {
     }
   }
 
-  // Any extra custom pools not in the default order.
   for (const [key, pool] of Object.entries(pools)) {
     if (order.includes(key)) continue;
     if (pool?.type === "poolPick") {
@@ -696,7 +599,6 @@ async function generateFromPools(profile, {
   }
 
   if (!items.length) {
-    // Absolute last resort for multi-pool profiles: one junk or ear if defined.
     const fallbackId = pools.monsterParts?.drops?.[0]?.definitionId
       ?? pools.junk?.definitionIds?.[0];
     if (fallbackId) {
@@ -708,15 +610,6 @@ async function generateFromPools(profile, {
   return { items, currency };
 }
 
-/**
- * @param {object} options
- * @param {object} options.context
- * @param {number} options.survivalTotal
- * @param {number} [options.naturalDie=0]
- * @param {boolean} [options.isNatural20=false]
- * @param {Actor|null} [options.actor]  Required for equipment pools
- * @returns {Promise<{ profileId: string, rollQuality: string, items: object[], currency: object }>}
- */
 export async function generateCreatureLoot({
   context,
   survivalTotal,
@@ -779,13 +672,6 @@ export async function generateCreatureLoot({
   };
 }
 
-/**
- * @param {object} context
- * @param {string} rollQuality
- * @param {string} definitionId
- * @param {object} [entry]  Original entry (for equipment re-quality)
- * @returns {Promise<import("./loot-storage.js").CorpseLootItem|null>}
- */
 export async function rerollSingleEntry(context, rollQuality, definitionId, entry = null) {
   if (entry?.kind === "currency" && entry.currency) {
     const denom = Object.keys(entry.currency).find((k) => entry.currency[k] > 0);
@@ -829,7 +715,6 @@ export async function rerollSingleEntry(context, rollQuality, definitionId, entr
     return false;
   });
 
-  // Multi-pool definition drops / junk / trinkets / story.
   if (!drop && profile?.pools) {
     return buildLootEntry(definitionId, 1);
   }

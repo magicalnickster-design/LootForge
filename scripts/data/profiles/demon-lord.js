@@ -1,8 +1,3 @@
-/**
- * Tier 5 boss — Demon Lord (and named lords: Orcus, Demogorgon, Graz'zt, etc.).
- * Guaranteed horn / crown fragment, ichor concentrate, soul-contract lore.
- */
-
 import {
   BOSS_CURRENCY,
   BOSS_EQUIPMENT,
@@ -11,7 +6,6 @@ import {
   bossPoolPick
 } from "./_boss-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const demonLordProfile = {
   id: "demon-lord",
   matchNames: [

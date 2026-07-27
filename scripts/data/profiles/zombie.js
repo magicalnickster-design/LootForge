@@ -1,9 +1,3 @@
-/**
- * Zombie — undead multi-pool profile.
- * Sheet equipment (burial goods, scavenged gear) drops when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const zombieProfile = {
   id: "zombie",
   matchNames: ["zombie"],

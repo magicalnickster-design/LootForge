@@ -1,11 +1,3 @@
-/**
- * Elemental — multi-pool profile for fire/water/earth/air elementals and myrmidons.
- *
- * Quantities scale by form via `lootScale` (base elementals mid, myrmidons higher).
- * Equipment comes from the NPC inventory when present (common on myrmidons).
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const elementalProfile = {
   id: "elemental",
   matchNames: [
@@ -29,7 +21,6 @@ export const elementalProfile = {
   matchTypes: ["elemental"],
   matchSubtypes: ["elemental", "fire", "water", "earth", "air"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "fire elemental myrmidon": 1.35,
       "water elemental myrmidon": 1.35,
@@ -236,7 +227,6 @@ export const elementalProfile = {
 
     currency: {
       type: "currency",
-      // Elementals rarely carry coin; myrmidons / conjured servants may.
       denominations: {
         cp: { min: 0, max: 8, chance: 0.2 },
         sp: { min: 0, max: 10, chance: 0.35 },
@@ -260,7 +250,6 @@ export const elementalProfile = {
 
     equipment: {
       type: "equipment",
-      // Myrmidons often have weapons/armor on the sheet; wild elementals rarely do.
       chances: {
         weapon: 0.7,
         armor: 0.55,

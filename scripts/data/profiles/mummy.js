@@ -1,9 +1,3 @@
-/**
- * Mummy — undead multi-pool profile.
- * Sheet equipment (tomb goods, ceremonial gear) drops when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const mummyProfile = {
   id: "mummy",
   matchNames: ["mummy", "mummy lord"],

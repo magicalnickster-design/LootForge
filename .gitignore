@@ -1,7 +1,5 @@
 node_modules/
 .npm/
 .DS_Store
-
-# Local logs — do NOT ignore packs/loot-items/*.log (LevelDB needs those files)
 /*.log
 logs/

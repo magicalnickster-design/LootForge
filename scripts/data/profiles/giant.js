@@ -1,11 +1,3 @@
-/**
- * Giant — multi-pool profile for hill, stone, frost, fire, cloud, and storm giants.
- *
- * Quantities scale by giant type via `lootScale` (hill smaller, storm larger).
- * Equipment comes from the NPC inventory when present (bags, weapons, armor).
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const giantProfile = {
   id: "giant",
   matchNames: [
@@ -20,11 +12,8 @@ export const giantProfile = {
   matchWholeWords: true,
   matchTypes: ["giant"],
   matchSubtypes: ["giant"],
-  // Avoid matching "giant spider", "giant wolf spider", etc. via type alone —
-  // those are beasts/monstrosities already handled by spider/monstrosity profiles.
   excludeNames: ["giant scorpion", "giant frog", "giant snake", "giant poisonous snake", "giant constrictor snake", "giant spider", "giant wolf", "giant rat", "giant eagle", "giant owl", "giant toad", "giant weasel", "giant crab", "giant crocodile", "giant constrictor", "giant centipede", "giant bat", "giant goat", "giant hyena", "giant lizard", "giant octopus", "giant seahorse", "giant shark", "giant vulture", "giant elk", "giant boar", "giant fire beetle", "giant poisonous", "giant badger"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "storm giant": 1.6,
       "cloud giant": 1.3,
@@ -206,7 +195,6 @@ export const giantProfile = {
 
     currency: {
       type: "currency",
-      // Giants keep tribute and pouch-coin — richer than humanoids, CR-scaled.
       denominations: {
         cp: { min: 0, max: 30, chance: 0.55 },
         sp: { min: 2, max: 24, chance: 0.9 },
@@ -230,7 +218,6 @@ export const giantProfile = {
 
     equipment: {
       type: "equipment",
-      // Giants usually carry weapons/armor/bags on the sheet.
       chances: {
         weapon: 0.9,
         armor: 0.55,

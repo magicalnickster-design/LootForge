@@ -1,13 +1,5 @@
-/**
- * Unknown creature — last-resort loot when LootForge cannot identify the
- * creature by name, subtype, or type. Pocket change plus small story scraps
- * (maps, notes, posters). No monster parts.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const unknownCreatureProfile = {
   id: "unknown",
-  // Never name-matched — only returned as the final resolve fallback.
   matchNames: [],
   lootScale: {
     bySize: {

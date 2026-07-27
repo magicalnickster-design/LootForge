@@ -1,10 +1,3 @@
-/**
- * Celestial — multi-pool profile for pegasi, unicorns, couatls, planetars, and solars.
- *
- * Quantities scale by form via `lootScale` (pegasus smaller, solar larger).
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const celestialProfile = {
   id: "celestial",
   matchNames: [
@@ -19,10 +12,8 @@ export const celestialProfile = {
   matchWholeWords: true,
   matchTypes: ["celestial"],
   matchSubtypes: ["celestial", "angel"],
-  // Avoid solar/dragon name collisions and mundane "solar" uses.
   excludeNames: ["dragon", "eclipse", "panel", "flare", "system"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       planetar: 1.55,
       solar: 1.9,

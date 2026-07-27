@@ -1,37 +1,6 @@
-/**
- * LootForge definition registry.
- *
- * Canonical Item documents live in the module compendium:
- *   Compendium.lootforge.loot-items
- *
- * This file maps stable definitionIds → compendium UUIDs and keeps a thin
- * fallback snapshot for worlds where UUID resolution is unavailable.
- */
-
 import { MODULE_ID } from "../modules/constants.js";
-
-/** Pack collection id as declared in module.json. */
 export const LOOT_ITEMS_PACK = `${MODULE_ID}.loot-items`;
 
-/**
- * @typedef {object} LootDefinition
- * @property {string} id
- * @property {string} itemUuid              Canonical Compendium UUID
- * @property {string} documentId            Fixed pack document _id
- * @property {string} name                  Display name (UI / fallback)
- * @property {string} category
- * @property {string} rarity
- * @property {string[]} tags
- * @property {string} img
- * @property {string} description
- * @property {{ value: number, denomination: string }} price
- * @property {{ value: number, units: string }} weight
- */
-
-/**
- * Stable document IDs used when packing packs/src/loot-items.
- * Changing these breaks existing UUID references — treat as immutable.
- */
 const DOC_IDS = Object.freeze({
   "wolf-pelt": "LFWolfPelt000001",
   "wolf-fang": "LFWolfFang000001",
@@ -478,15 +447,10 @@ const DOC_IDS = Object.freeze({
   "ranger-warning-scrap": "LFRangerWarnScrp",
 });
 
-/**
- * @param {string} documentId
- * @returns {string}
- */
 export function compendiumItemUuid(documentId) {
   return `Compendium.${LOOT_ITEMS_PACK}.Item.${documentId}`;
 }
 
-/** @type {Record<string, LootDefinition>} */
 export const LOOT_DEFINITIONS = {
   "wolf-pelt": {
     id: "wolf-pelt",
@@ -6267,31 +6231,14 @@ export const LOOT_DEFINITIONS = {
   }
 };
 
-/**
- * @param {string} definitionId
- * @returns {LootDefinition|null}
- */
 export function getLootDefinition(definitionId) {
   return LOOT_DEFINITIONS[definitionId] ?? null;
 }
 
-/**
- * @returns {LootDefinition[]}
- */
 export function listLootDefinitions() {
   return Object.values(LOOT_DEFINITIONS);
 }
 
-/**
- * Build a fallback Item create-data object when the compendium UUID cannot be resolved.
- * Not the canonical source — the pack Item is.
- *
- * @param {LootDefinition} def
- * @param {object} [options]
- * @param {number} [options.quantity=1]
- * @param {string} [options.sourceCreature=""]
- * @returns {object}
- */
 export function buildFallbackItemData(def, { quantity = 1, sourceCreature = "" } = {}) {
   const qty = Math.max(1, Math.floor(Number(quantity) || 1));
   return {
@@ -6330,9 +6277,6 @@ export function buildFallbackItemData(def, { quantity = 1, sourceCreature = "" }
   };
 }
 
-/**
- * @deprecated Use buildFallbackItemData / resolveItemDataForTransfer
- */
 export function definitionToItemData(definitionOrId, options = {}) {
   const def = typeof definitionOrId === "string"
     ? getLootDefinition(definitionOrId)
@@ -6341,15 +6285,6 @@ export function definitionToItemData(definitionOrId, options = {}) {
   return buildFallbackItemData(def, options);
 }
 
-/**
- * Clone create-data from a resolved Item document (never mutates the source).
- * @param {Item|object} doc
- * @param {object} [options]
- * @param {number} [options.quantity=1]
- * @param {string} [options.sourceCreature=""]
- * @param {LootDefinition|null} [options.definition]
- * @returns {object}
- */
 export function cloneItemDataFromDocument(doc, {
   quantity = 1,
   sourceCreature = "",
@@ -6385,22 +6320,11 @@ export function cloneItemDataFromDocument(doc, {
   return data;
 }
 
-/**
- * Resolve Item create-data: pack UUID → stored snapshot → definition fallback.
- *
- * @param {object} entry  Corpse loot entry
- * @param {object} [options]
- * @param {number} [options.quantity]
- * @param {string} [options.sourceCreature=""]
- * @returns {Promise<object>}
- */
 export async function resolveItemDataForTransfer(entry, {
   quantity,
   sourceCreature = ""
 } = {}) {
   const qty = Math.max(1, Math.floor(Number(quantity ?? entry.quantity) || 1));
-
-  // Equipment / official system-item clones always prefer their stored snapshot.
   if ((entry?.kind === "equipment" || entry?.kind === "system-item") && entry.itemData) {
     const duplicate = globalThis.foundry?.utils?.duplicate
       ?? ((obj) => JSON.parse(JSON.stringify(obj)));
@@ -6422,11 +6346,7 @@ export async function resolveItemDataForTransfer(entry, {
   }
 
   const def = getLootDefinition(entry.definitionId);
-  // Prefer UUID already stored on the corpse entry; otherwise the definition UUID.
   const uuid = entry.itemUuid || def?.itemUuid;
-
-  // 1) Canonical path: clone from the module Item compendium (read-only source).
-  //    Never update/create inside the pack — only clone create-data for the actor.
   if (uuid && typeof globalThis.fromUuid === "function") {
     try {
       const doc = await globalThis.fromUuid(uuid);
@@ -6441,8 +6361,6 @@ export async function resolveItemDataForTransfer(entry, {
       console.warn("LootForge | fromUuid failed, using snapshot/fallback", uuid, err);
     }
   }
-
-  // 2) Stored snapshot from generation time (or v0.2.1+ corpse entries).
   if (entry.itemData) {
     const duplicate = globalThis.foundry?.utils?.duplicate
       ?? ((obj) => JSON.parse(JSON.stringify(obj)));
@@ -6461,19 +6379,10 @@ export async function resolveItemDataForTransfer(entry, {
     };
     return data;
   }
-
-  // 3) Legacy v0.2.0 corpse entries / corrupted UUID: definition fallback snapshot.
   if (!def) throw new Error(`Unknown LootForge definition: ${entry.definitionId}`);
   return buildFallbackItemData(def, { quantity: qty, sourceCreature });
 }
 
-/**
- * Build a quantity-neutral snapshot for corpse storage.
- * Prefer cloning from the live pack document.
- *
- * @param {LootDefinition} def
- * @returns {Promise<object>}
- */
 export async function buildItemSnapshot(def) {
   if (def?.itemUuid && typeof fromUuid === "function") {
     try {
@@ -6483,7 +6392,6 @@ export async function buildItemSnapshot(def) {
           quantity: 1,
           definition: def
         });
-        // Snapshot stores quantity 1; transfer overwrites.
         return data;
       }
     } catch (err) {
@@ -6493,10 +6401,6 @@ export async function buildItemSnapshot(def) {
   return buildFallbackItemData(def, { quantity: 1 });
 }
 
-/**
- * @param {LootDefinition} def
- * @returns {string}
- */
 export function formatDefinitionValue(def) {
   if (!def?.price) return "—";
   return `${def.price.value} ${def.price.denomination}`;

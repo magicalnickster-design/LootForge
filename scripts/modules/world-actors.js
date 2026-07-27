@@ -1,8 +1,3 @@
-/**
- * Seed world Actors used as drag-and-drop loot containers.
- * GM-only; safe to call on every ready (find-or-create).
- */
-
 import { MODULE_ID } from "./constants.js";
 import { log } from "./logger.js";
 
@@ -10,13 +5,8 @@ export const CONTAINER_KIND_CHEST = "chest";
 export const CONTAINER_KIND_BLANK = "blank";
 
 const CHEST_IMG = `modules/${MODULE_ID}/assets/tokens/chest.svg`;
-/** Real transparent PNG — Foundry rejects empty/none SVG textures for drag-drop. */
 const BLANK_IMG = `modules/${MODULE_ID}/assets/tokens/blank.png`;
 
-/**
- * @param {Actor|null|undefined} actor
- * @returns {boolean}
- */
 export function isLootContainerActor(actor) {
   if (!actor) return false;
   try {
@@ -27,10 +17,6 @@ export function isLootContainerActor(actor) {
   return Boolean(actor.flags?.[MODULE_ID]?.isContainer);
 }
 
-/**
- * @param {Actor|null|undefined} actor
- * @returns {string|null}
- */
 export function getContainerKind(actor) {
   if (!isLootContainerActor(actor)) return null;
   try {
@@ -42,9 +28,6 @@ export function getContainerKind(actor) {
   }
 }
 
-/**
- * @returns {Promise<Folder|null>}
- */
 async function ensureLootForgeActorFolder() {
   const existing = game.folders?.find((f) => f.type === "Actor" && f.name === "LootForge");
   if (existing) return existing;
@@ -63,25 +46,12 @@ async function ensureLootForgeActorFolder() {
   }
 }
 
-/**
- * @param {string} kind
- * @returns {Actor|null}
- */
 function findContainerActor(kind) {
   return game.actors?.find((actor) => (
     isLootContainerActor(actor) && getContainerKind(actor) === kind
   )) ?? null;
 }
 
-/**
- * dnd5e NPC create data for a 1 HP loot container.
- * @param {object} options
- * @param {string} options.name
- * @param {string} options.kind
- * @param {string} options.img
- * @param {string|null} options.folderId
- * @returns {object}
- */
 function buildContainerActorData({ name, kind, img, folderId }) {
   return {
     name,
@@ -128,8 +98,6 @@ function buildContainerActorData({ name, kind, img, folderId }) {
         src: img,
         scaleX: 1,
         scaleY: 1,
-        // Blank containers stay fully visible to the sparkle overlay (alpha 1)
-        // while the art itself is transparent.
         alphaThreshold: 0
       },
       bar1: { attribute: null },
@@ -146,18 +114,9 @@ function buildContainerActorData({ name, kind, img, folderId }) {
   };
 }
 
-/**
- * @param {object} spec
- * @param {string} spec.name
- * @param {string} spec.kind
- * @param {string} spec.img
- * @param {string|null} spec.folderId
- * @returns {Promise<Actor|null>}
- */
 async function ensureContainerActor({ name, kind, img, folderId }) {
   const existing = findContainerActor(kind);
   if (existing) {
-    // Keep flags/HP correct if an older seed drifted.
     const patch = {};
     if (!existing.getFlag(MODULE_ID, "isContainer")) {
       patch[`flags.${MODULE_ID}.isContainer`] = true;
@@ -201,10 +160,6 @@ async function ensureContainerActor({ name, kind, img, folderId }) {
   }
 }
 
-/**
- * Ensure Chest + Container actors exist in the world Actors tab.
- * Call from Hooks.once("ready") as GM only.
- */
 export async function ensureWorldLootActors() {
   if (!game.user?.isGM) return;
   if (game.system?.id !== "dnd5e") return;
@@ -227,10 +182,6 @@ export async function ensureWorldLootActors() {
   });
 }
 
-/**
- * Stamp container flags onto placed tokens so sparkles / loot gates stay reliable
- * even for unlinked copies.
- */
 export function registerContainerTokenHooks() {
   Hooks.on("createToken", async (tokenDoc) => {
     if (!game.user?.isGM || !tokenDoc) return;

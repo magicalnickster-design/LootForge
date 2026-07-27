@@ -1,9 +1,3 @@
-/**
- * WoW-style loot sparkles around dead creatures.
- * Starts when a creature is marked dead / HP reaches 0; clears when fully looted.
- * Fully looted corpses are hidden from the canvas (GM-authoritative).
- */
-
 import { MODULE_ID } from "./constants.js";
 import { isLootableTarget } from "./creature-context.js";
 import { log } from "./logger.js";
@@ -15,10 +9,8 @@ import {
   isLootGenerated
 } from "./loot-storage.js";
 
-/** @type {Map<string, PIXI.Container>} token id → overlay container */
 const overlays = new Map();
 
-/** @type {Map<string, Function>} token id → ticker callback */
 const tickers = new Map();
 
 let hooksRegistered = false;
@@ -26,10 +18,6 @@ let starTexture = null;
 
 const STAR_COUNT = 10;
 
-/**
- * Tiny white cross/star texture (canvas-generated — Pixi 7/8 safe).
- * @returns {PIXI.Texture}
- */
 function getStarTexture() {
   if (starTexture) return starTexture;
 
@@ -39,7 +27,6 @@ function getStarTexture() {
   canvasEl.height = size;
   const ctx = canvasEl.getContext("2d");
 
-  // Soft glow
   const glow = ctx.createRadialGradient(8, 8, 0, 8, 8, 7);
   glow.addColorStop(0, "rgba(255,255,255,0.95)");
   glow.addColorStop(0.35, "rgba(255,255,240,0.55)");
@@ -47,11 +34,9 @@ function getStarTexture() {
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, size, size);
 
-  // Pixel cross (WoW-like sparkle)
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(7, 1, 2, 14);
   ctx.fillRect(1, 7, 14, 2);
-  // Center diamond nub
   ctx.fillRect(6, 6, 4, 4);
   ctx.fillStyle = "rgba(255,255,255,0.9)";
   ctx.fillRect(5, 7, 1, 2);
@@ -63,36 +48,19 @@ function getStarTexture() {
   return starTexture;
 }
 
-/**
- * Whether this client should render loot sparkles on the token.
- * Shown as soon as the creature is dead; hidden after it is fully looted.
- * @param {TokenDocument} tokenDoc
- */
 export function shouldShowLootIndicator(tokenDoc) {
   if (!tokenDoc || !getSetting("showLootIndicators")) return false;
-  // Dead creatures OR LootForge Chest/Container tokens.
   if (!isLootableTarget(tokenDoc, tokenDoc.actor)) return false;
-  // Fully emptied targets lose sparkles (and are hidden separately).
   if (isCorpseLooted(tokenDoc) && !hasRemainingLoot(tokenDoc)) return false;
   const state = getCorpseState(tokenDoc);
   if (state.looted && !hasRemainingLoot(tokenDoc)) return false;
   return true;
 }
 
-/**
- * Sparkles are visual-only. Looting is always Token double-left-click.
- * Kept for API compatibility / future use.
- * @param {TokenDocument} tokenDoc
- */
 export function canInteractWithLootIndicator(tokenDoc) {
   return false;
 }
 
-/**
- * Hide fully-looted corpses; restore visibility if LootForge previously hid them.
- * GM-only — players cannot update enemy tokens.
- * @param {TokenDocument} tokenDoc
- */
 export async function syncLootedCorpseVisibility(tokenDoc) {
   if (!game.user.isGM || !tokenDoc) return;
 
@@ -125,17 +93,11 @@ export async function syncLootedCorpseVisibility(tokenDoc) {
   }
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- */
 export async function syncLootIndicator(tokenDoc) {
   if (!tokenDoc) return;
   await refreshLootIndicators({ tokenDoc });
 }
 
-/**
- * @param {{ tokenDoc?: TokenDocument, tokenUuid?: string }} [scope]
- */
 export async function refreshLootIndicators(scope = {}) {
   if (!canvas?.ready || !canvas.tokens) return;
 
@@ -159,10 +121,6 @@ export async function refreshLootIndicators(scope = {}) {
   }
 }
 
-/**
- * @param {Token} token
- * @param {PIXI.Container} container
- */
 function layoutSparkles(token, container) {
   const w = token.w ?? token.document.width * canvas.grid.size;
   const h = token.h ?? token.document.height * canvas.grid.size;
@@ -170,7 +128,6 @@ function layoutSparkles(token, container) {
 
   for (let i = 0; i < stars.length; i++) {
     const star = stars[i];
-    // Scatter around the token silhouette (ellipse ring).
     const angle = (i / stars.length) * Math.PI * 2 + (i % 3) * 0.35;
     const rx = w * (0.28 + (i % 4) * 0.08);
     const ry = h * (0.22 + (i % 3) * 0.1);
@@ -190,7 +147,6 @@ function layoutSparkles(token, container) {
     star.tint = i % 2 === 0 ? 0xffffff : 0xfff6d0;
   }
 
-  // No hit target — sparkles must not steal Token double-clicks.
   const hit = container.children.find((c) => c.name === "lootforgeHit");
   if (hit) {
     container.removeChild(hit);
@@ -200,10 +156,6 @@ function layoutSparkles(token, container) {
   container.position.set(w / 2, h / 2);
 }
 
-/**
- * @param {string} tokenId
- * @param {PIXI.Container} container
- */
 function startSparkleAnimation(tokenId, container) {
   stopSparkleAnimation(tokenId);
 
@@ -212,7 +164,6 @@ function startSparkleAnimation(tokenId, container) {
 
   let elapsed = 0;
   const tick = (tickerDelta) => {
-    // Pixi 7 passes delta time; Pixi 8 may pass ticker instance.
     const delta = typeof tickerDelta === "number"
       ? tickerDelta
       : (tickerDelta?.deltaTime ?? 1);
@@ -234,9 +185,6 @@ function startSparkleAnimation(tokenId, container) {
   tickers.set(tokenId, tick);
 }
 
-/**
- * @param {string} tokenId
- */
 function stopSparkleAnimation(tokenId) {
   const tick = tickers.get(tokenId);
   if (!tick) return;
@@ -248,9 +196,6 @@ function stopSparkleAnimation(tokenId) {
   tickers.delete(tokenId);
 }
 
-/**
- * @param {Token} token
- */
 async function upsertOverlay(token) {
   const tokenDoc = token?.document;
   if (!tokenDoc) return;
@@ -299,10 +244,6 @@ async function upsertOverlay(token) {
   }
 }
 
-/**
- * @param {string} id
- * @param {PIXI.Container} container
- */
 function destroyOverlay(id, container) {
   stopSparkleAnimation(id);
   try {
@@ -315,10 +256,6 @@ function destroyOverlay(id, container) {
   overlays.delete(id);
 }
 
-/**
- * Refresh sparkles for every token linked to an actor (death / HP changes).
- * @param {Actor} actor
- */
 async function refreshIndicatorsForActor(actor) {
   if (!actor || !canvas?.ready || !canvas.tokens) return;
   const tokens = canvas.tokens.placeables.filter((t) => t.actor?.id === actor.id);
@@ -327,9 +264,6 @@ async function refreshIndicatorsForActor(actor) {
   }
 }
 
-/**
- * Register canvas/token hooks for indicator refresh.
- */
 export function registerLootIndicatorHooks() {
   if (hooksRegistered) return;
   hooksRegistered = true;
@@ -353,7 +287,6 @@ export function registerLootIndicatorHooks() {
     if (container) destroyOverlay(id, container);
   });
 
-  // Death is often applied via actor HP / status effects, not token flags.
   Hooks.on("updateActor", async (actor, changes) => {
     const hp = changes?.system?.attributes?.hp;
     if (hp === undefined && !changes?.system?.attributes) return;
@@ -390,10 +323,6 @@ export function registerLootIndicatorHooks() {
   log.debug("Loot sparkle hooks registered");
 }
 
-/**
- * CSS class helper kept for API compatibility.
- * @param {Token} token
- */
 export function applyTokenLootClass(token) {
   return shouldShowLootIndicator(token?.document);
 }

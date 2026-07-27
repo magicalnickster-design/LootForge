@@ -1,12 +1,3 @@
-/**
- * Beast — multi-pool profile for common MM beasts (boar, bear, great cats,
- * giant vermin/birds, crocodile, shark, etc.).
- *
- * Wolf and Spider stay on their dedicated profiles (matched first).
- * Dire Wolf continues to use the wolf profile.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const beastProfile = {
   id: "beast",
   matchNames: [
@@ -39,7 +30,6 @@ export const beastProfile = {
   ],
   matchWholeWords: true,
   matchTypes: ["beast"],
-  // Name-only (no subtype) so Wolf / Spider dedicated profiles are never stolen.
   excludeNames: [
     "spider",
     "wolf",
@@ -50,7 +40,6 @@ export const beastProfile = {
     "displacer"
   ],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "giant scorpion": 1.2,
       "giant constrictor snake": 1.15,
@@ -354,7 +343,6 @@ export const beastProfile = {
 
     currency: {
       type: "currency",
-      // Beasts rarely carry coin — occasional swallowed / nest scraps.
       denominations: {
         cp: { min: 0, max: 12, chance: 0.25 },
         sp: { min: 0, max: 6, chance: 0.15 },
@@ -376,7 +364,6 @@ export const beastProfile = {
 
     equipment: {
       type: "equipment",
-      // Occasional swallowed / nest victim gear from the sheet.
       chances: {
         weapon: 0.2,
         armor: 0.1,

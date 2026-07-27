@@ -1,9 +1,3 @@
-/**
- * Bugbear — goblinoid multi-pool profile (humanoid).
- * Equipment comes from the NPC inventory when present.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const bugbearProfile = {
   id: "bugbear",
   matchNames: ["bugbear"],

@@ -1,13 +1,5 @@
-/**
- * Resolve which character is looting / should receive assigned loot.
- */
-
 import { log } from "./logger.js";
 
-/**
- * @param {Actor|null} [excludeActor=null]
- * @returns {Actor[]}
- */
 export function getLooterCandidates(excludeActor = null) {
   const byId = new Map();
   const excludeId = excludeActor?.id;
@@ -31,10 +23,6 @@ export function getLooterCandidates(excludeActor = null) {
   return [...byId.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/**
- * @param {Actor[]} candidates
- * @returns {Promise<Actor|null>}
- */
 async function promptLooterChoice(candidates) {
   const escape = (value) => String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -69,12 +57,6 @@ async function promptLooterChoice(candidates) {
   return candidates.find((a) => a.id === looterId) ?? game.actors.get(looterId) ?? null;
 }
 
-/**
- * @param {object} [options]
- * @param {Actor|null} [options.excludeActor]
- * @param {boolean} [options.forcePrompt=false]
- * @returns {Promise<Actor|null>}
- */
 export async function resolveLooterActor({ excludeActor = null, forcePrompt = false } = {}) {
   if (!forcePrompt && game.user.character && game.user.character.id !== excludeActor?.id) {
     return game.user.character;
@@ -101,11 +83,6 @@ export async function resolveLooterActor({ excludeActor = null, forcePrompt = fa
   return promptLooterChoice(candidates);
 }
 
-/**
- * Users who own a given actor (for assignment notifications).
- * @param {Actor} actor
- * @returns {User[]}
- */
 export function ownersOfActor(actor) {
   if (!actor) return [];
   return game.users.filter((user) => {

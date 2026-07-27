@@ -1,12 +1,3 @@
-/**
- * Generic Undead — fallback multi-pool profile for undead that lack a
- * dedicated name profile (wight, specter, ghast, ghost, vampire, etc.).
- *
- * Zombie / Skeleton / Mummy / Lich / Lich King stay more specific and are
- * matched first. Also used as the creature-type fallback for `undead`.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const genericUndeadProfile = {
   id: "generic-undead",
   matchNames: [

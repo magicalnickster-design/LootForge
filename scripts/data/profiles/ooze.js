@@ -1,12 +1,3 @@
-/**
- * Ooze — multi-pool profile for gray ooze, gelatinous cube, black pudding,
- * and ochre jelly.
- *
- * Quantities scale by creature name via `lootScale` (gray ooze smaller,
- * black pudding larger). Equipment is undigested prey gear from the sheet.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const oozeProfile = {
   id: "ooze",
   matchNames: [
@@ -23,10 +14,8 @@ export const oozeProfile = {
   matchWholeWords: true,
   matchTypes: ["ooze"],
   matchSubtypes: ["ooze"],
-  // Avoid matching food/dessert names or unrelated cubes if possible.
   excludeNames: ["ice cube", "rubik", "sugar cube"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "gelatinous cube": 0.85,
       "black pudding": 1.25,
@@ -177,7 +166,6 @@ export const oozeProfile = {
 
     currency: {
       type: "currency",
-      // Undigested purses and coins floating inside.
       denominations: {
         cp: { min: 0, max: 20, chance: 0.55 },
         sp: { min: 0, max: 16, chance: 0.7 },
@@ -201,7 +189,6 @@ export const oozeProfile = {
 
     equipment: {
       type: "equipment",
-      // Classic cube/pudding gullet loot from the sheet.
       chances: {
         weapon: 0.65,
         armor: 0.4,

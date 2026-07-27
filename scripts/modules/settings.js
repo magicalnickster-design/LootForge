@@ -1,12 +1,8 @@
 import { MODULE_ID } from "./constants.js";
 
-/**
- * Register world settings for LootForge.
- */
 export function registerSettings() {
   const settings = [
     {
-      // Legacy key — Investigation is always required; hidden from config.
       key: "requireSurvivalRoll",
       name: "LOOTFORGE.Settings.RequireInvestigationRoll.Name",
       hint: "LOOTFORGE.Settings.RequireInvestigationRoll.Hint",
@@ -14,7 +10,6 @@ export function registerSettings() {
       config: false
     },
     {
-      // Legacy key — unused; hidden from config.
       key: "defaultSurvivalDC",
       name: "LOOTFORGE.Settings.DefaultInvestigationTotal.Name",
       hint: "LOOTFORGE.Settings.DefaultInvestigationTotal.Hint",
@@ -24,7 +19,6 @@ export function registerSettings() {
       config: false
     },
     {
-      // Legacy key — players always initiate; hidden from config.
       key: "manualGenerationOnly",
       name: "LOOTFORGE.Settings.ManualGenerationOnly.Name",
       hint: "LOOTFORGE.Settings.ManualGenerationOnly.Hint",
@@ -32,7 +26,6 @@ export function registerSettings() {
       config: false
     },
     {
-      // Legacy key — request-DM prompt removed; hidden from config.
       key: "allowPlayerRequestLoot",
       name: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Name",
       hint: "LOOTFORGE.Settings.AllowPlayerRequestLoot.Hint",
@@ -85,10 +78,6 @@ export function registerSettings() {
   }
 }
 
-/**
- * @param {string} key
- * @returns {*}
- */
 export function getSetting(key) {
   return game.settings.get(MODULE_ID, key);
 }

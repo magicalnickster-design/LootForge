@@ -1,8 +1,3 @@
-/**
- * Human — civilized humanoid multi-pool profile.
- * Equipment comes from the NPC's actual inventory when present.
- */
-
 import {
   CIVILIZED_EQUIPMENT,
   civilizedCurrency,
@@ -11,7 +6,6 @@ import {
   trinketPool
 } from "./_humanoid-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const humanProfile = {
   id: "human",
   matchNames: ["human"],

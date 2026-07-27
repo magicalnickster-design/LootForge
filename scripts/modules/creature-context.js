@@ -1,41 +1,7 @@
-/**
- * Normalized creature context for loot generation.
- * Safe against missing DDB / incomplete actor data.
- */
-
 import { MODULE_ID } from "./constants.js";
 import { log } from "./logger.js";
 import { isLootContainerActor } from "./world-actors.js";
 
-/**
- * @typedef {object} CreatureContext
- * @property {string|null} actorId
- * @property {string|null} tokenId
- * @property {string|null} sceneId
- * @property {string} name
- * @property {string} image
- * @property {string} actorType
- * @property {string} creatureType
- * @property {string} creatureSubtype
- * @property {number} challengeRating
- * @property {string} size
- * @property {boolean} isDead
- * @property {boolean} isContainer
- * @property {boolean} isNamed
- * @property {boolean} isBoss
- * @property {string[]} environmentTags
- * @property {string[]} factionTags
- * @property {string[]} equipmentTags
- * @property {boolean} isWolf
- * @property {boolean} isBeast
- */
-
-/**
- * @param {Actor|null} actor
- * @param {TokenDocument|Token|null} token
- * @param {Scene|null} [scene]
- * @returns {CreatureContext}
- */
 export function buildCreatureContext(actor, token, scene = null) {
   const tokenDoc = token?.document ?? token ?? null;
   const resolvedActor = actor ?? tokenDoc?.actor ?? null;
@@ -57,7 +23,6 @@ export function buildCreatureContext(actor, token, scene = null) {
   const isDead = isCreatureDead(tokenDoc, resolvedActor);
   const isContainer = isLootContainerActor(resolvedActor)
     || Boolean(tokenDoc?.getFlag?.(MODULE_ID, "isContainer"));
-  // True wolves only — not wolf spiders, werewolves, or worgs.
   const isWolf = isActualWolf(nameLower, creatureSubtype);
   const isBeast = !isContainer && (creatureType === "beast" || isWolf);
   const isNamed = looksNamed(name, creatureType);
@@ -89,11 +54,6 @@ export function buildCreatureContext(actor, token, scene = null) {
   return context;
 }
 
-/**
- * @param {TokenDocument|null} tokenDoc
- * @param {Actor|null} actor
- * @returns {boolean}
- */
 export function isCreatureDead(tokenDoc, actor = null) {
   try {
     if (tokenDoc && typeof tokenDoc.hasStatusEffect === "function" && tokenDoc.hasStatusEffect("dead")) {
@@ -107,12 +67,6 @@ export function isCreatureDead(tokenDoc, actor = null) {
   return Number.isFinite(hp) && hp <= 0;
 }
 
-/**
- * True for LootForge Chest / Container actors (and tokens flagged as containers).
- * @param {TokenDocument|null} tokenDoc
- * @param {Actor|null} [actor]
- * @returns {boolean}
- */
 export function isLootContainer(tokenDoc, actor = null) {
   const resolved = actor ?? tokenDoc?.actor ?? null;
   if (isLootContainerActor(resolved)) return true;
@@ -124,23 +78,12 @@ export function isLootContainer(tokenDoc, actor = null) {
   return Boolean(tokenDoc?.flags?.[MODULE_ID]?.isContainer);
 }
 
-/**
- * Anything players may loot: dead creatures OR LootForge containers.
- * @param {TokenDocument|null} tokenDoc
- * @param {Actor|null} [actor]
- * @returns {boolean}
- */
 export function isLootableTarget(tokenDoc, actor = null) {
   const resolved = actor ?? tokenDoc?.actor ?? null;
   if (isLootContainer(tokenDoc, resolved)) return true;
   return isCreatureDead(tokenDoc, resolved);
 }
 
-/**
- * @param {string} nameLower
- * @param {string} subtypeLower
- * @returns {boolean}
- */
 function isActualWolf(nameLower, subtypeLower) {
   const hay = `${nameLower} ${subtypeLower}`;
   if (!/\bwolf\b/.test(hay)) return false;
@@ -150,19 +93,11 @@ function isActualWolf(nameLower, subtypeLower) {
   return true;
 }
 
-/**
- * Heuristic: "Wolf" / "Wolf 3" are generic; "Fenrir" style names are named.
- * @param {string} name
- * @param {string} creatureType
- * @returns {boolean}
- */
 function looksNamed(name, creatureType) {
   const trimmed = name.trim();
   if (!trimmed) return false;
-  // Generic numbered tokens: Wolf, Wolf (2), Wolf 3
   if (/^.+\s*\(?\d+\)?$/.test(trimmed)) return false;
   if (trimmed.toLowerCase() === creatureType) return false;
-  // Single common noun often means SRD stock creature.
   const stock = new Set([
     "wolf",
     "dire wolf",
@@ -319,16 +254,11 @@ function looksNamed(name, creatureType) {
     "container"
   ]);
   if (stock.has(trimmed.toLowerCase())) return false;
-  // Stock dragon age forms: "Adult Red Dragon", "Young White Dragon", "Ancient Gold Dragon"
   if (/^(wyrmling|young|adult|ancient)\s+\w+\s+dragon$/i.test(trimmed)) return false;
   if (/^(wyrmling|young|adult|ancient)\s+dragon$/i.test(trimmed)) return false;
   return true;
 }
 
-/**
- * @param {Scene|null} scene
- * @returns {string[]}
- */
 function inferEnvironmentTags(scene) {
   if (!scene) return [];
   const hay = `${scene.name ?? ""} ${scene.navName ?? ""}`.toLowerCase();

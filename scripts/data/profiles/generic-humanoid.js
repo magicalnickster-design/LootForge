@@ -1,11 +1,3 @@
-/**
- * Generic Humanoid — type-fallback multi-pool profile for humanoids that
- * lack a race, goblinoid, stock-role, or boss name match.
- *
- * Goblin / Hobgoblin / Bugbear / race / stock NPC / Archmage profiles stay
- * more specific and are matched first by name or subtype.
- */
-
 import {
   CIVILIZED_EQUIPMENT,
   civilizedCurrency,
@@ -14,11 +6,8 @@ import {
   trinketPool
 } from "./_humanoid-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const genericHumanoidProfile = {
   id: "generic-humanoid",
-  // Name matching is intentionally empty — this profile is reached via
-  // creature-type fallback after specific humanoid profiles miss.
   matchNames: [],
   matchTypes: ["humanoid"],
   lootScale: {

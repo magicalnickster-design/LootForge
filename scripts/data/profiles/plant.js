@@ -1,10 +1,3 @@
-/**
- * Plant — multi-pool profile for blights, myconids, shambling mounds, and treants.
- *
- * Quantities scale by form via `lootScale` (twig blight smaller, treant larger).
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const plantProfile = {
   id: "plant",
   matchNames: [
@@ -22,7 +15,6 @@ export const plantProfile = {
   matchSubtypes: ["plant", "blight", "myconid"],
   excludeNames: ["eggplant", "houseplant", "planter"],
   lootScale: {
-    // Longest token wins (see resolveLootScale).
     nameTokens: {
       "shambling mound": 1.35,
       "vine blight": 0.7,
@@ -207,7 +199,6 @@ export const plantProfile = {
 
     currency: {
       type: "currency",
-      // Plants rarely carry coin; victims / grove offerings may.
       denominations: {
         cp: { min: 0, max: 10, chance: 0.25 },
         sp: { min: 0, max: 8, chance: 0.35 },
@@ -231,7 +222,6 @@ export const plantProfile = {
 
     equipment: {
       type: "equipment",
-      // Occasional victim gear tangled in vines / roots.
       chances: {
         weapon: 0.45,
         armor: 0.25,

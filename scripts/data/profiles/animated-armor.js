@@ -1,5 +1,3 @@
-/** Auto-split legacy LootForge profile — keep drop tables stable. */
-
 export const animatedArmorProfile = {
   "id": "animated-armor",
   "matchNames": [

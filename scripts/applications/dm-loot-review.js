@@ -1,7 +1,3 @@
-/**
- * DM Loot Review — ApplicationV2 window for editing corpse loot before release.
- */
-
 import { listLootDefinitions } from "../data/loot-definitions.js";
 import { MODULE_ID } from "../modules/constants.js";
 import { generateCreatureLoot, rerollSingleEntry } from "../modules/loot-generator.js";
@@ -20,16 +16,12 @@ import { registerLootWindow, unregisterLootWindow } from "./window-registry.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
-  /** @type {TokenDocument} */
   #tokenDoc;
 
-  /** @type {boolean} */
   #busy = false;
 
-  /** @type {boolean} */
   #pendingRefresh = false;
 
-  /** Monotonic token so a slow busy=true render cannot overwrite a later idle UI. */
   #renderGeneration = 0;
 
   constructor(tokenDoc, options = {}) {
@@ -111,7 +103,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
     await super._onRender(context, options);
     registerLootWindow(this.#tokenDoc.uuid, this);
 
-    // If a newer render was requested while this frame was painting, correct it.
     if (context?.renderGeneration != null && context.renderGeneration < this.#renderGeneration) {
       void this.render({ force: true });
     }
@@ -120,7 +111,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   async _onClose(options) {
     unregisterLootWindow(this.#tokenDoc.uuid, this);
 
-    // Close / Save & Close release loot. Do not release if we were mid-edit.
     if (game.user.isGM && !this.#busy) {
       const state = getCorpseState(this.#tokenDoc);
       if (state.generated && !state.dmApproved && (state.items?.length || state.pendingReview)) {
@@ -136,8 +126,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   onCorpseStateChanged() {
-    // Flag updates from our own edits already re-render via #withBusy.
-    // A second render mid-edit races and can leave every button disabled.
     if (this.#busy) {
       this.#pendingRefresh = true;
       return;
@@ -145,10 +133,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
     if (this.rendered) void this.#safeRender();
   }
 
-  /**
-   * Disable/enable action controls without a full re-render (avoids busy-frame races).
-   * @param {boolean} disabled
-   */
   #setActionsDisabled(disabled) {
     const root = this.element;
     if (!root) return;
@@ -171,8 +155,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
     if (this.#busy) return;
     this.#busy = true;
     this.#pendingRefresh = false;
-    // Do NOT full-re-render with busy=true — that paint can finish after unlock
-    // and permanently disable every control except Close.
     this.#setActionsDisabled(true);
     try {
       await fn();
@@ -244,7 +226,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onIncQty(event, target) {
     event.preventDefault();
-    /** @type {DmLootReview} */
     const app = this;
     const entryId = target.dataset.entryId;
     await app.#withBusy(async () => {
@@ -259,7 +240,6 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onDecQty(event, target) {
     event.preventDefault();
-    /** @type {DmLootReview} */
     const app = this;
     const entryId = target.dataset.entryId;
     await app.#withBusy(async () => {
@@ -343,12 +323,7 @@ export class DmLootReview extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 }
 
-/**
- * @param {TokenDocument} tokenDoc
- * @param {object} [options]
- */
 export async function openDmLootReview(tokenDoc, options = {}) {
-  // Single instance per token.
   for (const app of foundry.applications.instances.values()) {
     if (app instanceof DmLootReview && app.tokenDoc?.uuid === tokenDoc.uuid) {
       await app.render({ force: true });

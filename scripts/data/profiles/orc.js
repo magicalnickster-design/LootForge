@@ -1,11 +1,3 @@
-/**
- * Orc — humanoid multi-pool profile.
- *
- * Monster parts are LootForge customs. Weapons/armor/consumables come from
- * the NPC's actual inventory (equipment pool), so SRD/DDB/custom orcs all work.
- */
-
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const orcProfile = {
   id: "orc",
   matchNames: ["orc", "orog", "orc war chief"],
@@ -93,7 +85,6 @@ export const orcProfile = {
 
     currency: {
       type: "currency",
-      // Orcs carry a bit more coin than goblins on average.
       denominations: {
         cp: { min: 4, max: 24, chance: 1 },
         sp: { min: 0, max: 8, chance: 0.9 },
@@ -115,7 +106,6 @@ export const orcProfile = {
 
     equipment: {
       type: "equipment",
-      // Greataxes, javelins, hide armor, etc. — whatever is on the sheet.
       chances: {
         weapon: 0.8,
         armor: 0.45,

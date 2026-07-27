@@ -1,17 +1,3 @@
-/**
- * Double-click a lootable target (dead creature or Chest/Container).
- *
- * Players usually cannot hover/control unowned enemy tokens, so Foundry never
- * sets canvas.tokens.hover and Token#_onClickLeft2 is permission-gated by
- * _canView. We patch those permissions for lootable targets.
- *
- * Sheet access is preserved for:
- * - GMs (always open the actor sheet on double-click)
- * - Players who own the actor (including dead PCs)
- *
- * Loot only starts for unowned lootable NPCs/containers (player double-click).
- */
-
 import { isLootableTarget } from "../modules/creature-context.js";
 import { log } from "../modules/logger.js";
 import { userOwnsActor } from "../modules/ownership.js";
@@ -19,13 +5,9 @@ import { lootBody } from "../modules/loot-workflow.js";
 
 let patched = false;
 
-/** @type {Map<string, number>} tokenUuid → last loot attempt ms */
 const recentLootClicks = new Map();
 const LOOT_CLICK_DEBOUNCE_MS = 900;
 
-/**
- * @returns {typeof Token|null}
- */
 function getTokenClass() {
   return CONFIG?.Token?.objectClass
     ?? foundry?.canvas?.placeables?.Token
@@ -33,11 +15,6 @@ function getTokenClass() {
     ?? null;
 }
 
-/**
- * Canvas coords for a DOM or PIXI-backed event.
- * @param {Event|PIXI.FederatedEvent|null} [event]
- * @returns {{ x: number, y: number }|null}
- */
 function getCanvasPoint(event) {
   if (canvas?.mousePosition && Number.isFinite(canvas.mousePosition.x)) {
     return { x: canvas.mousePosition.x, y: canvas.mousePosition.y };
@@ -56,11 +33,6 @@ function getCanvasPoint(event) {
   }
 }
 
-/**
- * Find a visible token under the pointer — works without ownership/hover.
- * @param {Event|null} [event]
- * @returns {Token|null}
- */
 export function resolveTokenUnderPointer(event = null) {
   if (!canvas?.ready || !canvas.tokens) return null;
 
@@ -99,19 +71,12 @@ export function resolveTokenUnderPointer(event = null) {
   return matches.at(-1) ?? null;
 }
 
-/**
- * Should this dead token open the actor sheet instead of starting loot?
- * @param {Token} token
- * @returns {boolean}
- */
 function shouldOpenSheetInsteadOfLoot(token) {
-  // GMs always get the sheet — loot via HUD / Alt+L / scene control.
   if (game.user.isGM) return true;
 
   const actor = token?.actor;
   if (!actor) return false;
 
-  // Dead PCs / owned actors: keep normal sheet access.
   if (actor.type === "character") return true;
   if (userOwnsActor(actor, game.user)) return true;
   try {
@@ -127,10 +92,6 @@ function shouldOpenSheetInsteadOfLoot(token) {
   return false;
 }
 
-/**
- * @param {Token} token
- * @param {Event|null} [event]
- */
 async function tryLootDeadToken(token, event = null) {
   if (!token?.document || !token.actor) return false;
   if (!isLootableTarget(token.document, token.actor)) return false;
@@ -159,10 +120,6 @@ async function tryLootDeadToken(token, event = null) {
   return true;
 }
 
-/**
- * Patch Foundry Token interaction so players can double-click dead enemy tokens.
- * Unowned NPCs normally fail _canView, so clickLeft2 never fires for players.
- */
 function patchTokenDoubleClick() {
   if (patched) return;
   const TokenClass = getTokenClass();
@@ -203,10 +160,8 @@ function patchTokenDoubleClick() {
       try {
         if (isLootableTarget(this.document, this.actor)) {
           if (shouldOpenSheetInsteadOfLoot(this)) {
-            // GM / owned actor — normal Foundry sheet open.
             return proto._lootforgeOnClickLeft2.call(this, event);
           }
-          // Unowned lootable NPC / container — loot instead of sheet.
           event?.stopPropagation?.();
           void tryLootDeadToken(this, event);
           return;
@@ -222,9 +177,6 @@ function patchTokenDoubleClick() {
   log.info("Patched Token double-click for dead-creature looting");
 }
 
-/**
- * Register canvas double-click looting.
- */
 export function registerTokenDoubleClickLoot() {
   patchTokenDoubleClick();
 

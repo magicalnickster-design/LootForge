@@ -1,11 +1,3 @@
-/**
- * Stock humanoid NPCs — multi-pool profile for MM/SRD roles
- * (bandit, guard, mage, priest, assassin, etc.).
- *
- * Goblin / Hobgoblin / Bugbear / race profiles and Archmage stay more specific
- * and are matched first. Quantities scale by role via `lootScale`.
- */
-
 import {
   CIVILIZED_EQUIPMENT,
   civilizedCurrency,
@@ -14,7 +6,6 @@ import {
   trinketPool
 } from "./_humanoid-pools.js";
 
-/** @type {import("../creature-profiles.js").CreatureProfile} */
 export const stockHumanoidProfile = {
   id: "stock-humanoid",
   matchNames: [
@@ -48,7 +39,6 @@ export const stockHumanoidProfile = {
     "halfling"
   ],
   lootScale: {
-    // Longest token wins (bandit captain before bandit, cult fanatic before cultist).
     nameTokens: {
       "bandit captain": 1.15,
       "cult fanatic": 0.95,

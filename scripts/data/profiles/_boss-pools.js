@@ -1,9 +1,3 @@
-/**
- * Shared pool fragments for Tier 5 unique boss profiles.
- * Rich currency, high-quality sheet gear, and boss collectible poolPicks.
- */
-
-/** @type {object} */
 export const BOSS_CURRENCY = {
   type: "currency",
   denominations: {
@@ -27,7 +21,6 @@ export const BOSS_CURRENCY = {
   }
 };
 
-/** @type {object} */
 export const BOSS_EQUIPMENT = {
   type: "equipment",
   chances: {
@@ -49,12 +42,6 @@ export const BOSS_EQUIPMENT = {
   }
 };
 
-/**
- * Guaranteed-style definition drop: always attempts; min qty usually ≥ 1.
- * @param {string} definitionId
- * @param {[number, number]} qty
- * @param {object} [opts]
- */
 export function bossGuaranteed(definitionId, qty = [1, 1], opts = {}) {
   return {
     definitionId,
@@ -77,11 +64,6 @@ export function bossGuaranteed(definitionId, qty = [1, 1], opts = {}) {
   };
 }
 
-/**
- * High-chance boss drop (not fully guaranteed at poor quality).
- * @param {string} definitionId
- * @param {object} [opts]
- */
 export function bossLikely(definitionId, opts = {}) {
   const qty = opts.qty ?? [1, 1];
   return {
@@ -104,10 +86,6 @@ export function bossLikely(definitionId, opts = {}) {
   };
 }
 
-/**
- * @param {string[]} definitionIds
- * @param {object} [overrides]
- */
 export function bossPoolPick(definitionIds, overrides = {}) {
   return {
     type: "poolPick",
