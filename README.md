@@ -7,7 +7,7 @@ Built for **Gambits Forge**.
 
 | | |
 | --- | --- |
-| Version | 0.6.4 |
+| Version | 0.6.5 |
 | Foundry | 13–14 (verified 14) |
 | System | dnd5e 4.0+ (verified 5.3.3) |
 
@@ -16,6 +16,7 @@ Built for **Gambits Forge**.
 - Survival / Investigation rolls when looting dead NPCs
 - DM review before players take loot
 - Shared free-for-all Items window after approval
+- Players must be within **10 feet** to loot (double-click or Alt+L)
 - Harvest tables for common MM creatures, humanoids, dragons, undead, and more
 - Type-based fallbacks when a creature has no dedicated table
 - Generic scrap loot (coin + notes/maps) when nothing matches
@@ -39,9 +40,9 @@ Until `GET /api/entitlements/lootforge` is deployed on gambitsforge.online, Loot
 ## How it works
 
 1. A creature dies — sparkles mark it as lootable.
-2. A player double-clicks an unowned dead NPC. The module rolls Survival (beasts) or Investigation (everything else).
+2. A player double-clicks an unowned dead NPC while within 10 feet. The module rolls Survival (beasts) or Investigation (everything else).
 3. The GM gets a review window to edit, reroll, add, or remove items.
-4. Save & Close (or Close) releases the loot. Players get the shared Items window.
+4. Save & Close (or Close) releases the loot. Players approach the corpse (within 10 feet) and double-click or press Alt+L to open the shared Items window.
 5. When emptied, sparkles clear and the corpse hides.
 6. GM **Reset Loot** puts the corpse back into play.
 

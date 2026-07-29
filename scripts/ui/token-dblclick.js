@@ -4,6 +4,7 @@ import { userOwnsActor } from "../modules/ownership.js";
 import { lootBody } from "../modules/loot-workflow.js";
 
 let patched = false;
+let canvasHooked = false;
 
 const recentLootClicks = new Map();
 const LOOT_CLICK_DEBOUNCE_MS = 900;
@@ -154,22 +155,27 @@ function patchTokenDoubleClick() {
     };
   }
 
-  if (!proto._lootforgeOnClickLeft2) {
-    proto._lootforgeOnClickLeft2 = proto._onClickLeft2;
-    proto._onClickLeft2 = function lootforgeOnClickLeft2(event) {
+  // Foundry versions differ on the double-left-click hook name.
+  const clickMethods = ["_onClickLeft2", "_onDoubleLeft", "onClickLeft2"];
+  for (const methodName of clickMethods) {
+    if (typeof proto[methodName] !== "function") continue;
+    const backupName = `_lootforge${methodName}`;
+    if (proto[backupName]) continue;
+    proto[backupName] = proto[methodName];
+    proto[methodName] = function lootforgeDoubleLeft(event) {
       try {
         if (isLootableTarget(this.document, this.actor)) {
           if (shouldOpenSheetInsteadOfLoot(this)) {
-            return proto._lootforgeOnClickLeft2.call(this, event);
+            return proto[backupName].call(this, event);
           }
           event?.stopPropagation?.();
           void tryLootDeadToken(this, event);
-          return;
+          return false;
         }
       } catch (err) {
         log.error("Token double-click loot failed", err);
       }
-      return proto._lootforgeOnClickLeft2.call(this, event);
+      return proto[backupName].call(this, event);
     };
   }
 
@@ -177,16 +183,44 @@ function patchTokenDoubleClick() {
   log.info("Patched Token double-click for dead-creature looting");
 }
 
+function bindCanvasDoubleClickFallback() {
+  if (!canvas?.ready) return;
+
+  const board = canvas.app?.view
+    ?? canvas.elements?.board
+    ?? document.getElementById("board");
+  if (!board || board.dataset.lootforgeDblclick === "1") return;
+  board.dataset.lootforgeDblclick = "1";
+
+  board.addEventListener("dblclick", (event) => {
+    if (event.button != null && event.button !== 0) return;
+    // Ignore double-clicks that land on Foundry UI chrome outside the canvas.
+    if (event.target?.closest?.("#ui-left, #ui-right, #ui-top, #ui-bottom, .app, .application")) {
+      return;
+    }
+    const token = resolveTokenUnderPointer(event);
+    if (!token) return;
+    void tryLootDeadToken(token, event);
+  }, { capture: true });
+
+  log.debug("Canvas double-click loot fallback bound");
+}
+
 export function registerTokenDoubleClickLoot() {
   patchTokenDoubleClick();
 
-  Hooks.on("canvasReady", () => {
-    patchTokenDoubleClick();
-    log.info("Token double-click loot ready", {
-      userId: game.user.id,
-      isGM: game.user.isGM
+  if (!canvasHooked) {
+    canvasHooked = true;
+    Hooks.on("canvasReady", () => {
+      patchTokenDoubleClick();
+      bindCanvasDoubleClickFallback();
+      log.info("Token double-click loot ready", {
+        userId: game.user.id,
+        isGM: game.user.isGM
+      });
     });
-  });
+  }
 
+  if (canvas?.ready) bindCanvasDoubleClickFallback();
   log.debug("Token double-click loot registered");
 }

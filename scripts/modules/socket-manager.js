@@ -1,4 +1,4 @@
-import { CORPSE_FLAG, MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
+import { CORPSE_FLAG, LOOT_RANGE_FEET, MODULE_ID, OPS, SOCKET_EVENT } from "./constants.js";
 import { log } from "./logger.js";
 import { canUserLootCorpse } from "./ownership.js";
 import {
@@ -20,6 +20,7 @@ import {
 } from "./loot-transfer.js";
 import { refreshLootWindows } from "../applications/window-registry.js";
 import { canHandleAuthoritativeLoot, canUse } from "../auth/access.js";
+import { assertPlayerLootRange, findLooterTokenForActor } from "./loot-range.js";
 
 let registered = false;
 
@@ -331,6 +332,18 @@ async function handleTakeRequest(payload) {
       rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.NoTakePermission"));
       return;
     }
+    if (!requestingUser.isGM) {
+      const looterToken = findLooterTokenForActor(actor, requestingUser);
+      const rangeCheck = assertPlayerLootRange(tokenDoc, {
+        user: requestingUser,
+        looterToken,
+        rangeFeet: LOOT_RANGE_FEET
+      });
+      if (!rangeCheck.ok) {
+        rejectTake(payload, rangeCheck.error);
+        return;
+      }
+    }
   } else if (
     !shared
     && state.activeLooterUserId
@@ -505,30 +518,17 @@ function beginAutoOpen(tokenUuid) {
 async function onLootReleased(payload) {
   if (game.user.isGM) return;
   const tokenUuid = payload.tokenUuid;
-  if (!tokenUuid || !beginAutoOpen(tokenUuid)) return;
+  if (!tokenUuid) return;
 
-  log.info("Loot released — opening player window", {
-    tokenUuid,
-    localUserId: game.user.id
-  });
-
+  // Do not auto-open from across the map — players must approach and interact.
   const tokenDoc = await resolveTokenDocSoon(tokenUuid);
-  if (!tokenDoc) {
-    ui.notifications.warn(game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
-    return;
-  }
-
-  for (let i = 0; i < 12; i++) {
-    const state = getCorpseState(tokenDoc);
-    if ((state.dmApproved || state.freeForAll) && hasRemainingLoot(tokenDoc)) break;
-    await new Promise((resolve) => setTimeout(resolve, 75));
-  }
-
-  const { openPlayerLootWindow } = await import("../applications/player-loot-window.js");
-  await openPlayerLootWindow(tokenDoc);
+  const name = tokenDoc
+    ? (getCorpseState(tokenDoc).creatureContext?.name ?? tokenDoc.name)
+    : "the corpse";
   ui.notifications.info(
-    game.i18n.format("LOOTFORGE.Notify.LootAvailable", {
-      name: getCorpseState(tokenDoc).creatureContext?.name ?? tokenDoc.name
+    game.i18n.format("LOOTFORGE.Notify.LootReadyApproach", {
+      name,
+      range: LOOT_RANGE_FEET
     })
   );
 }
@@ -569,25 +569,28 @@ export async function releaseLootForEveryone(tokenDoc) {
     tokenUuid: tokenDoc.uuid
   });
 
-  const players = game.users.filter((u) => !u.isGM && u.active);
-  for (const user of players) {
-    emitLootForge({
-      op: OPS.OPEN_PLAYER_WINDOW,
-      tokenUuid: tokenDoc.uuid,
-      targetUserId: user.id,
-      trusted: true
-    });
-  }
-
-  ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootOpenForAll"));
-  log.info("Released loot for everyone (free-for-all)", {
-    tokenUuid: tokenDoc.uuid,
-    playerIds: players.map((u) => u.id)
+  ui.notifications.info(
+    game.i18n.format("LOOTFORGE.Notify.LootReadyApproach", {
+      name: getCorpseState(tokenDoc).creatureContext?.name ?? tokenDoc.name,
+      range: LOOT_RANGE_FEET
+    })
+  );
+  log.info("Released loot for everyone (free-for-all, approach to loot)", {
+    tokenUuid: tokenDoc.uuid
   });
   return { ok: true, freeForAll: true };
 }
 
 export async function requestTakeItem(tokenDoc, actor, entryId) {
+  if (!game.user.isGM) {
+    const rangeCheck = assertPlayerLootRange(tokenDoc, {
+      looterToken: findLooterTokenForActor(actor, game.user)
+    });
+    if (!rangeCheck.ok) {
+      return { ok: false, error: rangeCheck.error };
+    }
+  }
+
   if (game.user.isGM || canUserModifyToken(tokenDoc)) {
     const result = await takeCorpseItem(tokenDoc, actor, entryId);
     if (result.ok) broadcastStateUpdated(tokenDoc.uuid);
@@ -604,6 +607,15 @@ export async function requestTakeItem(tokenDoc, actor, entryId) {
 }
 
 export async function requestTakeAll(tokenDoc, actor) {
+  if (!game.user.isGM) {
+    const rangeCheck = assertPlayerLootRange(tokenDoc, {
+      looterToken: findLooterTokenForActor(actor, game.user)
+    });
+    if (!rangeCheck.ok) {
+      return { ok: false, error: rangeCheck.error };
+    }
+  }
+
   if (game.user.isGM || canUserModifyToken(tokenDoc)) {
     const result = await takeAllCorpseItems(tokenDoc, actor);
     if (result.ok) broadcastStateUpdated(tokenDoc.uuid);

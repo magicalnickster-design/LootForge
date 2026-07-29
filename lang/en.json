@@ -9,7 +9,7 @@
       "ResetLoot": "Reset Loot"
     },
     "Keybinding": {
-      "LootTargetHint": "Loot the targeted corpse, or the nearest lootable corpse (Alt+L). Canvas looting is double-left-click only."
+      "LootTargetHint": "Loot the targeted corpse, or the nearest lootable corpse (Alt+L). Players must be within 10 feet. Double-left-click a corpse also works."
     },
     "Quality": {
       "poor": "Poor",
@@ -38,7 +38,10 @@
       "NoAssignedCorpse": "No lootable corpse found. Target a dead body, or stand near one.",
       "WaitingForGM": "Waiting for the DM to finish reviewing the loot.",
       "PlayersMustInitiate": "Only players can start looting a corpse — ask a player to double-click it.",
-      "LootOpenForAll": "Loot is ready — any player can double-click the corpse to loot.",
+      "LootOpenForAll": "Loot is ready — approach within {range} feet and double-click the corpse to loot.",
+      "LootReadyApproach": "Loot ready on {name}. Approach within {range} feet, then double-click (or Alt+L) to loot.",
+      "TooFarToLoot": "You must be within {range} feet of the corpse to loot it.",
+      "NeedNearbyCharacter": "Select or place your character token near the corpse before looting.",
       "PlayerGeneratedLoot": "{player} rolled {skill} {total} on {name}. Review the loot, then Save & Close.",
       "LootBusy": "{name} is already looting this corpse.",
       "ResetConfirm": "Clear generated loot on this corpse so it can be generated again?",

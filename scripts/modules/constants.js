@@ -42,3 +42,6 @@ export const LOOT_SKILL_SUR = "sur";
 export const LOOT_SKILL = LOOT_SKILL_INV;
 
 export const LOOT_BAG_ICON = `modules/${MODULE_ID}/assets/ui/loot-bag.svg`;
+
+/** Players must stand this close (feet) to start looting or take items. */
+export const LOOT_RANGE_FEET = 10;

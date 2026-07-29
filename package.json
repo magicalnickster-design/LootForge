@@ -1,6 +1,6 @@
 {
   "name": "lootforge",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "private": true,
   "description": "LootForge Foundry VTT module — interactive creature looting for Gambits Forge.",
   "type": "module",
@@ -10,7 +10,7 @@
     "verify:pack": "node tools/verify-pack-offline.mjs",
     "test:auth": "node --test tools/auth-entitlement.test.mjs",
     "test:entitlements": "node --test tools/backend-entitlement-dropin/product-entitlements.test.cjs",
-    "test:loot": "node --test tools/loot-transfer-race.test.mjs",
+    "test:loot": "node --test tools/loot-transfer-race.test.mjs tools/loot-range.test.mjs",
     "test": "npm run test:auth && npm run test:entitlements && npm run test:loot",
     "verify:lootforge-entitlement": "node tools/verify-lootforge-entitlement.mjs"
   },

@@ -47,6 +47,7 @@ import {
 } from "./socket-manager.js";
 import { MODULE_ID, OPS } from "./constants.js";
 import { requireAccess, canGenerateLoot } from "../auth/access.js";
+import { assertPlayerLootRange } from "./loot-range.js";
 
 const generatingTokens = new Set();
 
@@ -85,6 +86,14 @@ export async function lootBody(token) {
         game.i18n.format("LOOTFORGE.Notify.NotDefeated", { name: creature.name })
       );
       return;
+    }
+
+    if (!game.user.isGM) {
+      const rangeCheck = assertPlayerLootRange(token);
+      if (!rangeCheck.ok) {
+        ui.notifications.warn(rangeCheck.error);
+        return;
+      }
     }
 
     const state = getCorpseState(tokenDoc);

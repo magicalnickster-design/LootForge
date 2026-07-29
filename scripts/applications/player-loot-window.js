@@ -1,4 +1,4 @@
-import { MODULE_ID } from "../modules/constants.js";
+import { MODULE_ID, LOOT_RANGE_FEET } from "../modules/constants.js";
 import { log } from "../modules/logger.js";
 import {
   getCorpseState,
@@ -152,7 +152,9 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
     try {
       const result = await requestDoneLoot(this.#tokenDoc);
       if (result?.ok && !result.pending && result.freeForAll && result.deposited > 0) {
-        ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootOpenForAll"));
+        ui.notifications.info(game.i18n.format("LOOTFORGE.Notify.LootOpenForAll", {
+          range: LOOT_RANGE_FEET
+        }));
       } else if (result?.ok && !result.pending && result.deposited > 0) {
         ui.notifications.info(game.i18n.localize("LOOTFORGE.Notify.LootDeposited"));
       }

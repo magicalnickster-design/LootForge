@@ -1,5 +1,5 @@
 import { isLootableTarget } from "../modules/creature-context.js";
-import { MODULE_ID } from "../modules/constants.js";
+import { MODULE_ID, LOOT_RANGE_FEET } from "../modules/constants.js";
 import {
   getCorpseState,
   hasRemainingLoot,
@@ -7,6 +7,11 @@ import {
   isLootGenerated
 } from "../modules/loot-storage.js";
 import { canUserLootCorpse } from "../modules/ownership.js";
+import {
+  isWithinLootRange,
+  measureTokenDistanceFeet,
+  resolveLooterToken
+} from "../modules/loot-range.js";
 import { lootBody } from "../modules/loot-workflow.js";
 
 export function resolveLootTargetToken() {
@@ -32,8 +37,8 @@ export function resolveNearestLootableCorpse() {
   });
   if (!candidates.length) return null;
 
-  const origin = canvas.tokens.controlled[0]
-    ?? game.user.character?.getActiveTokens?.(true)?.[0]
+  const origin = resolveLooterToken(game.user)
+    ?? canvas.tokens.controlled[0]
     ?? null;
 
   if (!origin) return candidates[0];
@@ -41,9 +46,7 @@ export function resolveNearestLootableCorpse() {
   let best = null;
   let bestDist = Infinity;
   for (const token of candidates) {
-    const dx = token.center.x - origin.center.x;
-    const dy = token.center.y - origin.center.y;
-    const dist = dx * dx + dy * dy;
+    const dist = measureTokenDistanceFeet(origin, token);
     if (dist < bestDist) {
       bestDist = dist;
       best = token;
@@ -60,7 +63,13 @@ export function resolveLootHotkeyToken() {
     const doc = targeted.document;
     if (doc && isLootableTarget(doc, targeted.actor)) return targeted;
   }
-  return resolveNearestLootableCorpse();
+  const nearest = resolveNearestLootableCorpse();
+  if (!nearest || game.user.isGM) return nearest;
+
+  const origin = resolveLooterToken(game.user);
+  if (!origin) return nearest;
+  if (!isWithinLootRange(origin, nearest, LOOT_RANGE_FEET)) return nearest;
+  return nearest;
 }
 
 export function registerLootKeybinding() {
