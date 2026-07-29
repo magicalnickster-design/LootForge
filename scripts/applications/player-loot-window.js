@@ -208,10 +208,10 @@ export class PlayerLootWindow extends HandlebarsApplicationMixin(ApplicationV2) 
         ui.notifications.warn(result.error || game.i18n.localize("LOOTFORGE.Notify.TransferFailed"));
         return;
       }
-      if (!result.pending) {
-        app.#sessionReleased = true;
-        await app.close();
-      }
+      // Pending GM handoff still claimed client-side — close so this player
+      // cannot spam Loot All while other party windows sync.
+      app.#sessionReleased = true;
+      await app.close();
     });
   }
 

@@ -16,7 +16,12 @@ import {
   updateCorpseState
 } from "./loot-storage.js";
 
+/** One in-flight transfer per corpse — shared by take-one and take-all. */
 const transferLocks = new Set();
+
+function corpseTransferLockKey(tokenDoc) {
+  return `${tokenDoc?.uuid ?? "unknown"}:TRANSFER`;
+}
 
 function acquireLock(lockKey) {
   if (transferLocks.has(lockKey)) return false;
@@ -238,7 +243,7 @@ async function grantEntryToActor(actor, entry, sourceCreature) {
 }
 
 export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user = game.user } = {}) {
-  const lockKey = `${tokenDoc.uuid}:${entryId}`;
+  const lockKey = corpseTransferLockKey(tokenDoc);
   if (!acquireLock(lockKey)) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferBusy") };
   }
@@ -258,8 +263,7 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
     const grant = { ...entry, quantity: takeQty };
     const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
 
-    await grantEntryToActor(actor, grant, sourceCreature);
-
+    // Claim on the corpse first so concurrent Take / Loot All cannot re-grant.
     const remaining = entry.quantity - takeQty;
     const nextItems = remaining > 0
       ? state.items.map((i) => (i.entryId === entryId ? { ...i, quantity: remaining } : i))
@@ -283,6 +287,25 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
         : {})
     });
 
+    try {
+      await grantEntryToActor(actor, grant, sourceCreature);
+    } catch (grantErr) {
+      log.error("grant after claim failed; restoring item to corpse", grantErr);
+      await updateCorpseState(tokenDoc, {
+        items: state.items,
+        currency: aggregateCurrencyFromItems(state.items),
+        looted: false,
+        lootedAt: state.lootedAt,
+        freeForAll: state.freeForAll,
+        activeLooterUserId: state.activeLooterUserId,
+        activeLooterActorId: state.activeLooterActorId,
+        activeLooterName: state.activeLooterName,
+        assignedActorId: state.assignedActorId,
+        assignedUserId: state.assignedUserId
+      });
+      throw grantErr;
+    }
+
     if (empty) {
       const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
       await syncLootedCorpseVisibility(tokenDoc);
@@ -302,7 +325,7 @@ export async function takeCorpseItem(tokenDoc, actor, entryId, { quantity, user 
 }
 
 export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
-  const lockKey = `${tokenDoc.uuid}:ALL`;
+  const lockKey = corpseTransferLockKey(tokenDoc);
   if (!acquireLock(lockKey)) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferBusy") };
   }
@@ -316,15 +339,16 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
     }
 
     await materializeCorpseInventoryLoot(tokenDoc);
-    let state = getCorpseState(tokenDoc);
-    const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
-
-    for (const entry of [...state.items]) {
-      if (entry.quantity <= 0) continue;
-      await grantEntryToActor(actor, entry, sourceCreature);
+    const state = getCorpseState(tokenDoc);
+    const claimed = (state.items ?? []).filter((entry) => Number(entry.quantity) > 0);
+    if (!claimed.length) {
+      return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.AlreadyLootedEmpty") };
     }
 
-    state = await updateCorpseState(tokenDoc, {
+    const sourceCreature = state.creatureContext?.name ?? tokenDoc.name;
+
+    // Clear the corpse before granting so a second Loot All cannot copy the same pile.
+    const nextState = await updateCorpseState(tokenDoc, {
       items: [],
       currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
       looted: true,
@@ -337,11 +361,32 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
       freeForAll: false
     });
 
+    try {
+      for (const entry of claimed) {
+        await grantEntryToActor(actor, entry, sourceCreature);
+      }
+    } catch (grantErr) {
+      log.error("Take All grant failed after claim; restoring corpse loot", grantErr);
+      await updateCorpseState(tokenDoc, {
+        items: claimed,
+        currency: aggregateCurrencyFromItems(claimed),
+        looted: false,
+        lootedAt: null,
+        freeForAll: state.freeForAll,
+        activeLooterUserId: state.activeLooterUserId,
+        activeLooterActorId: state.activeLooterActorId,
+        activeLooterName: state.activeLooterName,
+        assignedActorId: state.assignedActorId,
+        assignedUserId: state.assignedUserId
+      });
+      throw grantErr;
+    }
+
     const { syncLootedCorpseVisibility } = await import("./loot-indicator.js");
     await syncLootedCorpseVisibility(tokenDoc);
 
-    log.info(`Take All → ${actor.name} from ${tokenDoc.name}`);
-    return { ok: true, state };
+    log.info(`Take All → ${actor.name} from ${tokenDoc.name} (${claimed.length} entries)`);
+    return { ok: true, state: nextState };
   } catch (err) {
     log.error("takeAllCorpseItems failed", err);
     return {
@@ -354,7 +399,7 @@ export async function takeAllCorpseItems(tokenDoc, actor, user = game.user) {
 }
 
 export async function depositRemainingToCorpse(tokenDoc, user = game.user) {
-  const lockKey = `${tokenDoc.uuid}:DONE`;
+  const lockKey = corpseTransferLockKey(tokenDoc);
   if (!acquireLock(lockKey)) {
     return { ok: false, error: game.i18n.localize("LOOTFORGE.Notify.TransferBusy") };
   }

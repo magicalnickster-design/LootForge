@@ -259,6 +259,7 @@ function rejectTake(payload, error) {
 }
 
 async function handleTakeRequest(payload) {
+  // Dedupe identical handoffs (socket + whisper chat for the same click).
   const dedupeKey = [
     payload.op,
     payload.tokenUuid,
@@ -272,6 +273,22 @@ async function handleTakeRequest(payload) {
   }
   processedTakeKeys.add(dedupeKey);
   setTimeout(() => processedTakeKeys.delete(dedupeKey), 4000);
+
+  // Only the first Loot All for a corpse wins — later clicks from other players
+  // are rejected while that claim is open (prevents free-for-all duplicates).
+  if (payload.op === OPS.TAKE_ALL) {
+    const takeAllKey = `TAKE_ALL:${payload.tokenUuid}`;
+    if (processedTakeKeys.has(takeAllKey)) {
+      log.info("Ignoring concurrent Loot All", {
+        tokenUuid: payload.tokenUuid,
+        fromUserId: payload.fromUserId
+      });
+      rejectTake(payload, game.i18n.localize("LOOTFORGE.Notify.TransferBusy"));
+      return;
+    }
+    processedTakeKeys.add(takeAllKey);
+    setTimeout(() => processedTakeKeys.delete(takeAllKey), 8000);
+  }
 
   const tokenDoc = await fromUuid(payload.tokenUuid);
   if (!tokenDoc) {
