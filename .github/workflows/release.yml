@@ -1,0 +1,120 @@
+name: Release Foundry Module
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. 0.6.4). Leave empty to use module.json."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install zip tooling
+        run: sudo apt-get update && sudo apt-get install -y zip unzip
+
+      - name: Resolve version
+        id: ver
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          elif [[ "${GITHUB_REF_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            VERSION="${GITHUB_REF_NAME}"
+          else
+            VERSION="$(node -p "require('./module.json').version")"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $VERSION"
+
+      - name: Install npm deps (for pack tools)
+        run: npm ci
+
+      - name: Build packed loot items
+        run: npm run pack
+
+      - name: Build release ZIP + module.json
+        run: node tools/build-release-zip.mjs --version "${{ steps.ver.outputs.version }}"
+
+      - name: Validate module.json JSON and download field
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const mod = JSON.parse(fs.readFileSync('dist/module.json', 'utf8'));
+          if (mod.version !== process.env.VERSION) {
+            throw new Error(`version mismatch: ${mod.version} != ${process.env.VERSION}`);
+          }
+          if (!mod.download || mod.downloadUrl) {
+            throw new Error('module.json must define "download" (not downloadUrl)');
+          }
+          if (!mod.download.endsWith('LootForge.zip')) {
+            throw new Error('download must point to LootForge.zip');
+          }
+          if (!mod.manifest.endsWith('/module.json')) {
+            throw new Error('manifest must point to module.json');
+          }
+          console.log('module.json OK', {
+            version: mod.version,
+            manifest: mod.manifest,
+            download: mod.download
+          });
+          NODE
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+
+      - name: Validate ZIP root contains module.json
+        run: |
+          unzip -Z1 dist/LootForge.zip | head
+          unzip -Z1 dist/LootForge.zip | grep -qx 'module.json'
+          if unzip -Z1 dist/LootForge.zip | grep -E -q '^(LootForge|lootforge)/'; then
+            echo "ZIP unexpectedly nests files under a parent folder" >&2
+            exit 1
+          fi
+
+      - name: Create GitHub Release and upload assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          TAG="$VERSION"
+          # Prefer bare version tags (0.6.4). Fall back to creating if missing.
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG exists — uploading/replacing assets"
+          else
+            gh release create "$TAG" \
+              --title "LootForge $TAG" \
+              --notes "Foundry VTT module release $TAG."
+          fi
+
+          gh release upload "$TAG" \
+            dist/LootForge.zip \
+            dist/module.json \
+            --clobber
+
+          echo "Release assets:"
+          gh release view "$TAG" --json assets --jq '.assets[].name'

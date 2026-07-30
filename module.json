@@ -2,7 +2,7 @@
   "id": "lootforge",
   "title": "LootForge",
   "description": "Interactive looting and harvesting for defeated creatures. Built for Gambits Forge.",
-  "version": "0.6.5",
+  "version": "0.6.4",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
@@ -55,7 +55,9 @@
     {
       "name": "LootForge",
       "sorting": "a",
-      "packs": ["loot-items"]
+      "packs": [
+        "loot-items"
+      ]
     }
   ],
   "socket": true,
@@ -64,8 +66,19 @@
   "bugs": "https://github.com/magicalnickster-design/LootForge/issues",
   "flags": {
     "hotReload": {
-      "extensions": ["css", "hbs", "json"],
-      "paths": ["styles", "templates", "lang", "packs/src"]
+      "extensions": [
+        "css",
+        "hbs",
+        "json"
+      ],
+      "paths": [
+        "styles",
+        "templates",
+        "lang",
+        "packs/src"
+      ]
     }
-  }
+  },
+  "manifest": "https://github.com/magicalnickster-design/LootForge/releases/download/0.6.4/module.json",
+  "download": "https://github.com/magicalnickster-design/LootForge/releases/download/0.6.4/LootForge.zip"
 }
